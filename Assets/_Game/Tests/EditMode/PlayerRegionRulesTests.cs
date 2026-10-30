@@ -1,0 +1,74 @@
+using System;
+using FF.Core;
+using FF.Data;
+using FF.Gameplay.Movement;
+using NUnit.Framework;
+using UnityEngine;
+
+namespace FF.Tests
+{
+    public sealed class PlayerRegionRulesTests
+    {
+        WorldLayout _layout;
+        PlayerRegionRules _rules;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _layout = ScriptableObject.CreateInstance<WorldLayout>();
+            _rules = new PlayerRegionRules(_layout.playerBounds);
+        }
+
+        [TearDown]
+        public void TearDown() => UnityEngine.Object.DestroyImmediate(_layout);
+
+        /// <summary>Direct port of the prototype's collide() region part, in prototype coordinates.</summary>
+        static void PrototypeCollide(ref float x, ref float z, bool sink)
+        {
+            x = Mathf.Clamp(x, -31.5f, 100f);
+            z = Mathf.Clamp(z, -39.4f, 25.6f);
+            if (z < -13.2f && x >= 62) { if (z < -25.6f) z = -25.6f; }
+            else if (z < -13.2f)
+            {
+                if (x <= 15 && z < -27.2f) z = -27.2f;
+                if (x > 15 && z < -24.6f) z = -24.6f;
+                bool sk = x > 15, ok = !sk || sink;
+                float a = sk ? 34.4f : -18.2f, b = sk ? 59.6f : -1.8f;
+                if (!ok) z = -13.2f;
+                else if (x < a || x > b) { if (z > -13.9f) z = -13.2f; else x = Mathf.Clamp(x, a, b); }
+            }
+        }
+
+        Vector2 ApplyProto(float protoX, float protoZ, bool minesOpen)
+        {
+            Vector2 p = ProtoCoords.ToUnityXZ(protoX, protoZ);
+            _rules.Apply(ref p, minesOpen);
+            return new Vector2(p.x, -p.y); // back to proto for readable asserts
+        }
+
+        [Test]
+        public void MatchesPrototype_OnRandomPoints([Values(false, true)] bool minesOpen)
+        {
+            var rng = new System.Random(42);
+            for (int i = 0; i < 20000; i++)
+            {
+                float x = (float)(rng.NextDouble() * 150 - 40);
+                float z = (float)(rng.NextDouble() * 80 - 50);
+                float ex = x, ez = z;
+                PrototypeCollide(ref ex, ref ez, minesOpen);
+                Vector2 got = ApplyProto(x, z, minesOpen);
+                Assert.AreEqual(ex, got.x, 1e-4f, $"x for ({x}, {z})");
+                Assert.AreEqual(ez, got.y, 1e-4f, $"z for ({x}, {z})");
+            }
+        }
+
+        [Test] public void FrontYard_Free() => Assert.AreEqual(new Vector2(10, 0), ApplyProto(10, 0, false));
+        [Test] public void InFenceGap_PushedBackToFence() => Assert.AreEqual(-13.2f, ApplyProto(10, -13.5f, false).y, 1e-5f);
+        [Test] public void DeepBehindFence_SlidesToSawYardWall() => Assert.AreEqual(new Vector2(-1.8f, -20), ApplyProto(10, -20, false));
+        [Test] public void SawBackYard_Allowed() => Assert.AreEqual(new Vector2(-10, -20), ApplyProto(-10, -20, false));
+        [Test] public void MinesYard_ClosedWithoutPlumbing() => Assert.AreEqual(-13.2f, ApplyProto(45, -20, false).y, 1e-5f);
+        [Test] public void MinesYard_OpenWithPlumbing() => Assert.AreEqual(new Vector2(45, -20), ApplyProto(45, -20, true));
+        [Test] public void DreamPlot_Allowed() => Assert.AreEqual(new Vector2(85, -20), ApplyProto(85, -20, false));
+        [Test] public void DreamPlot_BackLimit() => Assert.AreEqual(-25.6f, ApplyProto(85, -30, false).y, 1e-5f);
+    }
+}

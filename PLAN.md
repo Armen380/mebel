@@ -31,7 +31,7 @@ remove packages ai.assistant, ai.inference, collab-proxy.
 - [x] G. Scenes (`FF/Setup Scenes`): Boot.unity (BootLoader: 60 fps, wait localization, load Game), Game.unity (Systems/GameInstaller, CameraRig, World, Actors, UI); temporary M0Check
 - [x] H. EditMode tests: ProtoCoords, NumberFormat (401 cases generated from the prototype fmt() in Node), EconomyConfig, DataImport — 428/428 green
 - [x] Verify: Play Mode shows "Կահույքի Գործարան / Мебельная фабрика" + ֏, data log correct (chair 430 ֏, xp(Lv1) 13, saw_speed 1.9K ֏), no Console errors
-- [ ] Commit `M0: ...`
+- [x] Commit `M0: project setup, data import, localization, fonts` (140ddc1)
 
 Notes / discrepancies:
 - pads.json `costPerLevel_beforeECON` used banker's rounding in 3 places (saw_speed lv1 2600, chair_speed lv1 2600, table_speed lv2 55100); prototype Math.round gives 2650/2650/55150 → prototype wins (test has explicit overrides).
@@ -40,19 +40,23 @@ Notes / discrepancies:
 - `capture game_view --save_path` writes under `Assets/` — move the file out and delete `Assets/Temp` after use.
 - Editor tooling run order on a fresh clone: FF/Import Design Data → FF/Setup Fonts → FF/Setup Render Settings → FF/Setup Scenes.
 
-### M1 — Player, camera, input, world blockout — 2026-10-31
-- [ ] A. Look: fog/background #bfe3f0 (42–95), ambient gradient #ffffff/#7a9a55, sun #fff1d6 from SE; MaterialLibrary SO (one Simple Lit material per colour, instancing)
-- [ ] B. Editor LowPolyMeshFactory: flat-shaded icosahedron, N-segment cylinder
-- [ ] C. Editor LayoutBuilder (`FF/Build World Blockout`): ground, roads, car park, zebra, fences, back yards, dream plot, sawmill 1, chair factory, empty lots, shop walls/door, register 0, delivery bays, forest (seeded jitter), localized signs, Static flags
-- [ ] D. Aabb2D + CollisionResolver (push-out r=0.3), PlayerRegionRules, BlockerSet.Build(WorldLayout, WorldStateSnapshot)
-- [ ] E. Input: FF_Input.inputactions (Move, Throw), IMoveInput, VirtualJoystick (UI), MoveInputAggregator (deadzone 0.12), SafeAreaFitter
-- [ ] F. Player: CharacterRigBuilder → Player prefab (makeChar), CharacterRig, CharacterAnimator (animChar), PlayerMover (updPlayer), spawn proto (-4,0)
-- [ ] G. Camera: Cinemachine 3 Follow offset (0,14.5,-13.5), look y=0.4, FOV 42, PortraitOffsetScaler ×1.45
-- [ ] H. EditMode tests: CollisionResolver, PlayerRegionRules, BlockerSet, MoveInputAggregator
-- [ ] I. Verify in Play Mode (portrait + landscape screenshots vs reference), user checklist → commit `M1: ...`
+### M1 — Player, camera, input, world blockout — 2026-10-31 (branch `m1-player-world`)
+- [x] A. Look (`FF/Build Game Scene`): background + linear fog #bfe3f0 42–95, trilight ambient (white / #7a9a55 ×0.72), sun #fff1d6 from the prototype sun offset; MaterialPalette SO + one Simple Lit material per colour (GPU instancing) in Art/Materials
+- [x] B. Editor LowPolyMeshFactory: flat-shaded plane, icosahedron, N-segment cylinder/cone, hemisphere → Art/Meshes
+- [x] C. Editor LayoutBuilder (`FF/Build World Blockout`) → World/Blockout (946 renderers): ground, roads, car park, zebra, fences, saw back yard, mines yard + closed gate, dream plot (arch, lamps, foundation, billboard blockout), sawmill 1, chair factory, lots, sawmill 2 lot, shop walls/door/plants, register stalls, materials shop (inactive), delivery bays, forest 5×7 (seeded jitter), localized 3D signs (LocalizedTmpText). State-dependent parts are built inactive.
+- [x] D. CollisionResolver (push-out r=0.3, prototype tie order), PlayerRegionRules (Unity space), BlockerSet.Build + WorldStateSnapshot.NewGame, WorldCollision service
+- [x] E. Input: FF_Input.inputactions (Move WASD/arrows/stick, Throw Q/buttonWest) = project-wide actions (default InputSystem_Actions deleted); MoveInputAggregator; VirtualJoystick (floating, full-screen area under the HUD); SafeAreaFitter; dev LocaleSwitchButton (top-right, hy/en/ru)
+- [x] F. Player: CharacterRigBuilder → Prefabs/Characters/Player.prefab (makeChar, skin from SkinDef, all hat types), CharacterRig, CharacterAnimator (animChar), PlayerMover (updPlayer movement), spawn proto (-4, 0)
+- [x] G. Camera: CinemachineBrain + CinemachineCamera (Follow world-space offset (0, 14.5, -13.5), RotationComposer look y 0.4, damping = 4.6 / lerp rate), GameCameraRig applies FOV 42 / clip / portrait ×1.45 from WorldLayout.camera
+- [x] H. EditMode tests: CollisionResolver, PlayerRegionRules (20k-point fuzz vs a direct port of collide()), BlockerSet (= refreshBlocks() on a new game + late game), MoveInputMath — 451/451 green
+- [x] I. Play Mode check: landscape frame ≈ screenshot 02, portrait (×1.45) ≈ screenshot 15; walking: blocked by chair factory (z 6.90), saw back yard reachable to its back fence, main fence and closed mines gate stop at 13.2, shop walls + door work, dream plot reachable; no Console errors
+- [ ] User play-test (Editor + phone) → merge `m0-setup` + `m1-player-world` into `main`, push
 
 Notes:
 - Prototype wins over docs: unowned factory lots are walkable (blocker only after purchase).
+- Region rule detail (prototype): deep behind the fence outside the yards x is clamped to the yard wall (not pushed back to the fence).
+- Colours look a little darker than the prototype (three.js r128 output without sRGB encoding looks brighter) — tune in the M9 polish pass if needed.
+- Automating input in Play Mode: Editor must tick unfocused (`editor.playmode set_run_in_background --enable true`, `editor set_auto_tick --enable true`); the real macOS keyboard ignores simulated keys, so add a virtual one first (`InputSystem.AddDevice<Keyboard>("FFTestKeyboard").MakeCurrent()`) and set Input settings background behaviour to IgnoreFocus; restore everything afterwards. Use `simulate_key --action down/up` (press = down+up at once).
 
 ## Done
 
