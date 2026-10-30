@@ -1,0 +1,237 @@
+[
+  {
+    "id": "cap",
+    "group": "g.player",
+    "max": 8,
+    "baseCost": 1000,
+    "costMultiplier": 1.7,
+    "requiresShopLevel": null,
+    "requiresPlumbing": false,
+    "costPerLevel_beforeECON": [
+      1000,
+      1700,
+      2900,
+      4900,
+      8350,
+      14200,
+      24150,
+      41050
+    ]
+  },
+  {
+    "id": "speed",
+    "group": "g.player",
+    "max": 6,
+    "baseCost": 1250,
+    "costMultiplier": 1.8,
+    "requiresShopLevel": null,
+    "requiresPlumbing": false,
+    "costPerLevel_beforeECON": [
+      1250,
+      2250,
+      4050,
+      7300,
+      13100,
+      23600
+    ]
+  },
+  {
+    "id": "axe",
+    "group": "g.player",
+    "max": 6,
+    "baseCost": 1100,
+    "costMultiplier": 1.8,
+    "requiresShopLevel": null,
+    "requiresPlumbing": false,
+    "costPerLevel_beforeECON": [
+      1100,
+      2000,
+      3550,
+      6400,
+      11550,
+      20800
+    ]
+  },
+  {
+    "id": "lumber",
+    "group": "g.workers",
+    "max": 4,
+    "baseCost": 3750,
+    "costMultiplier": 2.2,
+    "requiresShopLevel": null,
+    "requiresPlumbing": false,
+    "costPerLevel_beforeECON": [
+      3750,
+      8250,
+      18150,
+      39950
+    ]
+  },
+  {
+    "id": "carrier",
+    "group": "g.workers",
+    "max": 4,
+    "baseCost": 5500,
+    "costMultiplier": 2.2,
+    "requiresShopLevel": null,
+    "requiresPlumbing": false,
+    "costPerLevel_beforeECON": [
+      5500,
+      12100,
+      26600,
+      58550
+    ]
+  },
+  {
+    "id": "robot",
+    "group": "g.workers",
+    "max": 4,
+    "baseCost": 40000,
+    "costMultiplier": 2.4,
+    "requiresShopLevel": null,
+    "requiresPlumbing": false,
+    "costPerLevel_beforeECON": [
+      40000,
+      96000,
+      230400,
+      552950
+    ]
+  },
+  {
+    "id": "miner",
+    "group": "g.section",
+    "max": 4,
+    "baseCost": 250000,
+    "costMultiplier": 2,
+    "requiresShopLevel": null,
+    "requiresPlumbing": true,
+    "costPerLevel_beforeECON": [
+      250000,
+      500000,
+      1000000,
+      2000000
+    ]
+  },
+  {
+    "id": "secCarrier",
+    "group": "g.section",
+    "max": 3,
+    "baseCost": 300000,
+    "costMultiplier": 2.1,
+    "requiresShopLevel": null,
+    "requiresPlumbing": true,
+    "costPerLevel_beforeECON": [
+      300000,
+      630000,
+      1323000
+    ]
+  },
+  {
+    "id": "secCashier",
+    "group": "g.section",
+    "max": 2,
+    "baseCost": 200000,
+    "costMultiplier": 2.2,
+    "requiresShopLevel": null,
+    "requiresPlumbing": true,
+    "costPerLevel_beforeECON": [
+      200000,
+      440000
+    ]
+  },
+  {
+    "id": "cashier",
+    "group": "g.staff",
+    "max": 8,
+    "baseCost": 3000,
+    "costMultiplier": 2.2,
+    "requiresShopLevel": null,
+    "requiresPlumbing": false,
+    "costPerLevel_beforeECON": [
+      3000,
+      6600,
+      14500,
+      31950,
+      70300,
+      154600,
+      340150,
+      748300
+    ]
+  },
+  {
+    "id": "stocker",
+    "group": "g.staff",
+    "max": 3,
+    "baseCost": 9000,
+    "costMultiplier": 2.2,
+    "requiresShopLevel": 2,
+    "requiresPlumbing": false,
+    "costPerLevel_beforeECON": [
+      9000,
+      19800,
+      43550
+    ]
+  },
+  {
+    "id": "manager",
+    "group": "g.staff",
+    "max": 2,
+    "baseCost": 20000,
+    "costMultiplier": 2.5,
+    "requiresShopLevel": 4,
+    "requiresPlumbing": false,
+    "costPerLevel_beforeECON": [
+      20000,
+      50000
+    ]
+  },
+  {
+    "id": "consult",
+    "group": "g.staff",
+    "max": 2,
+    "baseCost": 40000,
+    "costMultiplier": 2.5,
+    "requiresShopLevel": 5,
+    "requiresPlumbing": false,
+    "costPerLevel_beforeECON": [
+      40000,
+      100000
+    ]
+  },
+  {
+    "id": "ads",
+    "group": "g.biz",
+    "max": 6,
+    "baseCost": 2250,
+    "costMultiplier": 1.8,
+    "requiresShopLevel": null,
+    "requiresPlumbing": false,
+    "costPerLevel_beforeECON": [
+      2250,
+      4050,
+      7300,
+      13100,
+      23600,
+      42500
+    ]
+  },
+  {
+    "id": "quality",
+    "group": "g.biz",
+    "max": 8,
+    "baseCost": 3000,
+    "costMultiplier": 1.85,
+    "requiresShopLevel": null,
+    "requiresPlumbing": false,
+    "costPerLevel_beforeECON": [
+      3000,
+      5550,
+      10250,
+      19000,
+      35150,
+      65000,
+      120250,
+      222500
+    ]
+  }
+]

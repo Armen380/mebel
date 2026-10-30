@@ -1,0 +1,47 @@
+[
+  {
+    "id": "lumber",
+    "nameKey": "skin.lumber",
+    "shirt": "#c8412f",
+    "pants": "#34495e",
+    "hat": "#5a3a22",
+    "hatType": "beanie",
+    "unlockTotalEarned": 0
+  },
+  {
+    "id": "master",
+    "nameKey": "skin.master",
+    "shirt": "#2f6fb5",
+    "pants": "#2a3a5c",
+    "hat": "#f4c430",
+    "hatType": "hard",
+    "unlockTotalEarned": 0
+  },
+  {
+    "id": "forest",
+    "nameKey": "skin.forest",
+    "shirt": "#4f8a3c",
+    "pants": "#5b4630",
+    "hat": "#2f4a22",
+    "hatType": "cap",
+    "unlockTotalEarned": 0
+  },
+  {
+    "id": "night",
+    "nameKey": "skin.night",
+    "shirt": "#433570",
+    "pants": "#1f1a2e",
+    "hat": "#9b7be0",
+    "hatType": "beanie",
+    "unlockTotalEarned": 0
+  },
+  {
+    "id": "gold",
+    "nameKey": "skin.gold",
+    "shirt": "#e6b422",
+    "pants": "#6b4e16",
+    "hat": "#ffd75e",
+    "hatType": "crown",
+    "unlockTotalEarned": 100000
+  }
+]

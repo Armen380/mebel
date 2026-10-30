@@ -1,0 +1,1727 @@
+<title>Կահույքի Գործարան</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@500;700;800;900&family=Noto+Sans:wght@500;700;800;900&display=swap">
+<style>
+:root{
+  /* Layout: full-bleed 3D world, HUD pinned to safe-area corners, menu + upgrades as walnut sheets docked to the bottom */
+  --walnut:#2b1d14; --walnut-2:#3a281b; --walnut-3:#523a27;
+  --honey:#f3b33d; --honey-d:#c4861a;
+  --cream:#fbf1de; --muted:#cbb697;
+  --leaf:#5cae4a; --leaf-d:#3d8a31; --danger:#d9573b;
+  --sky:#bfe3f0;
+  --display:"Noto Sans Armenian","Noto Sans","Segoe UI",system-ui,sans-serif;
+  color-scheme:light;
+}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--sky);color:var(--cream);font-family:var(--display);overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+#app{position:fixed;inset:0}
+#app canvas{display:block;width:100%;height:100%;touch-action:none}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible{outline:3px solid var(--honey);outline-offset:3px}
+
+/* HUD */
+.hud{position:fixed;inset:0;pointer-events:none}
+.hud-top{position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.left{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.money{display:flex;align-items:center;gap:8px;background:var(--walnut);padding:5px 16px 5px 5px;border-radius:999px;box-shadow:0 3px 0 rgba(0,0,0,.28);font-weight:900;font-size:20px;font-variant-numeric:tabular-nums;transition:transform .12s}
+.money.bump{transform:scale(1.08)}
+.coin{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:var(--walnut);font-size:17px;font-weight:900;background:radial-gradient(circle at 35% 30%,#ffe7a3,var(--honey) 55%,var(--honey-d));box-shadow:inset 0 0 0 3px rgba(43,29,20,.15)}
+.money{position:relative}
+.mpop{position:absolute;left:100%;top:50%;margin-left:8px;display:flex;align-items:center;gap:5px;background:var(--leaf-d);color:#fff;font-size:13px;font-weight:900;padding:3px 10px 3px 7px;border-radius:999px;white-space:nowrap;pointer-events:none;animation:mpop 2.2s forwards;box-shadow:0 2px 0 rgba(0,0,0,.2)}
+.mpop svg{width:16px;height:16px}
+@keyframes mpop{0%{opacity:0;transform:translate(-8px,-50%)}10%{opacity:1;transform:translate(0,-50%)}75%{opacity:1;transform:translate(0,-50%)}100%{opacity:0;transform:translate(0,-130%)}}
+.level{display:flex;align-items:center;gap:8px;background:var(--walnut);padding:4px 12px 4px 4px;border-radius:999px;box-shadow:0 3px 0 rgba(0,0,0,.28)}
+.lvnum{background:var(--leaf);color:#fff;font-weight:900;font-size:12px;padding:3px 9px;border-radius:999px;font-variant-numeric:tabular-nums}
+.bar{width:74px;height:7px;border-radius:4px;background:var(--walnut-3);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--leaf);transition:width .2s}
+.hud-right{display:flex;gap:8px;pointer-events:auto}
+.btn-up{position:relative;display:flex;align-items:center;gap:6px;height:44px;padding:0 14px 0 10px;border-radius:14px;background:var(--honey);color:var(--walnut);font-weight:900;font-size:14px;box-shadow:0 4px 0 var(--honey-d)}
+.btn-up:active{transform:translateY(2px);box-shadow:0 2px 0 var(--honey-d)}
+.btn-up svg{width:22px;height:22px}
+.btn-up.home{background:var(--cream);box-shadow:0 4px 0 var(--muted)}
+.btn-up .badge{position:absolute;top:-5px;right:-5px;width:14px;height:14px;border-radius:50%;background:var(--danger);border:2px solid var(--cream)}
+.icon-btn{width:44px;height:44px;border-radius:14px;background:var(--walnut);display:grid;place-items:center;box-shadow:0 4px 0 rgba(0,0,0,.28)}
+.icon-btn svg{width:22px;height:22px}
+.quest{position:absolute;top:calc(env(safe-area-inset-top,0px) + 108px);left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 32px);display:flex;align-items:center;gap:10px;background:rgba(43,29,20,.86);padding:8px 14px 8px 8px;border-radius:14px;font-weight:700;font-size:14px;line-height:1.3}
+.quest .step{flex:none;background:var(--leaf);color:#fff;font-weight:900;font-size:12px;padding:4px 8px;border-radius:9px;font-variant-numeric:tabular-nums}
+.hint{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);left:50%;transform:translateX(-50%);font-size:12px;font-weight:700;color:var(--walnut);opacity:.6;white-space:nowrap}
+.throw{position:absolute;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 22px);pointer-events:auto;width:72px;height:72px;border-radius:50%;background:var(--walnut);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:800;box-shadow:0 4px 0 rgba(0,0,0,.3)}
+.throw svg{width:26px;height:26px}
+.throw:active{transform:translateY(2px)}
+.toast{position:absolute;top:34%;left:50%;transform:translate(-50%,-50%);text-align:center;background:rgba(43,29,20,.92);padding:14px 22px;border-radius:18px;box-shadow:0 6px 0 rgba(0,0,0,.25);max-width:calc(100% - 32px)}
+.toast b{display:block;font-size:26px;font-weight:900;color:var(--honey)}
+.toast span{display:block;font-size:14px;font-weight:700;margin-top:4px}
+.toast.show{animation:pop .3s ease-out}
+@keyframes pop{from{transform:translate(-50%,-50%) scale(.7);opacity:0}}
+
+/* world labels */
+#labels{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.chip{position:absolute;left:0;top:0;padding:3px 10px;border-radius:999px;background:rgba(43,29,20,.84);color:var(--cream);font:800 13px/1.3 var(--display);white-space:nowrap;font-variant-numeric:tabular-nums;will-change:transform}
+.chip span{opacity:.6;font-weight:700}
+.chip.max{background:var(--danger);color:#fff;letter-spacing:.06em}
+.chip.cash{background:var(--leaf-d);color:#fff}
+.chip.bot{background:#1d6b7a;color:#e6fbff;font-size:11.5px;padding:2px 9px}
+.chip.bot b{color:var(--honey)}
+.chip.lvl{background:var(--honey);color:var(--walnut);font-weight:900;box-shadow:0 2px 0 var(--honey-d)}
+.chip.pad{display:flex;flex-direction:column;align-items:center;background:var(--honey);color:var(--walnut);border-radius:11px;padding:4px 10px;line-height:1.2;box-shadow:0 2px 0 var(--honey-d)}
+.chip.pad .pn{font-size:11px;font-weight:700;opacity:.85}
+.chip.pad b{font-size:15px;font-weight:900}
+.chip.locked{background:rgba(43,29,20,.72);text-align:center;line-height:1.3;border-radius:12px;padding:5px 12px}
+.chip.locked b{color:var(--honey)}
+.chip.bubble{background:#fff;color:var(--walnut);padding:5px 7px;border-radius:12px;box-shadow:0 2px 0 rgba(0,0,0,.2)}
+.chip.bubble svg{width:24px;height:24px;display:block}
+.float{position:absolute;left:0;top:0;font:900 20px var(--display);color:var(--honey);text-shadow:0 2px 0 var(--walnut),0 0 8px rgba(0,0,0,.25);white-space:nowrap;will-change:transform,opacity}
+
+/* joystick */
+.joy{position:fixed;left:0;top:0;width:118px;height:118px;margin:-59px 0 0 -59px;border-radius:50%;background:rgba(43,29,20,.22);border:3px solid rgba(255,255,255,.55);pointer-events:none}
+.joy .knob{position:absolute;left:50%;top:50%;width:50px;height:50px;margin:-25px 0 0 -25px;border-radius:50%;background:var(--cream);box-shadow:0 3px 0 rgba(0,0,0,.25)}
+
+/* menu */
+.menu{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;background:linear-gradient(to bottom,rgba(43,29,20,0) 35%,rgba(43,29,20,.5))}
+.menu-card{width:min(560px,100%);max-height:100%;overflow-y:auto;background:var(--walnut);border-radius:26px 26px 0 0;padding-block:22px calc(20px + env(safe-area-inset-bottom,0px));padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px;box-shadow:0 -8px 30px rgba(0,0,0,.25)}
+.kicker{font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--honey);text-transform:uppercase}
+.menu h1{margin:4px 0 6px;font-size:clamp(28px,7.5vw,40px);font-weight:900;line-height:1.05;letter-spacing:-.01em;text-wrap:balance}
+.menu h1 em{font-style:normal;color:var(--honey)}
+.menu p{margin:0;color:var(--muted);font-size:14px;line-height:1.5;max-width:46ch}
+.label{font-size:12px;font-weight:800;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.skins{display:grid;grid-auto-flow:column;grid-auto-columns:92px;gap:10px;overflow-x:auto;padding:4px 2px 8px;scrollbar-width:none}
+.skins::-webkit-scrollbar{display:none}
+.skin{display:flex;flex-direction:column;align-items:center;gap:7px;padding:12px 6px 10px;border-radius:16px;background:var(--walnut-2);border:3px solid transparent;font-size:12px;font-weight:700;line-height:1.2;text-align:center}
+.skin.on{border-color:var(--honey);background:var(--walnut-3)}
+.skin:disabled{opacity:.5;cursor:not-allowed}
+.sw{width:46px;height:46px;border-radius:50%;background:conic-gradient(var(--b) 0 35%,var(--a) 35% 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.18)}
+.skin .lock{font-size:10px;color:var(--honey);font-weight:800}
+.actions{display:flex;flex-direction:column;gap:10px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.primary{height:56px;border-radius:16px;background:var(--honey);color:var(--walnut);font-weight:900;font-size:19px;box-shadow:0 5px 0 var(--honey-d)}
+.primary:active{transform:translateY(3px);box-shadow:0 2px 0 var(--honey-d)}
+.ghost{min-height:44px;padding:6px 10px;border-radius:14px;border:2px solid var(--walnut-3);color:var(--muted);font-weight:700;font-size:13px;line-height:1.25}
+.ghost.warn{border-color:var(--danger);color:#ffb19f}
+.menu-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.langs{display:flex;background:var(--walnut-2);border-radius:12px;padding:3px;gap:2px}
+.langs button{min-width:44px;height:34px;padding:0 10px;border-radius:9px;font-size:13px;font-weight:800;color:var(--muted)}
+.langs button[aria-pressed="true"]{background:var(--honey);color:var(--walnut)}
+.unlock{position:absolute;top:calc(env(safe-area-inset-top,0px) + 160px);left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 32px);display:flex;align-items:center;gap:12px;background:var(--cream);color:var(--walnut);padding:10px 18px 10px 10px;border-radius:18px;box-shadow:0 5px 0 var(--honey-d),0 10px 24px rgba(0,0,0,.25);border:3px solid var(--honey)}
+.unlock.show{animation:slidein .45s cubic-bezier(.2,1.4,.4,1)}
+@keyframes slidein{from{transform:translate(-50%,-30px);opacity:0}}
+.un-ic{flex:none;width:46px;height:46px;border-radius:14px;background:var(--honey);display:grid;place-items:center}
+.un-ic svg{width:28px;height:28px}
+.un-tx{display:flex;flex-direction:column;min-width:0;line-height:1.25}
+.un-k{font-size:10.5px;font-weight:900;letter-spacing:.14em;color:var(--danger)}
+.un-tx b{font-size:16px;font-weight:900}
+.un-tx span:last-child{font-size:12.5px;font-weight:700;opacity:.75}
+.controls{font-size:12px;color:var(--muted);text-align:center;opacity:.8}
+
+/* upgrades sheet */
+.sheet{position:fixed;inset:0;background:rgba(20,12,8,.5);display:flex;align-items:flex-end;justify-content:center}
+.sheet-panel{width:min(560px,100%);max-height:84%;display:flex;flex-direction:column;background:var(--walnut);border-radius:26px 26px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.3)}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:18px 10px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sheet-head h2{margin:0;font-size:22px;font-weight:900}
+.sheet-head .bal{font-size:14px;font-weight:800;color:var(--honey);font-variant-numeric:tabular-nums}
+.sheet-body{overflow-y:auto;padding-block:0 calc(20px + env(safe-area-inset-bottom,0px));padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:6px}
+.note{font-size:12.5px;color:var(--muted);line-height:1.45;background:var(--walnut-2);border-radius:12px;padding:10px 12px}
+.note b{color:var(--honey)}
+.grp{margin-top:12px;font-size:12px;font-weight:800;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.up{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:12px 12px 12px 14px;border-radius:16px;background:var(--walnut-2)}
+.up>div{min-width:0}
+.up h3{margin:0 0 2px;font-size:16px;font-weight:800}
+.up .d{font-size:12.5px;color:var(--muted);line-height:1.4}
+.up .v{margin-top:6px;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--cream);font-variant-numeric:tabular-nums}
+.pips{display:flex;gap:3px}
+.pips i{width:10px;height:6px;border-radius:2px;background:var(--walnut-3)}
+.pips i.f{background:var(--leaf)}
+.buy{min-width:96px;height:44px;padding:0 12px;border-radius:12px;background:var(--leaf);color:#fff;font-weight:900;font-size:15px;box-shadow:0 4px 0 var(--leaf-d);font-variant-numeric:tabular-nums;white-space:nowrap}
+.buy:active{transform:translateY(2px);box-shadow:0 2px 0 var(--leaf-d)}
+.buy:disabled{background:var(--walnut-3);color:var(--muted);box-shadow:none;cursor:not-allowed}
+.buy.locked{font-size:12.5px;background:var(--walnut-3);color:var(--honey)}
+.buy.maxed{background:transparent;color:var(--honey);box-shadow:none}
+
+@media (prefers-reduced-motion:reduce){.money{transition:none}.toast.show,.unlock.show{animation:none}}
+</style>
+
+<div id="app"></div>
+<div id="labels"></div>
+<div class="joy" id="joy" hidden><div class="knob" id="knob"></div></div>
+
+<div class="hud" id="hud" hidden>
+  <div class="hud-top">
+    <div class="left">
+      <div class="money" id="moneyBox"><span class="coin">֏</span><b id="money">0</b></div>
+      <div class="level"><span class="lvnum" id="lvNum">Lv 1</span><span class="bar"><i id="lvBar"></i></span></div>
+    </div>
+    <div class="hud-right">
+      <button class="btn-up" id="btnUp" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5M17 8v6M14 11h6"/></svg>
+        <span data-i18n="ui.upgrade">Բարելավել</span><i class="badge" id="badge" hidden></i>
+      </button>
+      <button class="btn-up home" id="btnHome" type="button" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9H3z"/><path d="M9 20v-6h6v6"/></svg><span data-i18n="ui.home">Տուն</span></button>
+      <button class="icon-btn" id="btnMenu" type="button" aria-label="Մենյու" data-i18n-aria="ui.menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fbf1de" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="quest" id="quest" hidden><span class="step" id="qStep">1/8</span><span id="qText"></span></div>
+  <div class="hint" id="hint" data-i18n="ui.hint">Քաշիր էկրանի վրա կամ սեղմիր WASD</div>
+  <button class="throw" id="btnThrow" type="button" hidden aria-label="Նետել ձեռքի իրերը" data-i18n-aria="ui.throwAria">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fbf1de" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v5M14 11v5"/></svg>
+    <span data-i18n="ui.throw">Նետել</span>
+  </button>
+  <div class="toast" id="toast" hidden><b id="toastT"></b><span id="toastS"></span></div>
+  <div class="unlock" id="unlock" hidden role="status"><div class="un-ic" id="unIc"></div><div class="un-tx"><span class="un-k" data-i18n="un.new">ՆՈՐ</span><b id="unT"></b><span id="unS"></span></div></div>
+</div>
+
+<div class="menu" id="menu">
+  <div class="menu-card">
+    <div>
+      <div class="menu-top"><div class="kicker" data-i18n="ui.kicker">Նախատիպ · v0.3</div>
+        <div class="langs" role="group" aria-label="Language" id="langs">
+          <button type="button" data-lang="hy">Հայ</button><button type="button" data-lang="en">EN</button><button type="button" data-lang="ru">RU</button>
+        </div></div>
+      <h1 data-i18n-html="ui.h1">Կահույքի <em>Գործարան</em></h1>
+      <p data-i18n="ui.intro">Կտրիր ծառեր, սղոցիր տախտակներ, պատրաստիր կահույք և վաճառիր։</p>
+    </div>
+    <div>
+      <div class="label" data-i18n="ui.skin">Ընտրիր կերպարը</div>
+      <div class="skins" id="skins"></div>
+    </div>
+    <div class="actions">
+      <button class="primary" id="btnPlay" type="button">Սկսել</button>
+      <div class="row2">
+        <button class="ghost" id="btnTest" type="button" data-i18n="ui.test">Թեստ՝ +25 Lv, +250K ֏</button>
+        <button class="ghost" id="btnReset" type="button">Նոր խաղ</button>
+      </div>
+    </div>
+    <div class="controls" data-i18n="ui.controls">WASD կամ սլաքներ · Q՝ նետել · Հեռախոս՝ քաշիր մատով</div>
+  </div>
+</div>
+
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-panel" role="dialog" aria-labelledby="upTitle">
+    <div class="sheet-head">
+      <div><h2 id="upTitle" data-i18n="ui.upTitle">Բարելավումներ</h2><div class="bal" id="bal"></div></div>
+      <button class="icon-btn" id="btnClose" type="button" aria-label="Փակել" data-i18n-aria="ui.close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fbf1de" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="sheet-body" id="upList"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+'use strict';
+const V3=THREE.Vector3, PI=Math.PI;
+const $=s=>document.querySelector(s);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const d2=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
+const lerpAng=(a,b,t)=>{let d=((b-a+PI)%(2*PI)+2*PI)%(2*PI)-PI;return a+d*t};
+const hex=c=>'#'+c.toString(16).padStart(6,'0');
+function fmt(n){n=Math.floor(n);if(n<1000)return ''+n;if(n<1e6)return (n/1e3).toFixed(n<1e4?1:0).replace('.0','')+'K';return (n/1e6).toFixed(n<1e7?2:1).replace(/\.?0+$/,'')+'M'}
+
+/* ================= data ================= */
+const PRODUCTS=[
+ {id:'chair',   name:'Աթոռ',               sign:'ԱԹՈՌՆԵՐ',    inType:'plank',inN:2,time:2.6,price:500,  xp:3, unlock:1,  cost:0,      x:-2, wall:0xd9bf8c,roof:0x3f6f8a},
+ {id:'sofa',    name:'Բազմոց',             sign:'ԲԱԶՄՈՑՆԵՐ',  inType:'plank',inN:3,time:3.4,price:1500, xp:6, unlock:5,  cost:15000,  x:6,  wall:0xcdb4d9,roof:0x6b3f7a},
+ {id:'wardrobe',name:'Միջանցքի պահարան',   sign:'ՊԱՀԱՐԱՆՆԵՐ', inType:'plank',inN:4,time:4.2,price:3000, xp:9, unlock:12, cost:60000,  x:14, wall:0xb98a5e,roof:0x4d3524},
+ {id:'table',   name:'Սեղան',              sign:'ՍԵՂԱՆՆԵՐ',   inType:'plank',inN:3,time:4,  price:5000, xp:12,unlock:22, cost:150000, x:22, wall:0xe3d3b0,roof:0x8a4b2f},
+ {id:'kitchen', name:'Խոհանոցային կահույք',sign:'ԽՈՀԱՆՈՑ',    inType:'plank',inN:5,time:5.2,price:8500, xp:16,unlock:35, cost:400000, x:30, wall:0xd6e0e3,roof:0x2f5d6b},
+ {id:'sink',    name:'Սանտեխնիկա',         sign:'ՍԱՆՏԵԽՆԻԿԱ', inType:'clay', inN:2,time:5,  price:16000,xp:25,unlock:150,cost:1500000,x:40, wall:0xe8eef2,roof:0x3a6ea5,annex:true},
+ {id:'material',name:'Շինանյութ',          sign:'ՇԻՆԱՆՅՈՒԹ',  inType:'iron', inN:2,time:5.5,price:24000,xp:30,unlock:150,cost:0,with:'sink',x:48, wall:0xc9ccd1,roof:0x5a6470,annex:true},
+];
+const PROD={};PRODUCTS.forEach((p,i)=>{p.i=i;PROD[p.id]=p;p.shelfX=p.id==='sink'?48:p.id==='material'?50.6:4.6+i*2.8});
+const isProduct=t=>!!PROD[t];
+
+const UPG=[
+ {id:'cap',grp:'g.player',max:8,base:1000,mul:1.7,val:l=>t('u.items',{n:5+l*2})},
+ {id:'speed',max:6,base:1250,mul:1.8,val:l=>`${100+12*l}%`},
+ {id:'axe',max:6,base:1100,mul:1.8,val:l=>t('u.sec',{n:(1.1/(1+.35*l)).toFixed(2)})},
+ {id:'lumber',grp:'g.workers',max:4,base:3750,mul:2.2,val:l=>t('u.people',{n:l})},
+ {id:'carrier',max:4,base:5500,mul:2.2,val:l=>t('u.people',{n:l})},
+ {id:'robot',max:4,base:40000,mul:2.4,val:l=>t('u.bots',{n:l})},
+ {id:'miner',grp:'g.section',max:4,base:250000,mul:2,needSink:true,val:l=>t('u.people',{n:l})},
+ {id:'secCarrier',max:3,base:300000,mul:2.1,needSink:true,val:l=>t('u.people',{n:l})},
+ {id:'secCashier',max:2,base:200000,mul:2.2,needSink:true,val:l=>t('u.people',{n:l})},
+ {id:'cashier',grp:'g.staff',max:8,base:3000,mul:2.2,val:l=>t('u.people',{n:l})},
+ {id:'stocker',max:3,base:9000,mul:2.2,need:2,val:l=>t('u.people',{n:l})},
+ {id:'manager',max:2,base:20000,mul:2.5,need:4,val:l=>t('u.people',{n:l})},
+ {id:'consult',max:2,base:40000,mul:2.5,need:5,val:l=>t('u.price',{n:15*l})},
+ {id:'ads',grp:'g.biz',max:6,base:2250,mul:1.8,val:l=>t('u.cust',{n:l?'+'+l:'0'})},
+ {id:'quality',max:8,base:3000,mul:1.85,val:l=>`+${25*l}%`},
+];
+UPG.forEach(u=>{Object.defineProperty(u,'name',{get:()=>t('upg.'+u.id)})});
+
+const KEY='kahuyq-gortsaran-v3';
+const S={money:0,total:0,xp:0,level:1,lv:{},pads:{},owned:{chair:true},skin:'lumber',quest:0};
+UPG.forEach(u=>S.lv[u.id]=0);
+let hadSave=false;
+try{const d=JSON.parse(localStorage.getItem(KEY)||'null');if(d){hadSave=true;
+  for(const k of ['money','total','xp','level','skin','quest'])if(d[k]!==undefined)S[k]=d[k];
+  Object.assign(S.lv,d.lv||{});Object.assign(S.pads,d.pads||{});if(S.pads.reg2&&!S.pads.reg){S.pads.reg=S.pads.reg2;delete S.pads.reg2}Object.assign(S.owned,d.owned||{})}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const I18N={
+hy:{
+'ui.title':'Կահույքի Գործարան','ui.h1':'Կահույքի <em>Գործարան</em>','ui.kicker':'Նախատիպ · v0.3',
+'ui.intro':'Կտրիր ծառեր, սղոցիր տախտակներ, պատրաստիր կահույք և վաճառիր։ Մակարդակ բարձրացրու՝ նոր գործարաններ բացելու համար։',
+'ui.skin':'Ընտրիր կերպարը','ui.lang':'Լեզու','ui.play':'Սկսել','ui.continue':'Շարունակել','ui.test':'Թեստ՝ +25 Lv, +250K ֏',
+'ui.new':'Նոր խաղ','ui.reset':'Ամբողջը կջնջվի․ սեղմիր նորից','ui.controls':'WASD կամ սլաքներ · Q՝ նետել · Հեռախոս՝ քաշիր մատով',
+'ui.upgrade':'Բարելավել','ui.upTitle':'Բարելավումներ','ui.menu':'Մենյու','ui.close':'Փակել','ui.hint':'Քաշիր էկրանի վրա կամ սեղմիր WASD',
+'ui.throw':'Նետել','ui.throwAria':'Նետել ձեռքի իրերը','ui.balance':'Հաշիվ՝ {v} ֏',
+'ui.padNote':'Գործարանների, բեռնատարների, կայանատեղիի և դրամարկղի բարելավումները <b>դեղին հարթակներն են</b> գետնի վրա։ Կանգնիր հարթակին, և գումարը կլցվի։',
+'ui.max':'ՄԱՔՍ','ui.lockSink':'Սանտեխնիկա','ui.lockShop':'Խանութ Lv {n}','ui.earn':'{v} ֏ վաստակ','ui.unlocked':'բացվեց՝ ',
+'g.player':'Խաղացող','g.workers':'Աշխատակիցներ','g.staff':'Խանութի անձնակազմ','g.biz':'Բիզնես',
+'u.items':'{n} իր','u.sec':'{n} վրկ','u.people':'{n} հոգի','u.bots':'{n} հատ','u.price':'+{n}% գին','u.cust':'{n} գնորդ',
+'upg.cap':'Տարողություն','upgd.cap':'Միանգամից ավելի շատ իր ես տանում',
+'upg.speed':'Արագություն','upgd.speed':'Ավելի արագ ես քայլում',
+'upg.axe':'Սուր կացին','upgd.axe':'Ծառերն ու քարերն ավելի արագ ես կտրում',
+'upg.lumber':'Փայտահատ','upgd.lumber':'Կտրում է ծառեր և գերանները տանում սղոցարան',
+'upg.carrier':'Բեռնակիր','upgd.carrier':'Տախտակները տանում է գործարաններ, կահույքը՝ խանութ կամ բեռնատար',
+'upg.robot':'Ռոբոտ-բեռնակիր','upgd.robot':'Արագ է և շատ է տանում։ Ինքն է հասկանում, թե որտեղ ինչ է պակասում (դատարկ դարակ, սպասող բեռնատար, կանգնած գործարան), և առաջինը դա է անում',
+'upg.miner':'Հանքագործ','upgd.miner':'Հանում է կավ և երկաթ ու տանում Սանտեխնիկայի և Շինանյութի գործարաններ',
+'upg.cashier':'Գանձապահ','upgd.cashier':'Կանգնում է ազատ դրամարկղի մոտ և սպասարկում գնորդներին',
+'upg.stocker':'Դարակավար','upgd.stocker':'Պատրաստի կահույքը գործարաններից տանում է խանութի դարակներ',
+'upg.manager':'Կառավարիչ','upgd.manager':'Հավաքում է գումարը բոլոր դրամարկղերից և լցնում քո հաշվին',
+'upg.consult':'Խորհրդատու','upgd.consult':'Գնորդներն ավելի համբերատար են և վճարում են ավելի շատ',
+'upg.ads':'Գովազդ','upgd.ads':'Գնորդներն ավելի հաճախ են գալիս',
+'upg.quality':'Որակ','upgd.quality':'Ամբողջ կահույքն ավելի թանկ է վաճառվում',
+'p.chair':'Աթոռ','s.chair':'ԱԹՈՌՆԵՐ','p.sofa':'Բազմոց','s.sofa':'ԲԱԶՄՈՑՆԵՐ','p.wardrobe':'Միջանցքի պահարան','s.wardrobe':'ՊԱՀԱՐԱՆՆԵՐ',
+'p.table':'Սեղան','s.table':'ՍԵՂԱՆՆԵՐ','p.kitchen':'Խոհանոցային կահույք','s.kitchen':'ԽՈՀԱՆՈՑ','p.sink':'Սանտեխնիկա','s.sink':'ՍԱՆՏԵԽՆԻԿԱ',
+'p.material':'Շինանյութ','s.material':'ՇԻՆԱՆՅՈՒԹ',
+'in.plank':'ՏԱԽՏԱԿՆԵՐ','in.clay':'ԿԱՎ','in.iron':'ԵՐԿԱԹ','in.log':'ԳԵՐԱՆՆԵՐ',
+'sign.saw':'ՍՂՈՑԱՐԱՆ','sign.saw2':'ՍՂՈՑԱՐԱՆ 2','sign.shop':'ԽԱՆՈՒԹ','sign.delivery':'ԱՌԱՔՈՒՄ','sign.clay':'ԿԱՎԱՀԱՆՔ','sign.iron':'ԵՐԿԱԹԻ ՀԱՆՔ',
+'z.shelf':'ԴԱՐԱԿ','z.reg':'ԴՐԱՄԱՐԿՂ','z.truck':'ԲԵՌՆԱՏԱՐ',
+'done.speed':'Արագացավ','done.floor':'+1 հարկ','done.factory':'Գործարանը բացվեց','done.saw':'Սղոցարանը բացվեց','done.reg':'Նոր դրամարկղ',
+'done.shop':'Խանութը մեծացավ','done.truck':'Բեռնատարը ճանապարհին է','done.parking':'+1 կայանատեղի','done.generic':'Բարելավվեց',
+'lk.lv':'{sign}<br><b>Բացվում է Lv {n}-ում</b>','lk.with':'{sign}<br><b>Բացվում է {name}ի հետ</b>',
+'c.noTruck':'Բեռնատար չկա','c.arriving':'Մոտենում է…','c.freeIn':'Ազատ · {n} վրկ','c.free':'Ազատ','c.full':'ԼԻՔ Է',
+'f.cap':'×{k} արտադրանք · {c} տեղ',
+'job.shelf':'Դարակ · {name}','job.truck':'Բեռնատար','job.planks':'Տախտակ → {name}',
+'t.level':'Մակարդակ {n}','t.newFactory':'Նոր գործարան՝ {list}','t.keepGoing':'Շարունակիր զարգանալ','t.delivered':'Առաքումը վճարվեց',
+'t.factoryOpened':'Նոր գործարանը բացվեց','t.sinkOpened':'Բացվեցին նաև Շինանյութը, հանքերը և նոր խանութը','t.saw2':'Նոր սղոցարանը բացվեց',
+'t.shopLv':'Խանութ Lv {n}','t.canHire':'Կարող ես վարձել՝ {list} · ','t.regSlot':'+1 դրամարկղի տեղ',
+'q1':'Մոտեցիր ծառին՝ այն կտրելու համար','q2':'Գերանները տար սղոցարան','q3':'Վերցրու պատրաստ տախտակները',
+'q4':'Տախտակները տար աթոռների արտադրամաս','q5':'Վերցրու պատրաստ աթոռները','q6':'Աթոռները դիր խանութի դարակին',
+'q7':'Կանգնիր դրամարկղի մոտ, սպասարկիր գնորդին ու հավաքիր գումարը','q8':'Կանգնիր դեղին հարթակին՝ սղոցարանը բարելավելու համար',
+'skin.lumber':'Փայտահատ','skin.master':'Վարպետ','skin.forest':'Անտառապահ','skin.night':'Գիշերային','skin.gold':'Ոսկե',
+'un.new':'ՆՈՐ','un.fac.t':'{name}՝ գործարան','un.fac.s':'Գնիր այն իր հողամասում · {price} ֏','un.with.s':'Բացվեց Սանտեխնիկայի հետ',
+'un.staff.t':'Նոր աշխատակից՝ {name}','un.staff.s':'Վարձիր «Բարելավել» պանելում',
+'un.reg.t':'Նոր դրամարկղի տեղ','un.reg.s':'Գնիր այն խանութում՝ «+֏» հարթակով',
+'un.saw2.t':'Երկրորդ սղոցարան','un.saw2.s':'Ետևի բակում, առաջին սղոցարանի ետևում',
+'un.mines.t':'Կավահանք և երկաթի հանք','un.mines.s':'Գործարանների ետևում',
+'un.matshop.t':'Շինանյութի խանութ','un.matshop.s':'Գլխավոր խանութի կողքին',
+'un.skin.t':'Նոր կերպար՝ {name}','un.skin.s':'Ընտրիր այն մենյուում',
+},
+en:{
+'ui.title':'Furniture Factory','ui.h1':'Furniture <em>Factory</em>','ui.kicker':'Prototype · v0.3',
+'ui.intro':'Chop trees, saw planks, build furniture and sell it. Level up to unlock new factories.',
+'ui.skin':'Choose your character','ui.lang':'Language','ui.play':'Play','ui.continue':'Continue','ui.test':'Test: +25 Lv, +250K ֏',
+'ui.new':'New game','ui.reset':'Everything will be erased. Tap again','ui.controls':'WASD or arrows · Q: throw · Phone: drag your finger',
+'ui.upgrade':'Upgrades','ui.upTitle':'Upgrades','ui.menu':'Menu','ui.close':'Close','ui.hint':'Drag on the screen or press WASD',
+'ui.throw':'Throw','ui.throwAria':'Throw away what you carry','ui.balance':'Balance: {v} ֏',
+'ui.padNote':'Factory, truck, parking and register upgrades are the <b>yellow pads</b> on the ground. Stand on a pad and the money flows in.',
+'ui.max':'MAX','ui.lockSink':'Plumbing','ui.lockShop':'Shop Lv {n}','ui.earn':'earn {v} ֏','ui.unlocked':'unlocked: ',
+'g.player':'Player','g.workers':'Workers','g.staff':'Shop staff','g.biz':'Business',
+'u.items':'{n} items','u.sec':'{n} s','u.people':'{n} people','u.bots':'{n} units','u.price':'+{n}% price','u.cust':'{n} customers',
+'upg.cap':'Capacity','upgd.cap':'Carry more items at once',
+'upg.speed':'Speed','upgd.speed':'Walk faster',
+'upg.axe':'Sharp axe','upgd.axe':'Chop trees and rocks faster',
+'upg.lumber':'Lumberjack','upgd.lumber':'Chops trees and brings logs to the sawmill',
+'upg.carrier':'Carrier','upgd.carrier':'Takes planks to factories, furniture to the shop or trucks',
+'upg.robot':'Robot carrier','upgd.robot':'Fast and carries a lot. Figures out what is missing (empty shelf, waiting truck, idle factory) and handles that first',
+'upg.miner':'Miner','upgd.miner':'Digs clay and iron and brings them to the Plumbing and Building materials factories',
+'upg.cashier':'Cashier','upgd.cashier':'Stands at a free register and serves customers',
+'upg.stocker':'Stocker','upgd.stocker':'Brings finished furniture from the factories to the shop shelves',
+'upg.manager':'Manager','upgd.manager':'Collects money from every register into your balance',
+'upg.consult':'Consultant','upgd.consult':'Customers are more patient and pay more',
+'upg.ads':'Advertising','upgd.ads':'Customers come more often',
+'upg.quality':'Quality','upgd.quality':'All furniture sells for more',
+'p.chair':'Chair','s.chair':'CHAIRS','p.sofa':'Sofa','s.sofa':'SOFAS','p.wardrobe':'Hallway wardrobe','s.wardrobe':'WARDROBES',
+'p.table':'Table','s.table':'TABLES','p.kitchen':'Kitchen furniture','s.kitchen':'KITCHENS','p.sink':'Plumbing','s.sink':'PLUMBING',
+'p.material':'Building materials','s.material':'MATERIALS',
+'in.plank':'PLANKS','in.clay':'CLAY','in.iron':'IRON','in.log':'LOGS',
+'sign.saw':'SAWMILL','sign.saw2':'SAWMILL 2','sign.shop':'SHOP','sign.delivery':'DELIVERY','sign.clay':'CLAY PIT','sign.iron':'IRON MINE',
+'z.shelf':'SHELF','z.reg':'REGISTER','z.truck':'TRUCK',
+'done.speed':'Faster!','done.floor':'+1 floor','done.factory':'Factory opened','done.saw':'Sawmill opened','done.reg':'New register',
+'done.shop':'Shop expanded','done.truck':'Truck on its way','done.parking':'+1 parking spot','done.generic':'Upgraded',
+'lk.lv':'{sign}<br><b>Opens at Lv {n}</b>','lk.with':'{sign}<br><b>Opens with {name}</b>',
+'c.noTruck':'No truck','c.arriving':'Arriving…','c.freeIn':'Free · {n} s','c.free':'Free','c.full':'FULL',
+'f.cap':'×{k} output · {c} slots',
+'job.shelf':'Shelf · {name}','job.truck':'Truck','job.planks':'Planks → {name}',
+'t.level':'Level {n}','t.newFactory':'New factory: {list}','t.keepGoing':'Keep growing','t.delivered':'Delivery paid',
+'t.factoryOpened':'New factory opened','t.sinkOpened':'Building materials, the mines and a new shop opened too','t.saw2':'New sawmill opened',
+'t.shopLv':'Shop Lv {n}','t.canHire':'You can hire: {list} · ','t.regSlot':'+1 register slot',
+'q1':'Walk up to a tree to chop it','q2':'Take the logs to the sawmill','q3':'Pick up the finished planks',
+'q4':'Take the planks to the chair workshop','q5':'Pick up the finished chairs','q6':'Put the chairs on the shop shelf',
+'q7':'Stand at the register, serve the customer and collect the money','q8':'Stand on a yellow pad to upgrade the sawmill',
+'skin.lumber':'Lumberjack','skin.master':'Craftsman','skin.forest':'Ranger','skin.night':'Night owl','skin.gold':'Golden',
+'un.new':'NEW','un.fac.t':'{name} factory','un.fac.s':'Buy it on its lot · {price} ֏','un.with.s':'Opened together with Plumbing',
+'un.staff.t':'New staff: {name}','un.staff.s':'Hire in the Upgrades panel',
+'un.reg.t':'New register slot','un.reg.s':'Buy it in the shop on the “+֏” pad',
+'un.saw2.t':'Second sawmill','un.saw2.s':'In the back yard, behind the first sawmill',
+'un.mines.t':'Clay pit and iron mine','un.mines.s':'Behind the factories',
+'un.matshop.t':'Building materials shop','un.matshop.s':'Next to the main shop',
+'un.skin.t':'New character: {name}','un.skin.s':'Pick it in the menu',
+},
+ru:{
+'ui.title':'Мебельная фабрика','ui.h1':'Мебельная <em>фабрика</em>','ui.kicker':'Прототип · v0.3',
+'ui.intro':'Руби деревья, пили доски, делай мебель и продавай. Повышай уровень, чтобы открывать новые фабрики.',
+'ui.skin':'Выбери персонажа','ui.lang':'Язык','ui.play':'Играть','ui.continue':'Продолжить','ui.test':'Тест: +25 ур., +250K ֏',
+'ui.new':'Новая игра','ui.reset':'Всё будет удалено. Нажми ещё раз','ui.controls':'WASD или стрелки · Q: бросить · Телефон: веди пальцем',
+'ui.upgrade':'Улучшения','ui.upTitle':'Улучшения','ui.menu':'Меню','ui.close':'Закрыть','ui.hint':'Веди по экрану или жми WASD',
+'ui.throw':'Бросить','ui.throwAria':'Выбросить то, что несёшь','ui.balance':'Баланс: {v} ֏',
+'ui.padNote':'Улучшения фабрик, грузовиков, парковки и касс — это <b>жёлтые площадки</b> на земле. Встань на площадку, и деньги пойдут туда.',
+'ui.max':'МАКС','ui.lockSink':'Сантехника','ui.lockShop':'Магазин ур. {n}','ui.earn':'заработай {v} ֏','ui.unlocked':'открыто: ',
+'g.player':'Игрок','g.workers':'Работники','g.staff':'Персонал магазина','g.biz':'Бизнес',
+'u.items':'{n} шт.','u.sec':'{n} с','u.people':'{n} чел.','u.bots':'{n} шт.','u.price':'+{n}% к цене','u.cust':'{n} покуп.',
+'upg.cap':'Вместимость','upgd.cap':'Носи больше предметов за раз',
+'upg.speed':'Скорость','upgd.speed':'Ходи быстрее',
+'upg.axe':'Острый топор','upgd.axe':'Руби деревья и камни быстрее',
+'upg.lumber':'Лесоруб','upgd.lumber':'Рубит деревья и носит брёвна на лесопилку',
+'upg.carrier':'Грузчик','upgd.carrier':'Носит доски на фабрики, мебель в магазин или в грузовики',
+'upg.robot':'Робот-грузчик','upgd.robot':'Быстрый и много носит. Сам понимает, чего не хватает (пустая полка, ждущий грузовик, простаивающая фабрика), и делает это первым',
+'upg.miner':'Шахтёр','upgd.miner':'Добывает глину и железо и носит на фабрики сантехники и стройматериалов',
+'upg.cashier':'Кассир','upgd.cashier':'Стоит у свободной кассы и обслуживает покупателей',
+'upg.stocker':'Мерчендайзер','upgd.stocker':'Носит готовую мебель с фабрик на полки магазина',
+'upg.manager':'Менеджер','upgd.manager':'Собирает деньги со всех касс на твой счёт',
+'upg.consult':'Консультант','upgd.consult':'Покупатели терпеливее и платят больше',
+'upg.ads':'Реклама','upgd.ads':'Покупатели приходят чаще',
+'upg.quality':'Качество','upgd.quality':'Вся мебель продаётся дороже',
+'p.chair':'Стул','s.chair':'СТУЛЬЯ','p.sofa':'Диван','s.sofa':'ДИВАНЫ','p.wardrobe':'Шкаф для прихожей','s.wardrobe':'ШКАФЫ',
+'p.table':'Стол','s.table':'СТОЛЫ','p.kitchen':'Кухонная мебель','s.kitchen':'КУХНИ','p.sink':'Сантехника','s.sink':'САНТЕХНИКА',
+'p.material':'Стройматериалы','s.material':'СТРОЙМАТЕРИАЛЫ',
+'in.plank':'ДОСКИ','in.clay':'ГЛИНА','in.iron':'ЖЕЛЕЗО','in.log':'БРЁВНА',
+'sign.saw':'ЛЕСОПИЛКА','sign.saw2':'ЛЕСОПИЛКА 2','sign.shop':'МАГАЗИН','sign.delivery':'ДОСТАВКА','sign.clay':'ГЛИНЯНЫЙ КАРЬЕР','sign.iron':'ЖЕЛЕЗНЫЙ РУДНИК',
+'z.shelf':'ПОЛКА','z.reg':'КАССА','z.truck':'ГРУЗОВИК',
+'done.speed':'Быстрее!','done.floor':'+1 этаж','done.factory':'Фабрика открыта','done.saw':'Лесопилка открыта','done.reg':'Новая касса',
+'done.shop':'Магазин расширен','done.truck':'Грузовик в пути','done.parking':'+1 парковка','done.generic':'Улучшено',
+'lk.lv':'{sign}<br><b>Откроется на ур. {n}</b>','lk.with':'{sign}<br><b>Откроется вместе с: {name}</b>',
+'c.noTruck':'Нет грузовика','c.arriving':'Подъезжает…','c.freeIn':'Свободно · {n} с','c.free':'Свободно','c.full':'ПОЛНО',
+'f.cap':'×{k} выпуск · {c} мест',
+'job.shelf':'Полка · {name}','job.truck':'Грузовик','job.planks':'Доски → {name}',
+'t.level':'Уровень {n}','t.newFactory':'Новая фабрика: {list}','t.keepGoing':'Продолжай развиваться','t.delivered':'Доставка оплачена',
+'t.factoryOpened':'Новая фабрика открыта','t.sinkOpened':'Также открылись стройматериалы, рудники и новый магазин','t.saw2':'Новая лесопилка открыта',
+'t.shopLv':'Магазин ур. {n}','t.canHire':'Можно нанять: {list} · ','t.regSlot':'+1 место для кассы',
+'q1':'Подойди к дереву, чтобы срубить его','q2':'Отнеси брёвна на лесопилку','q3':'Забери готовые доски',
+'q4':'Отнеси доски в цех стульев','q5':'Забери готовые стулья','q6':'Поставь стулья на полку магазина',
+'q7':'Встань у кассы, обслужи покупателя и забери деньги','q8':'Встань на жёлтую площадку, чтобы улучшить лесопилку',
+'skin.lumber':'Лесоруб','skin.master':'Мастер','skin.forest':'Лесник','skin.night':'Ночной','skin.gold':'Золотой',
+'un.new':'НОВОЕ','un.fac.t':'Фабрика: {name}','un.fac.s':'Купи её на участке · {price} ֏','un.with.s':'Открыта вместе с сантехникой',
+'un.staff.t':'Новый сотрудник: {name}','un.staff.s':'Найми в разделе «Улучшения»',
+'un.reg.t':'Место для новой кассы','un.reg.s':'Купи её в магазине на площадке «+֏»',
+'un.saw2.t':'Вторая лесопилка','un.saw2.s':'На заднем дворе, за первой лесопилкой',
+'un.mines.t':'Глиняный карьер и железный рудник','un.mines.s':'За фабриками',
+'un.matshop.t':'Магазин стройматериалов','un.matshop.s':'Рядом с главным магазином',
+'un.skin.t':'Новый персонаж: {name}','un.skin.s':'Выбери его в меню',
+}};
+
+Object.assign(I18N.hy,{'g.section':'Սանտեխնիկա և Շինանյութ','upg.secCarrier':'Բաժնի բեռնակիր','upgd.secCarrier':'Սանտեխնիկան և շինանյութը տանում է Շինանյութի խանութ կամ բեռնատար',
+ 'upg.secCashier':'Բաժնի գանձապահ','upgd.secCashier':'Աշխատում է միայն Շինանյութի խանութի դրամարկղերում',
+ 'dream.title':'ԵՐԱԶԱՆՔԻ ՏՈՒՆ','dream.soon':'Շուտով','dream.chip':'Երազանքի տուն<br><b>Շուտով</b>','sign.houseShop':'ՏԱՆ ԽԱՆՈՒԹ','sign.sales':'ՎԱՃԱՌՔԻ ՏԱՐԱԾՔ',
+ 'un.dream.t':'Երազանքի տան հողամաս','un.dream.s':'Գործարաններից արևելք՝ ճանապարհի վերջում · շուտով այստեղ կկառուցես քո տունը'});
+Object.assign(I18N.en,{'g.section':'Plumbing & Materials','upg.secCarrier':'Section carrier','upgd.secCarrier':'Takes plumbing and building materials to the materials shop or trucks',
+ 'upg.secCashier':'Section cashier','upgd.secCashier':'Works only at the building materials shop registers',
+ 'dream.title':'DREAM HOUSE','dream.soon':'Coming soon','dream.chip':'Dream house<br><b>Coming soon</b>','sign.houseShop':'HOME STORE','sign.sales':'SALES AREA',
+ 'un.dream.t':'Dream house plot','un.dream.s':'East of the factories, at the end of the road · soon you will build your house here'});
+Object.assign(I18N.ru,{'g.section':'Сантехника и стройматериалы','upg.secCarrier':'Грузчик отдела','upgd.secCarrier':'Носит сантехнику и стройматериалы в магазин стройматериалов или в грузовики',
+ 'upg.secCashier':'Кассир отдела','upgd.secCashier':'Работает только на кассах магазина стройматериалов',
+ 'dream.title':'ДОМ МЕЧТЫ','dream.soon':'Скоро','dream.chip':'Дом мечты<br><b>Скоро</b>','sign.houseShop':'ТОВАРЫ ДЛЯ ДОМА','sign.sales':'ЗОНА ПРОДАЖ',
+ 'un.dream.t':'Участок для дома мечты','un.dream.s':'К востоку от фабрик, в конце дороги · скоро здесь ты построишь свой дом'});
+Object.assign(I18N.hy,{'upg.bulkSeller':'Վաճառքի տարածքի վաճառող','upgd.bulkSeller':'Կանգնում է ետևի վաճառքի տարածքի դրամարկղի մոտ և մեծածախ վաճառում կապալառուներին',
+ 'z.bulk':'ՄԵԾԱԾԱԽ','un.bulk.t':'Վաճառքի տարածքը բացվեց','un.bulk.s':'Կապալառուները մեծածախ գնում են շինանյութ և սանտեխնիկա'});
+Object.assign(I18N.en,{'upg.bulkSeller':'Sales area seller','upgd.bulkSeller':'Stands at the back sales area register and sells in bulk to contractors',
+ 'z.bulk':'WHOLESALE','un.bulk.t':'Sales area is open','un.bulk.s':'Contractors buy building materials and plumbing in bulk'});
+Object.assign(I18N.ru,{'upg.bulkSeller':'Продавец зоны продаж','upgd.bulkSeller':'Стоит у кассы задней зоны продаж и продаёт оптом подрядчикам',
+ 'z.bulk':'ОПТ','un.bulk.t':'Зона продаж открыта','un.bulk.s':'Подрядчики оптом покупают стройматериалы и сантехнику'});
+Object.assign(I18N.hy,{'ui.home':'Տուն','sign.lot':'P · ԳՆՈՐԴՆԵՐ'});Object.assign(I18N.en,{'ui.home':'Home','sign.lot':'P · CUSTOMERS'});Object.assign(I18N.ru,{'ui.home':'Дом','sign.lot':'P · ПОКУПАТЕЛИ'});
+if(!S.seen)S.seen={};
+let LANG=I18N[S.lang]?S.lang:((navigator.language||'').startsWith('ru')?'ru':(navigator.language||'').startsWith('en')?'en':'hy');
+function t(k,v){let s=I18N[LANG][k];if(s==null)s=I18N.hy[k];if(s==null)return k;if(v)s=s.replace(/\{(\w+)\}/g,(m,x)=>v[x]!=null?v[x]:m);return s}
+const pn=p=>t('p.'+p.id),ps=p=>t('s.'+p.id);
+const TEXT_REDRAW=[];
+const lvOf=id=>(S.pads[id]&&S.pads[id].lv)||0;
+// difficulty: medium. ~1.5x more XP per level, ~15% lower sale prices, ~25% pricier upgrades, smaller truck bonus
+const ECON={price:.85,cost:1.25,truck:1.4};
+const xpNeed=l=>Math.round(8+4.5*l);
+const prodPrice=p=>Math.round(p.price*ECON.price*(1+.25*S.lv.quality)/10)*10;
+const shopCap=()=>8+3*lvOf('shop');
+const st={
+ cap:()=>5+S.lv.cap*2, speed:()=>4.4*(1+.12*S.lv.speed), chop:()=>1.1/(1+.35*S.lv.axe),
+ spawn:()=>Math.max(1.1,5-S.lv.ads*.5-lvOf('shop')*.3), maxCust:()=>4+S.lv.ads+lvOf('shop')*2,
+};
+const upPrice=(u,l)=>Math.round(u.base*ECON.cost*Math.pow(u.mul,l)/50)*50;
+const upLocked=u=>(u.need&&lvOf('shop')<u.need)||(u.needSink&&!S.owned.sink);
+const lockText=u=>u.needSink?t('ui.lockSink'):t('ui.lockShop',{n:u.need});
+const shopW=l=>25+4.2*(l===undefined?lvOf('shop'):l);
+
+const SKINS=[
+ {id:'lumber',name:'Փայտահատ',shirt:0xc8412f,pants:0x34495e,hat:0x5a3a22,hatType:'beanie'},
+ {id:'master',name:'Վարպետ',shirt:0x2f6fb5,pants:0x2a3a5c,hat:0xf4c430,hatType:'hard'},
+ {id:'forest',name:'Անտառապահ',shirt:0x4f8a3c,pants:0x5b4630,hat:0x2f4a22,hatType:'cap'},
+ {id:'night',name:'Գիշերային',shirt:0x433570,pants:0x1f1a2e,hat:0x9b7be0,hatType:'beanie'},
+ {id:'gold',name:'Ոսկե',shirt:0xe6b422,pants:0x6b4e16,hat:0xffd75e,hatType:'crown',unlock:100000},
+];
+const skinById=id=>SKINS.find(s=>s.id===id)||SKINS[0];
+
+/* ================= three setup ================= */
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0xbfe3f0);
+scene.fog=new THREE.Fog(0xbfe3f0,42,95);
+const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,0.1,200);
+camera.position.set(0,6,8);
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth,innerHeight);
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+$('#app').appendChild(renderer.domElement);
+const canvas=renderer.domElement;
+
+scene.add(new THREE.HemisphereLight(0xffffff,0x7a9a55,0.72));
+const sun=new THREE.DirectionalLight(0xfff1d6,0.85);
+sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
+Object.assign(sun.shadow.camera,{left:-26,right:26,top:26,bottom:-26,near:1,far:90});
+sun.shadow.bias=-0.0006;
+scene.add(sun,sun.target);
+
+const matCache={};
+const M=c=>matCache[c]||(matCache[c]=new THREE.MeshStandardMaterial({color:c,roughness:.88,metalness:0,flatShading:true}));
+function mesh(geo,c,x=0,y=0,z=0,parent){const m=new THREE.Mesh(geo,M(c));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;if(parent)parent.add(m);return m}
+const box=(w,h,d,c,x,y,z,p)=>mesh(new THREE.BoxGeometry(w,h,d),c,x,y,z,p);
+const cyl=(rt,rb,h,c,seg,x,y,z,p)=>mesh(new THREE.CylinderGeometry(rt,rb,h,seg||8),c,x,y,z,p);
+function flat(w,d,c,x,z,y=0.01,parent){const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),M(c));m.rotation.x=-PI/2;m.position.set(x,y,z);m.receiveShadow=true;(parent||scene).add(m);return m}
+
+/* ================= canvas textures ================= */
+function rr(x,X,Y,w,h,r){x.beginPath();x.moveTo(X+r,Y);x.lineTo(X+w-r,Y);x.quadraticCurveTo(X+w,Y,X+w,Y+r);x.lineTo(X+w,Y+h-r);x.quadraticCurveTo(X+w,Y+h,X+w-r,Y+h);x.lineTo(X+r,Y+h);x.quadraticCurveTo(X,Y+h,X,Y+h-r);x.lineTo(X,Y+r);x.quadraticCurveTo(X,Y,X+r,Y);x.closePath()}
+const FONT='"Noto Sans Armenian","Noto Sans","Segoe UI",sans-serif';
+function signMesh(text,w,bg,fg){
+  const c=document.createElement('canvas');c.width=512;c.height=128;const x=c.getContext('2d');
+  const tx=new THREE.CanvasTexture(c);tx.anisotropy=4;
+  const draw=()=>{const s=typeof text==='function'?text():text;x.clearRect(0,0,512,128);
+    x.fillStyle=bg;rr(x,4,4,504,120,26);x.fill();x.lineWidth=6;x.strokeStyle='rgba(255,255,255,.18)';x.stroke();
+    x.fillStyle=fg;x.textAlign='center';x.textBaseline='middle';
+    let fs=58;do{x.font=`900 ${fs}px ${FONT}`;fs-=2}while(x.measureText(s).width>460&&fs>16);
+    x.fillText(s,256,68);tx.needsUpdate=true};
+  draw();TEXT_REDRAW.push(draw);const t=tx;
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(w,w/4),new THREE.MeshBasicMaterial({map:t,transparent:true}));
+  scene.add(m);return m;
+}
+function groundTex(label,glyph,tint,stroke){
+  const c=document.createElement('canvas');c.width=c.height=256;const g=c.getContext('2d');
+  const tx=new THREE.CanvasTexture(c);tx.anisotropy=4;
+  const draw=()=>{g.clearRect(0,0,256,256);drawGround(g,typeof label==='function'?label():label,glyph,tint,stroke);tx.needsUpdate=true};
+  draw();TEXT_REDRAW.push(draw);return tx;
+}
+function drawGround(g,label,glyph,tint,stroke){
+  g.fillStyle=tint;rr(g,14,14,228,228,46);g.fill();
+  if(stroke!==false){g.setLineDash([26,16]);g.lineWidth=10;g.strokeStyle='rgba(255,255,255,.95)';g.stroke();g.setLineDash([])}
+  g.fillStyle='#fff';g.textAlign='center';g.textBaseline='middle';
+  let gs=104;do{g.font=`900 ${gs}px ${FONT}`;gs-=4}while(g.measureText(glyph).width>180&&gs>40);
+  g.fillText(glyph,128,106);
+  let fs=30;do{g.font=`900 ${fs}px ${FONT}`;fs-=1}while(g.measureText(label).width>204&&fs>13);
+  g.fillText(label,128,200);
+}
+function groundPlane(tex,size,x,z,y=.03){const m=new THREE.Mesh(new THREE.PlaneGeometry(size,size),new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false}));m.rotation.x=-PI/2;m.position.set(x,y,z);scene.add(m);return m}
+
+/* ================= items ================= */
+const H={log:.3,plank:.11,clay:.28,iron:.24,material:.3,bill:.055,chair:.5,sofa:.44,wardrobe:.84,table:.5,kitchen:.58,sink:.56};
+const PROTO={};
+(function(){
+  let g=new THREE.Group();
+  const a=new THREE.Mesh(new THREE.CylinderGeometry(.16,.16,.9,8),M(0x8b5a2b));a.rotation.z=PI/2;a.castShadow=true;g.add(a);
+  const b=new THREE.Mesh(new THREE.CylinderGeometry(.11,.11,.92,8),M(0xe0b072));b.rotation.z=PI/2;g.add(b);PROTO.log=g;
+  g=new THREE.Group();box(.95,.1,.3,0xe2b878,0,.05,0,g);box(.95,.012,.02,0xc9975a,0,.101,0,g);PROTO.plank=g;
+  g=new THREE.Group();box(.42,.26,.34,0xb5653d,0,.13,0,g);box(.3,.04,.24,0xd4875c,0,.27,0,g);PROTO.clay=g;
+  g=new THREE.Group();box(.46,.05,.26,0x58a84a,0,.025,0,g);box(.14,.052,.27,0xa6dc8f,0,.026,0,g);PROTO.bill=g;
+  g=new THREE.Group();const cc=0xbd6f36,cd=0x8f4f22;
+  box(.5,.08,.5,cc,0,.34,0,g);[[-.2,-.2],[.2,-.2],[-.2,.2],[.2,.2]].forEach(([sx,sz])=>box(.07,.34,.07,cd,sx,.17,sz,g));
+  box(.5,.44,.07,cc,0,.6,-.215,g);box(.36,.06,.075,0xe2a066,0,.68,-.215,g);PROTO.chair=g;
+  g=new THREE.Group();box(.9,.2,.46,0x6c4f9a,0,.16,0,g);box(.78,.1,.38,0x9a7fd0,0,.31,.03,g);box(.9,.3,.12,0x6c4f9a,0,.4,-.17,g);
+  box(.1,.28,.46,0x5a4084,-.45,.3,0,g);box(.1,.28,.46,0x5a4084,.45,.3,0,g);box(.06,.06,.06,0x2b1d14,-.38,.03,.17,g);box(.06,.06,.06,0x2b1d14,.38,.03,.17,g);PROTO.sofa=g;
+  g=new THREE.Group();box(.62,.82,.36,0x9c6b3e,0,.41,0,g);box(.66,.05,.4,0x7a4f2a,0,.845,0,g);box(.015,.74,.005,0x5a3a1e,0,.42,.181,g);
+  box(.03,.12,.03,0xe0c070,-.06,.45,.19,g);box(.03,.12,.03,0xe0c070,.06,.45,.19,g);PROTO.wardrobe=g;
+  g=new THREE.Group();box(.82,.06,.56,0xc98a4a,0,.45,0,g);[[-.35,-.22],[.35,-.22],[-.35,.22],[.35,.22]].forEach(([sx,sz])=>box(.06,.42,.06,0x8a5a2e,sx,.21,sz,g));PROTO.table=g;
+  g=new THREE.Group();box(.7,.5,.44,0xece6d8,0,.25,0,g);box(.74,.05,.48,0x3d3d3d,0,.525,0,g);box(.66,.012,.005,0xb9b2a3,0,.36,.221,g);
+  box(.16,.025,.03,0x8a8a8a,-.17,.43,.23,g);box(.16,.025,.03,0x8a8a8a,.17,.43,.23,g);box(.012,.3,.005,0xb9b2a3,0,.17,.221,g);PROTO.kitchen=g;
+  g=new THREE.Group();cyl(.08,.12,.38,0xf2f4f5,10,0,.19,0,g);box(.52,.14,.38,0xf2f4f5,0,.44,0,g);box(.4,.04,.26,0xbfd3dc,0,.5,.02,g);
+  box(.04,.12,.04,0xa5aeb8,0,.56,-.13,g);box(.04,.04,.1,0xa5aeb8,0,.61,-.09,g);PROTO.sink=g;
+  g=new THREE.Group();box(.4,.22,.32,0x5b6470,0,.11,0,g);box(.18,.1,.14,0xb5653d,.08,.24,.04,g);box(.12,.08,.1,0x8a949c,-.1,.23,-.06,g);PROTO.iron=g;
+  g=new THREE.Group();for(let k=0;k<3;k++){const z=(k-1)*.17;box(.92,.03,.14,0x8a949c,0,.02,z,g);box(.92,.18,.03,0x8a949c,0,.12,z,g);box(.92,.03,.14,0x8a949c,0,.22,z,g)}
+  box(.06,.27,.56,0xd9573b,-.28,.12,0,g);box(.06,.27,.56,0xd9573b,.28,.12,0,g);PROTO.material=g;
+})();
+function makeItem(type){const m=PROTO[type].clone();m.userData.type=type;return m}
+
+/* ================= stacks & tweens ================= */
+class Stack{
+  constructor(anchor,layout,cap,fixed){this.anchor=anchor;this.layout=layout;this.cap=cap;this.items=[];this.incoming=0;this.type=fixed||null;this.fixed=!!fixed}
+  get n(){return this.items.length+this.incoming}
+  pop(){const m=this.items.pop();if(m&&!this.fixed&&this.n===0)this.type=null;return m}
+}
+const carryLayout=(t,i)=>({p:new V3(0,i*H[t],0),r:0});
+const pileLayout=(cols,rows,sx,sz)=>(t,i)=>{const per=cols*rows,L=Math.floor(i/per),k=i%per;return{p:new V3((k%cols-(cols-1)/2)*sx,L*H[t],(Math.floor(k/cols)-(rows-1)/2)*sz),r:0}};
+const tweens=[],shrinks=[];
+function fly(m,targetFn,dur,onDone,arc=1){scene.attach(m);tweens.push({m,s:m.position.clone(),targetFn,t:0,dur,onDone,arc})}
+function sendTo(m,s,dur=.24){
+  s.incoming++;if(!s.fixed)s.type=m.userData.type;
+  fly(m,()=>{s.anchor.updateWorldMatrix(true,false);return s.anchor.localToWorld(s.layout(m.userData.type,s.items.length).p.clone())},dur,()=>{
+    s.incoming--;s.anchor.add(m);s.items.push(m);const L=s.layout(m.userData.type,s.items.length-1);m.position.copy(L.p);m.rotation.set(0,L.r||0,0);
+  });
+}
+function move(from,to,dur){const m=from.pop();if(!m)return null;sendTo(m,to,dur);return m}
+function updTweens(dt){
+  for(let i=tweens.length-1;i>=0;i--){const w=tweens[i];w.t+=dt;const k=Math.min(1,w.t/w.dur);
+    w.m.position.lerpVectors(w.s,w.targetFn(),k);w.m.position.y+=Math.sin(k*PI)*w.arc;
+    if(k>=1){tweens.splice(i,1);w.onDone&&w.onDone()}}
+  for(let i=shrinks.length-1;i>=0;i--){const s=shrinks[i];s.t+=dt;s.m.scale.setScalar(Math.max(.01,1-s.t*4));if(s.t>=.25){scene.remove(s.m);shrinks.splice(i,1)}}
+}
+
+/* ================= characters ================= */
+function makeRobot(){
+  const g=new THREE.Group(),body=new THREE.Group();g.add(body);
+  const W=0xdfe6ea,D=0x55606a,C=0x4fd1e8;
+  cyl(.3,.4,.28,D,10,0,.2,0,body);const ring=new THREE.Mesh(new THREE.TorusGeometry(.36,.04,6,16),new THREE.MeshBasicMaterial({color:C}));ring.rotation.x=PI/2;ring.position.y=.08;body.add(ring);
+  box(.62,.62,.46,W,0,.72,0,body);box(.32,.2,.02,C,0,.8,.24,body);box(.08,.08,.02,0xf3b33d,.2,.62,.24,body);
+  cyl(.08,.1,.12,D,8,0,1.08,0,body);
+  box(.48,.36,.4,W,0,1.3,0,body);box(.38,.12,.02,C,0,1.32,.21,body);
+  cyl(.02,.02,.24,D,6,0,1.6,0,body);mesh(new THREE.IcosahedronGeometry(.07,0),0xd9573b,0,1.75,0,body);
+  const hipL=new THREE.Group(),hipR=new THREE.Group();body.add(hipL,hipR);
+  const shL=new THREE.Group(),shR=new THREE.Group();shL.position.set(-.4,.95,0);shR.position.set(.4,.95,0);body.add(shL,shR);
+  for(const sh of[shL,shR]){box(.14,.42,.14,D,0,-.2,0,sh);box(.18,.1,.18,W,0,-.44,0,sh)}
+  const axe=new THREE.Group();axe.visible=false;
+  const anchor=new THREE.Group();anchor.position.set(0,.92,.56);g.add(anchor);
+  return{g,body,hipL,hipR,shL,shR,axe,anchor,t:0,ph:0,seed:Math.random()*9,robot:true};
+}
+function makeChar(sk){
+  if(sk.robot)return makeRobot();
+  const g=new THREE.Group(),body=new THREE.Group();g.add(body);
+  const skin=sk.skin||0xf1c27d;
+  const hipL=new THREE.Group(),hipR=new THREE.Group();hipL.position.set(-.14,.52,0);hipR.position.set(.14,.52,0);body.add(hipL,hipR);
+  box(.22,.52,.24,sk.pants,0,-.26,0,hipL);box(.22,.52,.24,sk.pants,0,-.26,0,hipR);
+  box(.24,.08,.3,0x2b1d14,0,-.5,.03,hipL);box(.24,.08,.3,0x2b1d14,0,-.5,.03,hipR);
+  box(.62,.62,.38,sk.shirt,0,.84,0,body);box(.64,.08,.4,0x3b2a1e,0,.56,0,body);
+  box(.46,.44,.44,skin,0,1.37,0,body);
+  box(.07,.09,.02,0x1d140d,-.1,1.4,.225,body);box(.07,.09,.02,0x1d140d,.1,1.4,.225,body);
+  const ht=sk.hatType;
+  if(ht==='beanie'){box(.5,.2,.48,sk.hat,0,1.66,0,body);box(.16,.1,.16,sk.hat,0,1.8,0,body)}
+  else if(ht==='hard'){const h=new THREE.Mesh(new THREE.SphereGeometry(.3,10,6,0,2*PI,0,PI/2),M(sk.hat));h.position.set(0,1.58,0);h.castShadow=true;body.add(h);cyl(.36,.36,.04,sk.hat,12,0,1.58,.02,body)}
+  else if(ht==='cap'){box(.48,.14,.48,sk.hat,0,1.65,0,body);box(.42,.04,.24,sk.hat,0,1.6,.32,body)}
+  else if(ht==='crown'){cyl(.27,.25,.2,sk.hat,6,0,1.68,0,body);for(let i=0;i<6;i++){const a=i/6*2*PI;box(.07,.12,.07,sk.hat,Math.sin(a)*.24,1.83,Math.cos(a)*.24,body)}}
+  const shL=new THREE.Group(),shR=new THREE.Group();shL.position.set(-.41,1.08,0);shR.position.set(.41,1.08,0);body.add(shL,shR);
+  box(.2,.5,.22,sk.shirt,0,-.22,0,shL);box(.18,.14,.2,skin,0,-.53,0,shL);
+  box(.2,.5,.22,sk.shirt,0,-.22,0,shR);box(.18,.14,.2,skin,0,-.53,0,shR);
+  const axe=new THREE.Group();box(.06,.75,.06,0x8b5a2b,0,0,0,axe);box(.06,.22,.26,0xa5aeb8,0,.3,.11,axe);
+  axe.position.set(0,-.56,.08);axe.rotation.x=PI/2;shR.add(axe);axe.visible=false;
+  const anchor=new THREE.Group();anchor.position.set(0,.92,.56);g.add(anchor);
+  return{g,body,hipL,hipR,shL,shR,axe,anchor,t:0,ph:0,seed:Math.random()*9};
+}
+let T=0;
+function animChar(c,dt){
+  const ch=c.ch,k=1-Math.exp(-dt*14),carrying=c.stack&&c.stack.n>0;
+  ch.g.rotation.y=lerpAng(ch.g.rotation.y,c.face,1-Math.exp(-dt*13));
+  if(c.moving)ch.t+=dt*11;
+  const s=c.moving?Math.sin(ch.t):0;
+  ch.hipL.rotation.x+=(s*.7-ch.hipL.rotation.x)*k;ch.hipR.rotation.x+=(-s*.7-ch.hipR.rotation.x)*k;
+  ch.body.position.y=ch.robot?.05+Math.sin(T*4+ch.seed)*.04:c.moving?Math.abs(Math.sin(ch.t))*.07:Math.sin(T*2+ch.seed)*.012;
+  const aL=carrying?-1.25:-s*.55,aR=carrying?-1.25:s*.55;
+  if(c.chopping){ch.ph+=dt*14;ch.shR.rotation.x=-1.9+Math.sin(ch.ph)*1.05}
+  else ch.shR.rotation.x+=(aR-ch.shR.rotation.x)*k;
+  ch.shL.rotation.x+=(aL-ch.shL.rotation.x)*k;
+  ch.axe.visible=!!(c.chopping||c.kind==='lumber'||c.kind==='miner');
+}
+function makeAgent(sk,o){const ch=makeChar(sk);scene.add(ch.g);const a=Object.assign({ch,stack:new Stack(ch.anchor,carryLayout,99),cool:0,chopT:0,hitT:0,face:0,moving:false,chopping:false},o);a.pos=ch.g.position;return a}
+function moveTo(a,tg,dt,sp){
+  const dx=tg.x-a.pos.x,dz=tg.z-a.pos.z,d=Math.hypot(dx,dz);
+  if(d<.06){a.moving=false;return true}
+  const step=Math.min(d,sp*dt);a.pos.x+=dx/d*step;a.pos.z+=dz/d*step;a.face=Math.atan2(dx,dz);a.moving=true;
+  return d-step<.06;
+}
+
+/* ================= world containers ================= */
+const zones=[],Z={},machines=[],nodes=[],workers=[],customers=[],trucks=[],bays=[],pads=[],regs=[],FAC={},SH={};
+let blocks=[];
+const SHOP={cur:0},BACK={},SAWB={},HOUSE={};
+const LANE=14.6,PARK=12.3,ORDER=8,BAYZ=10.1;
+const DUMMY=new Stack(new THREE.Group(),carryLayout,0,'goods');
+
+function addZone(id,o){
+  const z=Object.assign({id,r:1.3,active:()=>true},o);z.pos=new V3(o.x,0,o.z);
+  if(o.pile){const a=new THREE.Group();a.position.set(o.x+o.pile[0],o.pile[1],o.z+o.pile[2]);scene.add(a);z.stack=new Stack(a,o.layout,o.cap,o.type)}
+  z.capFn=o.capFn||(()=>z.cap);
+  z.canAccept=o.canAccept||(()=>z.stack.n<z.capFn());
+  z.marker=groundPlane(groundTex(o.label,o.glyph,o.tint),2.4,o.x,o.z);
+  zones.push(z);Z[id]=z;return z;
+}
+const T_DROP='rgba(43,29,20,.30)',T_PICK='rgba(61,138,49,.42)';
+
+/* ---------- buildings ---------- */
+function makeBuilding(cx,wall,roof,label,kind,cz=-10){
+  const g=new THREE.Group();g.position.set(cx,0,cz);scene.add(g);
+  box(5.4,2.6,4,wall,0,1.3,0,g);
+  box(1.8,.8,.8,0x6d4325,0,.4,2.4,g);
+  let part;
+  if(kind==='saw'){
+    part=new THREE.Group();part.position.set(0,1.25,2.42);g.add(part);
+    const bd=mesh(new THREE.CylinderGeometry(.62,.62,.06,14),0xc9d1d8);bd.rotation.x=PI/2;part.add(bd);
+    const hub=mesh(new THREE.CylinderGeometry(.14,.14,.1,8),0x55606a);hub.rotation.x=PI/2;part.add(hub);
+  }else{
+    part=new THREE.Group();part.position.set(.3,1.05,2.15);g.add(part);
+    box(.08,.08,.7,0x8b5a2b,0,0,.35,part);box(.32,.2,.22,0x55606a,0,0,.7,part);
+  }
+  const s=signMesh(label,3.2,'#2b1d14','#f3b33d');s.position.set(0,2.25,2.04);g.add(s);
+  const deco=new THREE.Group();g.add(deco);
+  const b={g,part,pop:1,bounce:0,wall,roof,deco,chimneys:[],fans:[],top:3.4,key:'',smokeT:0,s:0,q:0};
+  setBuildingLevel(b,0,0);
+  return b;
+}
+/* building grows with its upgrades: qty = extra floors, speed = chimneys, roof fan, tank; max = gold flag */
+const TRIMS=[0x6d4325,0xa23b2b,0x3d6f8a,0xd9a520];
+function setBuildingLevel(b,sp,q){
+  const key=sp+'/'+q;if(key===b.key)return;b.key=key;b.s=sp;b.q=q;
+  const d=b.deco;while(d.children.length)d.remove(d.children[0]);
+  b.chimneys=[];b.fans=[];
+  const tier=Math.min(3,Math.floor((sp+q)/3)),trim=TRIMS[tier],FH=1.25;
+  const lit=tier>=2?0xffe39a:0xbfe3f0;
+  box(5.5,.16,4.1,trim,0,2.6,0,d);
+  if(tier>=1)for(const wx of[-1.95,1.95])box(.6,.55,.06,lit,wx,1.75,2.02,d);
+  let y=2.6;
+  for(let i=0;i<q;i++){
+    box(4.9,FH,3.5,b.wall,0,y+FH/2,0,d);
+    for(const wx of[-1.65,-.55,.55,1.65]){box(.6,.55,.06,lit,wx,y+FH/2+.05,1.77,d);box(.7,.08,.1,trim,wx,y+FH/2-.27,1.79,d)}
+    box(5,.12,3.6,trim,0,y+FH,0,d);
+    y+=FH;
+  }
+  const rw=q?5.4:5.9,rd=q?2.2:2.5,rz=q?.92:1.05;
+  [[-1,.55],[1,-.55]].forEach(([k,r])=>{const m=box(rw,.18,rd,b.roof,0,y+.45,k*rz,d);m.rotation.x=r});
+  const nCh=sp>=5?2:sp>=1?1:0;
+  for(let i=0;i<nCh;i++){const x=-1.9+i*.8;box(.45,1.3,.45,0x8a4b3a,x,y+.95,-.75,d);box(.56,.12,.56,0x3b2a1e,x,y+1.62,-.75,d);b.chimneys.push(new V3(x,y+1.75,-.75))}
+  if(sp>=3){const f=new THREE.Group();f.position.set(1.75,y+1.05,-.6);d.add(f);cyl(.48,.48,.32,0x8a949c,10,0,0,0,f);
+    const bl=new THREE.Group();bl.position.y=.2;f.add(bl);for(let k=0;k<4;k++){const m=box(.8,.04,.16,0x55606a,0,0,0,bl);m.rotation.y=k*PI/4}b.fans.push(bl)}
+  if(sp>=7){cyl(.42,.42,1.3,0xc9d1d8,12,.15,y+1.1,-.9,d);cyl(.46,.46,.08,0x8a949c,12,.15,y+1.78,-.9,d)}
+  if(sp>=8&&q>=3){box(.08,2,.08,0x6d4325,2.35,y+1.5,1,d);const fl=box(.9,.55,.04,0xf3b33d,2.8,y+2.2,1,d);b.flag=fl}else b.flag=null;
+  b.top=y+1.5;
+  if(b.ghost){b.ghost=false;setGhost(b,true)}
+}
+function makeLot(cx,cz=-10){
+  const g=new THREE.Group();g.position.set(cx,0,cz);scene.add(g);
+  flat(5.4,4,0xb08a5a,0,0,.015,g);
+  for(let i=0;i<8;i++)box(.12,.7,.12,0xa77447,-2.7+i*(5.4/7),.35,-2,g);
+  for(let i=1;i<5;i++){box(.12,.7,.12,0xa77447,-2.7,.35,-2+i,g);box(.12,.7,.12,0xa77447,2.7,.35,-2+i,g)}
+  box(5.5,.08,.06,0xa77447,0,.55,-2,g);
+  return g;
+}
+
+/* ---------- pads (ground upgrades) ---------- */
+function addPad(def){
+  const p=Object.assign({max:1,show:()=>true},def);p.pos=new V3(def.x,0,def.z);
+  if(!S.pads[def.id])S.pads[def.id]={lv:0,paid:0};
+  p.st=S.pads[def.id];
+  p.g=new THREE.Group();p.g.position.set(def.x,0,def.z);scene.add(p.g);
+  p.cv=document.createElement('canvas');p.cv.width=p.cv.height=256;p.tex=new THREE.CanvasTexture(p.cv);p.tex.anisotropy=4;
+  const base=new THREE.Mesh(new THREE.PlaneGeometry(1.8,1.8),new THREE.MeshBasicMaterial({map:p.tex,transparent:true,depthWrite:false}));
+  base.rotation.x=-PI/2;base.position.y=.035;p.g.add(base);
+  p.price=()=>Math.round(def.base*ECON.cost*Math.pow(def.mul||1,p.st.lv)/50)*50;
+  p.visible=()=>p.show()&&p.st.lv<p.max;
+  p.key='';
+  pads.push(p);return p;
+}
+function drawPad(p){
+  const price=p.price(),prog=clamp(p.st.paid/price,0,1),txt=fmt(price-p.st.paid)+' ֏',key=txt+'|'+Math.round(prog*60);
+  if(key===p.key)return;p.key=key;
+  const g=p.cv.getContext('2d');g.clearRect(0,0,256,256);
+  g.fillStyle='rgba(196,134,26,.95)';rr(g,10,10,236,236,44);g.fill();
+  if(prog>0){g.save();rr(g,10,10,236,236,44);g.clip();g.fillStyle='rgba(61,138,49,.9)';g.fillRect(10,246-236*prog,236,236*prog);g.restore()}
+  g.lineWidth=8;g.strokeStyle='rgba(255,255,255,.9)';rr(g,10,10,236,236,44);g.stroke();
+  g.fillStyle='#fff';g.textAlign='center';g.textBaseline='middle';
+  g.font=`900 78px ${FONT}`;g.fillText(p.glyph,128,82);
+  let fs=74;do{g.font=`900 ${fs}px ${FONT}`;fs-=2}while(g.measureText(txt).width>216&&fs>24);
+  g.fillStyle='#2b1d14';g.fillText(txt,128,180);
+  p.tex.needsUpdate=true;
+}
+let payCoinT=0;
+function updPads(dt){
+  let on=null;
+  for(const p of pads){const v=p.visible();p.g.visible=v;if(!v)continue;
+    drawPad(p);
+    if(d2(P.pos,p.pos)<.95)on=p}
+  if(!on||P.still<.3||S.money<=0)return;
+  const price=on.price(),remain=price-on.st.paid;
+  const amt=Math.min(S.money,remain,Math.max(1,Math.ceil(price*dt/1.4)));
+  S.money-=amt;on.st.paid+=amt;hudMoney(true);
+  payCoinT-=dt;if(payCoinT<=0){payCoinT=.07;const b=makeItem('bill');b.position.copy(P.pos).setY(1.3);scene.add(b);const tg=on.pos.clone().setY(.1);fly(b,()=>tg,.25,()=>scene.remove(b),.6);sfx('coin')}
+  if(on.st.paid>=price){
+    on.st.paid=0;on.st.lv++;sfx('buy');floatText(on.pos.clone().setY(1.6),t(on.done||'done.generic'));
+    on.onLevel&&on.onLevel(on.st.lv);emit('pad',on.id);save();
+  }
+}
+
+/* ---------- world build ---------- */
+let sawBld;
+/* dream house plot: placeholder for the future house-building + furnishing mode */
+function houseBillboardTex(){
+  const c=document.createElement('canvas');c.width=640;c.height=400;const g=c.getContext('2d');
+  const tx=new THREE.CanvasTexture(c);tx.anisotropy=4;
+  const draw=()=>{
+    const sky=g.createLinearGradient(0,0,0,400);sky.addColorStop(0,'#9fd3ea');sky.addColorStop(1,'#eaf6fb');g.fillStyle=sky;g.fillRect(0,0,640,400);
+    g.fillStyle='#f3b33d';g.beginPath();g.arc(540,92,40,0,7);g.fill();
+    g.fillStyle='#8cc65a';g.beginPath();g.ellipse(160,400,330,120,0,0,7);g.fill();g.fillStyle='#74b24a';g.beginPath();g.ellipse(520,410,300,110,0,0,7);g.fill();
+    // house
+    g.fillStyle='#fbf1de';g.fillRect(200,196,250,150);g.fillRect(410,226,110,120);
+    g.fillStyle='#d9573b';g.beginPath();g.moveTo(180,200);g.lineTo(325,104);g.lineTo(470,200);g.closePath();g.fill();
+    g.beginPath();g.moveTo(398,230);g.lineTo(465,184);g.lineTo(532,230);g.closePath();g.fill();
+    g.fillStyle='#8a4b3a';g.fillRect(380,120,26,50);
+    g.fillStyle='#6d4325';g.fillRect(300,268,50,78);g.fillStyle='#f3b33d';g.beginPath();g.arc(340,310,4,0,7);g.fill();
+    g.fillStyle='#7cc4e0';for(const[x,y]of[[225,226],[375,226],[225,284],[440,258]]){g.fillRect(x,y,50,40)}
+    g.strokeStyle='#fff';g.lineWidth=5;for(const[x,y]of[[225,226],[375,226],[225,284],[440,258]]){g.strokeRect(x,y,50,40);g.beginPath();g.moveTo(x+25,y);g.lineTo(x+25,y+40);g.stroke()}
+    // tree + fence
+    g.fillStyle='#6d4325';g.fillRect(96,250,18,96);g.fillStyle='#3f8f3a';g.beginPath();g.arc(105,232,52,0,7);g.fill();
+    g.fillStyle='#fbf1de';for(let x=20;x<200;x+=22)g.fillRect(x,318,10,36);g.fillRect(20,328,180,7);
+    // title band
+    g.fillStyle='rgba(43,29,20,.88)';rr(g,24,20,420,72,18);g.fill();
+    g.fillStyle='#f3b33d';g.textAlign='left';g.textBaseline='middle';
+    const title=t('dream.title');let fs=46;do{g.font=`900 ${fs}px ${FONT}`;fs-=2}while(g.measureText(title).width>390&&fs>18);g.fillText(title,44,57);
+    // coming soon ribbon
+    g.save();g.translate(560,330);g.rotate(-.18);g.fillStyle='#d9573b';rr(g,-110,-30,220,60,14);g.fill();
+    g.fillStyle='#fff';g.textAlign='center';const soon=t('dream.soon');let f2=34;do{g.font=`900 ${f2}px ${FONT}`;f2-=2}while(g.measureText(soon).width>190&&f2>14);g.fillText(soon,0,2);g.restore();
+    g.strokeStyle='#6d4325';g.lineWidth=14;g.strokeRect(7,7,626,386);
+    tx.needsUpdate=true};
+  draw();TEXT_REDRAW.push(draw);return tx;
+}
+function buildDreamPlot(G){
+  const CX=85;
+  flat(26,22,0x92cc62,CX,-15,.011,G);                                   // lawn
+  // asphalt road from the main road up to the plot, with lane dashes, kerbs and lamps
+  flat(4.4,15.6,0x5d5a57,CX,3.4,.0145,G);flat(5.2,15.6,0xd8d0c0,CX,3.4,.0135,G);
+  for(let z=9.6;z>-4;z-=2.2)flat(.14,1,0xf3efe4,CX,z,.016,G);
+  for(const x of[CX-3,CX+3])for(const z of[6.5,.5]){box(.12,3,.12,0x3a4048,x,1.5,z,G);box(.5,.14,.5,0x3a4048,x,3.02,z,G);
+    const l=new THREE.Mesh(new THREE.BoxGeometry(.36,.16,.36),new THREE.MeshBasicMaterial({color:0xffe39a}));l.position.set(x,2.88,z);G.add(l)}
+  // entrance arch
+  box(.3,3.6,.3,0x6d4325,CX-2.6,1.8,-4,G);box(.3,3.6,.3,0x6d4325,CX+2.6,1.8,-4,G);box(5.6,.3,.34,0x6d4325,CX,3.6,-4,G);
+  const arch=signMesh(()=>t('dream.title'),4.6,'#2b1d14','#f3b33d');arch.position.set(CX,3.1,-3.8);G.add(arch);
+  // low fence round the plot, gap for the road
+  for(let x=72;x<=98;x+=1.6)if(x<CX-2.4||x>CX+2.4)box(.12,.9,.12,0xa77447,x,.45,-4,G);
+  for(let x=72;x<=98;x+=1.6)box(.12,.9,.12,0xa77447,x,.45,-26,G);
+  for(let z=-26;z<=-4;z+=1.6){box(.12,.9,.12,0xa77447,72,.45,z,G);box(.12,.9,.12,0xa77447,98,.45,z,G)}
+  box(26,.1,.08,0xa77447,CX,.75,-26,G);box(.08,.1,22,0xa77447,72,.75,-15,G);box(.08,.1,22,0xa77447,98,.75,-15,G);
+  box(10.6,.1,.08,0xa77447,77.3,.75,-4,G);box(10.6,.1,.08,0xa77447,92.7,.75,-4,G);
+  // path to the foundation
+  flat(3,6,0xe8d29f,CX,-7,.012,G);flat(9,3,0xe8d29f,81.5,-11.5,.012,G);
+  // foundation outline with stakes and string
+  flat(11,8,0xcfc6b8,81,-17,.016,G);flat(10.4,7.4,0xb9b0a1,81,-17,.017,G);
+  for(const[x,z]of[[75.6,-13.1],[86.4,-13.1],[75.6,-20.9],[86.4,-20.9]])box(.12,.9,.12,0xd9a066,x,.45,z,G);
+  box(10.8,.03,.03,0xd9573b,81,.75,-13.1,G);box(10.8,.03,.03,0xd9573b,81,.75,-20.9,G);box(.03,.03,7.8,0xd9573b,75.6,.75,-17,G);box(.03,.03,7.8,0xd9573b,86.4,.75,-17,G);
+  // billboard with the house picture
+  box(.22,3.6,.22,0x6d4325,77.6,1.8,-23.2,G);box(.22,3.6,.22,0x6d4325,84.4,1.8,-23.2,G);
+  box(7.2,4.4,.16,0x2b1d14,81,3.4,-23.32,G);
+  const bb=new THREE.Mesh(new THREE.PlaneGeometry(6.9,4.3),new THREE.MeshBasicMaterial({map:houseBillboardTex()}));bb.position.set(81,3.4,-23.22);G.add(bb);
+  // your own work area (empty for now)
+  flat(7,9,0xe8d29f,93.5,-15,.016,G);
+  const ss=signMesh(()=>t('sign.sales'),2.6,'#2b1d14','#f3b33d');ss.position.set(93.5,1.7,-10.2);G.add(ss);box(.12,1.6,.12,0x6d4325,93.5,.8,-10.3,G);
+  // a few trees round the plot
+  for(const[x,z]of[[70,-8],[70,-20],[100,-10],[100,-22],[76,-28],[92,-28]]){cyl(.18,.24,1.4,0x8b5a2b,7,x,.7,z,G);mesh(new THREE.IcosahedronGeometry(.95,0),0x3f8f3a,x,1.9,z,G)}
+}
+/* customer car park: across the road from the shop; cars drive in, park nose-in, the driver walks over the zebra crossing */
+const LOT={slots:[],aisleZ:19.6,slotZ:22.6,driveX:33},CARS=[];
+const lotSlots=()=>Math.min(8,4+lvOf('shop'));
+function buildLot(){
+  flat(25.2,6.6,0x5d5a57,22.2,21.9,.014);flat(25.8,7.2,0xd8d0c0,22.2,21.9,.013);
+  flat(3.6,3.2,0x5d5a57,LOT.driveX,17.2,.0145);                       // driveway over the sidewalk
+  for(let i=0;i<8;i++){const x=11.5+i*2.6;LOT.slots.push({i,x,car:null});}
+  for(let i=0;i<=8;i++)flat(.1,3.8,0xf3efe4,10.2+i*2.6,22.7,.016);
+  for(let z=11.7;z<15.6;z+=.8)flat(3,.42,0xf3efe4,20,z,.017);       // zebra crossing
+  const sg=signMesh(()=>t('sign.lot'),2.4,'#3a6ea5','#fbf1de');sg.position.set(36.2,1.7,19.1);box(.12,1.6,.12,0x3a4048,36.2,.8,19,scene);
+  for(const x of[10.5,16,24,30])scene.add(mesh(new THREE.IcosahedronGeometry(.55,0),0x4f9c3e,x,.45,25.8));
+}
+const CAR_COLORS=[0xd9573b,0x3a6ea5,0xf3b33d,0x5cae4a,0xfbf1de,0x2b1d14,0x8d5fd3,0x2a9d8f];
+function makeCar(){
+  const g=new THREE.Group(),c=pick(CAR_COLORS);
+  box(1.7,.55,3.4,c,0,.6,0,g);box(1.5,.5,1.8,0x9fc3d6,0,1.12,-.15,g);box(1.56,.08,1.7,c,0,1.4,-.15,g);
+  box(1.72,.16,.12,0x3a4048,0,.45,1.72,g);box(1.72,.16,.12,0x3a4048,0,.45,-1.72,g);
+  for(const x of[-.6,.6]){const h=new THREE.Mesh(new THREE.BoxGeometry(.32,.14,.04),new THREE.MeshBasicMaterial({color:0xfff3c4}));h.position.set(x,.72,1.71);g.add(h);
+    const tl=new THREE.Mesh(new THREE.BoxGeometry(.3,.12,.04),new THREE.MeshBasicMaterial({color:0xd9573b}));tl.position.set(x,.72,-1.71);g.add(tl)}
+  const wh=[];for(const[x,z]of[[.86,1.1],[-.86,1.1],[.86,-1.1],[-.86,-1.1]]){const w=mesh(new THREE.CylinderGeometry(.32,.32,.24,12),0x222222,x,.32,z,g);w.rotation.z=PI/2;wh.push(w)}
+  scene.add(g);return{g,wh};
+}
+function spawnCar(slot){
+  const car=Object.assign(makeCar(),{slot,state:'in',face:-PI/2});
+  car.g.position.set(140,0,12.3);car.g.rotation.y=car.face;
+  car.path=[{p:new V3(LOT.driveX,0,12.3)},{p:new V3(LOT.driveX,0,LOT.aisleZ)},{p:new V3(slot.x,0,LOT.aisleZ)},{p:new V3(slot.x,0,LOT.slotZ)}];
+  slot.car=car;CARS.push(car);
+}
+function carLeave(car){
+  car.state='leave';
+  car.path=[{p:new V3(car.slot.x,0,LOT.aisleZ),rev:true},{p:new V3(LOT.driveX,0,LOT.aisleZ)},{p:new V3(LOT.driveX,0,14.6)},{p:new V3(140,0,14.6)}];
+}
+function updCars(dt){
+  for(let i=CARS.length-1;i>=0;i--){const car=CARS[i],gp=car.g.position;
+    if(!car.path.length){
+      if(car.state==='in'){car.state='parked';spawnCustomer(false,car)}
+      else if(car.state==='leave'){scene.remove(car.g);car.slot.car=null;CARS.splice(i,1)}
+      continue}
+    const seg=car.path[0],dx=seg.p.x-gp.x,dz=seg.p.z-gp.z,d=Math.hypot(dx,dz);
+    const sp=gp.z<16.4&&seg.p.z<16.4?10:3.4,step=Math.min(d,sp*dt);
+    if(d>.01){gp.x+=dx/d*step;gp.z+=dz/d*step;if(!seg.rev)car.face=Math.atan2(dx,dz);car.wh.forEach(w=>w.rotation.x+=(seg.rev?-1:1)*step*3)}
+    car.g.rotation.y=lerpAng(car.g.rotation.y,car.face,1-Math.exp(-dt*8));
+    if(d-step<.02)car.path.shift();
+  }
+}
+let carT=3;
+function buildWorld(){
+  const ground=new THREE.Mesh(new THREE.PlaneGeometry(300,140),M(0x9cce68));ground.position.x=25;ground.rotation.x=-PI/2;ground.receiveShadow=true;scene.add(ground);
+  flat(62,8.4,0xe8d29f,15,-3.6,.012);
+  flat(10,3,0xe8d29f,-17,-3,.011);
+  SHOP.floor=flat(1,9.2,0xcfa877,0,5.1,.013);SHOP.stripes=[];
+  for(let x=3.2;x<46;x+=1.2)SHOP.stripes.push(flat(.04,9.2,0xb58f5f,x,5.1,.014));
+  flat(300,4.6,0x5d5a57,25,13.5,.014);
+  for(let x=-120;x<170;x+=3)flat(1.4,.14,0xf3efe4,x,13.5,.016);
+  flat(300,1.6,0xd8d0c0,25,17.5,.013);
+  buildLot();
+  for(let x=-31.5;x<=34;x+=1.6)if(x<-18.6||x>-1.4)box(.12,.9,.12,0xa77447,x,.45,-13.6,scene);
+  for(const[w,cx]of[[13,-25],[35.5,16.25]]){box(w,.1,.08,0xa77447,cx,.75,-13.6,scene);box(w,.1,.08,0xa77447,cx,.4,-13.6,scene)}
+  // back yard behind the sawmill: wide paved road on the left, yard for the 2nd sawmill
+  flat(5.6,8.6,0xe8d29f,-15.8,-9.6,.0115);
+  flat(17,14,0xe8d29f,-10,-20.6,.012);
+  for(let x=-18.5;x<=-1.5;x+=1.7)box(.12,.9,.12,0xa77447,x,.45,-27.6,scene);
+  for(let z=-27.6;z<=-13.6;z+=1.75){box(.12,.9,.12,0xa77447,-18.5,.45,z,scene);box(.12,.9,.12,0xa77447,-1.5,.45,z,scene)}
+  box(17,.1,.08,0xa77447,-10,.75,-27.6,scene);box(.08,.1,14,0xa77447,-18.5,.75,-20.6,scene);box(.08,.1,14,0xa77447,-1.5,.75,-20.6,scene);
+  // gate segment: closes the back area until plumbing opens
+  BACK.gate=new THREE.Group();scene.add(BACK.gate);
+  for(let x=35.6;x<=60;x+=1.6)box(.12,.9,.12,0xa77447,x,.45,-13.6,BACK.gate);
+  box(26,.1,.08,0xa77447,47,.75,-13.6,BACK.gate);box(26,.1,.08,0xa77447,47,.4,-13.6,BACK.gate);
+  // back area: clay + iron mine
+  BACK.g=new THREE.Group();scene.add(BACK.g);
+  flat(26,11.4,0x9a7a62,47,-19.3,.012,BACK.g);
+  for(let x=34;x<=60;x+=1.6)box(.12,.9,.12,0xa77447,x,.45,-25,BACK.g);
+  for(let z=-25;z<=-13.6;z+=1.6){box(.12,.9,.12,0xa77447,34,.45,z,BACK.g);box(.12,.9,.12,0xa77447,60,.45,z,BACK.g)}
+  box(26,.1,.08,0xa77447,47,.75,-25,BACK.g);box(.08,.1,11.4,0xa77447,34,.75,-19.3,BACK.g);box(.08,.1,11.4,0xa77447,60,.75,-19.3,BACK.g);
+  HOUSE.g=new THREE.Group();scene.add(HOUSE.g);buildDreamPlot(HOUSE.g);
+  {const a=signMesh(()=>t('sign.clay'),2.6,'#b5653d','#fbf1de');a.position.set(40,1.6,-14.4);BACK.g.add(a);box(.12,1.6,.12,0x6d4325,40,.8,-14.5,BACK.g);
+   const b=signMesh(()=>t('sign.iron'),2.6,'#3a4048','#fbf1de');b.position.set(52,1.6,-14.4);BACK.g.add(b);box(.12,1.6,.12,0x6d4325,52,.8,-14.5,BACK.g)}
+  [[-11,7],[-13,9],[-20,8],[65,9],[66,3],[-26,8]].forEach(([x,z])=>scene.add(mesh(new THREE.IcosahedronGeometry(.7+Math.random()*.4,0),0x4f9c3e,x,.55,z)));
+
+  // sawmill
+  sawBld=makeBuilding(-10,0xb5703c,0x7a3b2e,()=>t('sign.saw'),'saw');
+  addZone('sawIn',{x:-11.7,z:-5.3,kind:'drop',accepts:t=>t==='log',type:'log',cap:24,pile:[0,.02,-1.55],layout:pileLayout(1,3,0,.34),label:()=>t('in.log'),glyph:'↓',tint:T_DROP});
+  addZone('sawOut',{x:-8.3,z:-5.3,kind:'pickup',type:'plank',cap:30,pile:[0,.02,-1.55],layout:pileLayout(1,2,0,.36),label:()=>t('in.plank'),glyph:'↑',tint:T_PICK});
+  machines.push({id:'saw',in:Z.sawIn,out:Z.sawOut,inN:1,outN:2,outType:'plank',base:1.6,pad:'saw',mouth:new V3(-10,1.1,-7.6),t:0,busy:false,batch:0,bld:sawBld,kind:'saw',on:()=>true});
+  addPad({id:'saw_speed',x:-6,z:-11.1,name:'Արագություն',label:'ԱՐԱԳՈՒԹՅՈՒՆ',glyph:'»',base:1500,mul:1.75,max:8,done:'done.speed',onLevel:()=>refreshBuilding('saw',true)});
+  addPad({id:'saw_qty',x:-6,z:-8.8,name:'Քանակ',label:'ՔԱՆԱԿ',glyph:'+',base:4000,mul:2.4,max:3,done:'done.floor',onLevel:()=>refreshBuilding('saw',true)});
+  // second sawmill: behind the first one, facing it across the opened fence
+  {const own2=()=>!!S.owned.saw2;
+   const b2=makeBuilding(-10,0xb5703c,0x7a3b2e,()=>t('sign.saw2'),'saw',-23.5);b2.g.visible=own2();SAWB.b=b2;
+   SAWB.lot=makeLot(-10,-23.5);SAWB.lot.visible=!own2();
+   addLabel(()=>new V3(-10,2.2,-23),()=>own2()?null:t('sign.saw2'),'locked');
+   addZone('saw2In',{x:-11.7,z:-18.8,kind:'drop',accepts:t=>t==='log',type:'log',cap:24,pile:[0,.02,-1.55],layout:pileLayout(1,3,0,.34),label:()=>t('in.log'),glyph:'↓',tint:T_DROP,active:own2});
+   addZone('saw2Out',{x:-8.3,z:-18.8,kind:'pickup',type:'plank',cap:30,pile:[0,.02,-1.55],layout:pileLayout(1,2,0,.36),label:()=>t('in.plank'),glyph:'↑',tint:T_PICK,active:own2});
+   machines.push({id:'saw2',in:Z.saw2In,out:Z.saw2Out,inN:1,outN:2,outType:'plank',base:1.6,pad:'saw2',mouth:new V3(-10,1.1,-21.1),t:0,busy:false,batch:0,bld:b2,kind:'saw',on:own2});
+   addPad({id:'saw2_speed',x:-4.4,z:-24.6,name:'Արագություն',label:'ԱՐԱԳՈՒԹՅՈՒՆ',glyph:'»',base:2500,mul:1.75,max:8,show:own2,done:'done.speed',onLevel:()=>refreshBuilding('saw2',true)});
+   addPad({id:'saw2_qty',x:-4.4,z:-22.3,name:'Քանակ',label:'ՔԱՆԱԿ',glyph:'+',base:6000,mul:2.4,max:3,show:own2,done:'done.floor',onLevel:()=>refreshBuilding('saw2',true)});
+   addPad({id:'saw2_buy',x:-10,z:-23.1,name:'Երկրորդ սղոցարան',label:'ԳՆԵԼ',glyph:'֏',base:20000,max:1,show:()=>!own2(),done:'done.saw',onLevel:()=>{
+     S.owned.saw2=true;b2.g.visible=true;b2.pop=0;SAWB.lot.visible=false;toast(t('sign.saw2'),t('t.saw2'));refreshBlocks();save()}});
+  }
+
+  // furniture + plumbing factories
+  PRODUCTS.forEach(p=>{
+    const owned=()=>!!S.owned[p.id],cb=p.cost||(p.with?PROD[p.with].cost:0);
+    const b=makeBuilding(p.x,p.wall,p.roof,()=>ps(p),'press');b.g.visible=owned();
+    const lot=makeLot(p.x);lot.visible=!owned();
+    FAC[p.id]={b,lot};
+    const zi=addZone('in_'+p.id,{x:p.x-1.7,z:-5.3,kind:'drop',accepts:t=>t===p.inType,type:p.inType,cap:p.inType!=='plank'?16:24,pile:[0,.02,-1.55],
+      layout:p.inType!=='plank'?pileLayout(2,2,.46,.38):pileLayout(1,2,0,.36),label:()=>t('in.'+p.inType),glyph:'↓',tint:T_DROP,active:owned});
+    const zo=addZone('out_'+p.id,{x:p.x+1.7,z:-5.3,kind:'pickup',type:p.id,cap:12,pile:[0,.02,-1.5],layout:pileLayout(2,2,.72,.62),label:()=>ps(p),glyph:'↑',tint:T_PICK,active:owned});
+    machines.push({id:p.id,in:zi,out:zo,inN:p.inN,outN:1,outType:p.id,base:p.time,pad:p.id,mouth:new V3(p.x,1.05,-7.5),t:0,busy:false,batch:0,bld:b,kind:'press',on:owned});
+    addPad({id:p.id+'_speed',x:p.x+4,z:-11.1,name:'Արագություն',label:'ԱՐԱԳՈՒԹՅՈՒՆ',glyph:'»',base:Math.max(1500,cb*.12),mul:1.75,max:8,show:owned,done:'done.speed',onLevel:()=>refreshBuilding(p.id,true)});
+    addPad({id:p.id+'_qty',x:p.x+4,z:-8.8,name:'Քանակ',label:'ՔԱՆԱԿ',glyph:'+',base:Math.max(4000,cb*.3),mul:2.4,max:3,show:owned,done:'done.floor',onLevel:()=>refreshBuilding(p.id,true)});
+    if(p.cost){
+      addPad({id:p.id+'_buy',x:p.x,z:-9.6,name:`${p.name} · գործարան`,label:'ԳՆԵԼ',glyph:'֏',base:p.cost,max:1,show:()=>!owned()&&S.level>=p.unlock,done:'done.factory',onLevel:()=>ownFactory(p)});
+      addLabel(()=>new V3(p.x,2.4,-9),()=>!owned()&&S.level<p.unlock?t('lk.lv',{sign:ps(p),n:p.unlock}):null,'locked');
+    }
+    if(p.with)addLabel(()=>new V3(p.x,2.4,-9),()=>!owned()?t('lk.with',{sign:ps(p),name:pn(PROD[p.with])}):null,'locked');
+    const sx=p.shelfX;
+    const sg=new THREE.Group();sg.position.set(sx,0,1.6);scene.add(sg);
+    box(1.9,.14,1.3,0x8a5a32,0,.07,0,sg);box(1.9,1.5,.1,0x6d4325,0,.75,-.7,sg);
+    const ss=signMesh(()=>ps(p),1.8,'#2b1d14','#fbf1de');ss.position.set(0,1.75,-.64);sg.add(ss);sg.visible=owned();
+    const sz=addZone('shelf_'+p.id,{x:sx,z:3.3,kind:'drop',accepts:t=>t===p.id,type:p.id,capFn:shopCap,pile:[0,.14,-1.7],layout:pileLayout(2,2,.74,.6),label:()=>t('z.shelf'),glyph:'↓',tint:T_DROP,active:owned});
+    SH[p.id]=sz;FAC[p.id].shelf=sg;
+  });
+
+  // registers
+  [22.2,26.4,30.6,34.8,39,43.2,54.4,58.2].forEach((rx,i)=>{
+    // stall like v0.1: counter runs front-to-back, striped awning, cash on the counter's front end
+    const rz=i===8?-31.2:3.5;
+    const g=new THREE.Group();g.position.set(rx,0,rz);(i===8?BACK.g:scene).add(g);
+    box(1.1,1,3,0xa0622f,0,.5,0,g);box(1.25,.1,3.15,0xd9a066,0,1.04,0,g);
+    [[-.55,-1.5],[.55,-1.5],[-.55,1.5],[.55,1.5]].forEach(([px,pz])=>box(.12,2.7,.12,0x6d4325,px,1.35,pz,g));
+    for(let k=0;k<5;k++)box(1.6,.12,.63,k%2?0xfbf1de:0xd9573b,0,2.75,-1.26+k*.63,g);
+    const annex=i===6||i===7,bulk=i===8,active=i===6||i===8?()=>!!S.owned.sink:i===7?()=>!!S.owned.sink&&lvOf('reg_annex')>0:()=>i<1+Math.min(lvOf('reg'),lvOf('shop'));
+    const z=addZone('cash'+i,{x:rx-1.45,z:rz-.1,kind:'cash',type:'bill',cap:999,pile:[1.45,1.09,1.1],layout:pileLayout(2,2,.5,.3),label:()=>t('z.reg'),glyph:'֏',tint:'rgba(196,134,26,.45)',active});
+    regs.push({i,x:rx,z:rz,qz0:rz-.5,g,zone:z,active,annex,bulk});g.visible=active();
+  });
+  // shop hall: low walls, entrance facing the road, door frame with sign, plants, mat
+  const WALL=0xefe3c8,TRIM=0x8a5a32;
+  box(.22,1,9.4,WALL,2.9,.5,5.1,scene);box(15.1,1,.22,WALL,10.35,.5,9.7,scene);
+  box(.24,.1,9.5,TRIM,2.9,1.05,5.1,scene);box(15.2,.1,.24,TRIM,10.35,1.05,9.7,scene);
+  SHOP.right=new THREE.Group();scene.add(SHOP.right);box(.22,1,9.4,WALL,0,.5,5.1,SHOP.right);box(.24,.1,9.5,TRIM,0,1.05,5.1,SHOP.right);
+  for(const z of[9,.9]){cyl(.28,.22,.5,0xb5653d,8,-.7,.25,z,SHOP.right);mesh(new THREE.IcosahedronGeometry(.42,0),0x3f8f3a,-.7,.78,z,SHOP.right)}
+  SHOP.front=box(1,1,.22,WALL,0,.5,9.7,scene);SHOP.frontTrim=box(1,.1,.24,TRIM,0,1.05,9.7,scene);
+  // building-materials shop block (opens with plumbing)
+  SHOP.annex=new THREE.Group();scene.add(SHOP.annex);{const A=SHOP.annex;
+    flat(14.2,9.2,0xc3c8cc,53.5,5.1,.013,A);for(let x=47;x<60.4;x+=1.2)flat(.04,9.2,0x9aa1a8,x,5.1,.014,A);
+    box(.22,1,9.4,WALL,46.4,.5,5.1,A);box(.22,1,9.4,WALL,60.6,.5,5.1,A);box(3.6,1,.22,WALL,48.2,.5,9.7,A);box(7.6,1,.22,WALL,56.8,.5,9.7,A);
+    box(.24,.1,9.5,0x5a6470,46.4,1.05,5.1,A);box(.24,.1,9.5,0x5a6470,60.6,1.05,5.1,A);
+    box(.3,2.8,.3,0x5a6470,50,1.4,9.7,A);box(.3,2.8,.3,0x5a6470,53,1.4,9.7,A);box(3.5,.32,.34,0x5a6470,51.5,2.8,9.7,A);
+    const sg=signMesh(()=>ps(PROD.material),3,'#3a4048','#f3b33d');sg.position.set(51.5,3.4,9.72);A.add(sg);
+    flat(2.6,1.4,0x3a4048,51.5,8.7,.018,A)}
+  box(.3,2.8,.3,TRIM,17.95,1.4,9.7,scene);box(.3,2.8,.3,TRIM,22.05,1.4,9.7,scene);box(4.5,.32,.34,TRIM,20,2.8,9.7,scene);
+  signMesh(()=>t('sign.shop'),3.4,'#d9573b','#fbf1de').position.set(20,3.4,9.72);
+  flat(3.4,1.6,0x9c3b2b,20,8.7,.018);flat(3,1.2,0xc8553f,20,8.7,.019);
+  [[3.6,9],[17.2,9],[22.8,9]].forEach(([x,z])=>{cyl(.28,.22,.5,0xb5653d,8,x,.25,z,scene);mesh(new THREE.IcosahedronGeometry(.42,0),0x3f8f3a,x,.78,z,scene)});
+  const regPad=addPad({id:'reg',x:26.4,z:3.5,name:'Նոր դրամարկղ',label:'ԴՐԱՄԱՐԿՂ',glyph:'+֏',base:6000,mul:2.2,max:5,done:'done.reg',onLevel:()=>{refreshBlocks();placeRegPad()}});
+  regPad.show=()=>lvOf('reg')<lvOf('shop');
+  function placeRegPad(){const k=1+lvOf('reg');const n=k<6?regs[k]:null;if(n){regPad.pos.set(n.x,0,3.5);regPad.g.position.copy(regPad.pos)}}
+  placeRegPad();
+  addPad({id:'reg_annex',x:58.2,z:3.5,name:'Նոր դրամարկղ',label:'ԴՐԱՄԱՐԿՂ',glyph:'+֏',base:400000,max:1,show:()=>!!S.owned.sink,done:'done.reg',onLevel:()=>refreshBlocks()});
+  addPad({id:'shop',x:14.4,z:8.3,name:'Խանութի ընդլայնում',label:'ԽԱՆՈՒԹ',glyph:'+',base:5000,mul:2.2,max:5,done:'done.shop',onLevel:l=>{refreshBlocks();toast(t('t.shopLv',{n:l}),shopUnlockText(l));checkUnlocks()}});
+
+  // parking bays
+  for(let i=0;i<3;i++){
+    const bx=-4-i*5.2;
+    const pg=new THREE.Group();pg.position.set(bx,0,0);scene.add(pg);
+    box(3.6,.16,1.3,0xa77447,0,.08,11.2,pg);flat(4.6,2.2,0xf3efe4,0,PARK,.015,pg);flat(4.4,2,0x5d5a57,0,PARK,.016,pg);
+    const b={i,x:bx,truck:null,g:pg,active:()=>i<1+lvOf('parking')};
+    const z=addZone('dock'+i,{x:bx,z:BAYZ,kind:'drop',accepts:isProduct,label:()=>t('z.truck'),glyph:'↓',tint:T_DROP,active:b.active,
+      canAccept:()=>!!b.truck&&b.truck.state==='bay'&&b.truck.stack.n<ORDER});
+    Object.defineProperty(z,'stack',{get(){return b.truck?b.truck.stack:DUMMY}});
+    b.zone=z;bays.push(b);
+  }
+  signMesh(()=>t('sign.delivery'),2.2,'#2b1d14','#f3b33d').position.set(1.6,2.35,8.4);box(.14,2.2,.14,0x6d4325,1.6,1.1,8.36,scene);
+  addPad({id:'truck',x:1.2,z:10.4,name:'Նոր բեռնատար',label:'ԲԵՌՆԱՏԱՐ',glyph:'+',base:8000,mul:2.2,max:4,done:'done.truck',onLevel:()=>makeTruck()});
+  addPad({id:'parking',x:-1.4,z:7.6,name:'Կայանատեղի',label:'ԿԱՅԱՆԱՏԵՂԻ',glyph:'P',base:12000,mul:2.5,max:2,done:'done.parking'});
+
+  for(let c=0;c<5;c++)for(let r=0;r<7;r++)makeTree(-30.5+c*2.4+(Math.random()-.5)*.7,-11.8+r*2.55+(Math.random()-.5)*.7);
+  for(let c=0;c<4;c++)for(let r=0;r<4;r++)makeRock(36.5+c*2.4+(Math.random()-.5)*.5,-15.8-r*2.4+(Math.random()-.5)*.5,'clay');
+  for(let c=0;c<5;c++)for(let r=0;r<4;r++)makeRock(47+c*2.4+(Math.random()-.5)*.5,-15.8-r*2.4+(Math.random()-.5)*.5,'iron');
+  // factory storage grows with its upgrades: qty adds a lot, speed a little
+  machines.forEach(mc=>{const bi=mc.in.cap,bo=mc.out.cap;mc.in.capFn=()=>Math.round(bi*capMul(mc));mc.out.capFn=()=>Math.round(bo*capMul(mc))});
+  refreshBlocks();
+}
+const BULK={};
+function buildBulk(){
+  for(const[id,z]of[['sink',-30.4],['material',-33.6]]){const p=PROD[id];
+    const bz=addZone('bulk_'+id,{x:51.4,z,kind:'drop',accepts:t=>t===id,type:id,cap:18,pile:[-1.6,.14,0],layout:pileLayout(2,2,.7,.6),label:()=>t('z.bulk'),glyph:'↓',tint:T_DROP,active:()=>!!S.owned.sink});
+    BULK[id]=bz;BACK.g.add(bz.marker);bz.stack.anchor.parent.remove(bz.stack.anchor);BACK.g.add(bz.stack.anchor);}
+}
+function ownFactory(p,quiet){
+  S.owned[p.id]=true;const f=FAC[p.id];f.b.g.visible=true;f.b.pop=0;f.lot.visible=false;f.shelf.visible=true;
+  PRODUCTS.forEach(o=>{if(o.with===p.id&&!S.owned[o.id])ownFactory(o,true)});
+  if(!quiet)toast(ps(p),t(p.id==='sink'?'t.sinkOpened':'t.factoryOpened'));
+  refreshBlocks();save();if(!quiet)checkUnlocks();
+}
+function shopUnlockText(l){const u=UPG.filter(u=>u.need===l).map(u=>u.name);return (u.length?t('t.canHire',{list:u.join(', ')}):'')+t('t.regSlot')}
+function layoutShop(w){
+  SHOP.floor.scale.x=w-2.9;SHOP.floor.position.x=(2.9+w)/2;
+  SHOP.stripes.forEach(m=>m.visible=m.position.x<w-.15);
+  SHOP.right.position.x=w;
+  const fw=w-22.05;SHOP.front.scale.x=fw;SHOP.front.position.x=22.05+fw/2;SHOP.frontTrim.scale.x=fw+.1;SHOP.frontTrim.position.x=22.05+fw/2;
+}
+function refreshBlocks(){
+  const w=shopW();
+  blocks=[[-12.7,-7.3,-12,-7.2],...(S.owned.saw2?[[-12.7,-7.3,-25.5,-20.7]]:[]),[2.75,3.05,.4,9.85],[w-.15,w+.15,.4,9.85],[2.75,17.95,9.55,9.85],[22.05,w+.15,9.55,9.85]];
+  blocks.push([71.85,72.15,-26,-4],[97.85,98.15,-26,-4],[72,98,-26.15,-25.85],[72,82.6,-4.15,-3.85],[87.4,98,-4.15,-3.85]);
+  if(S.owned.sink)blocks.push([46.25,46.55,.4,9.85],[60.45,60.75,.4,9.85],[46.25,50,9.55,9.85],[53,60.75,9.55,9.85]);
+  PRODUCTS.forEach(p=>{if(S.owned[p.id])blocks.push([p.x-2.7,p.x+2.7,-12,-7.2])});
+  regs.forEach(r=>{if(r.active())blocks.push([r.x-.62,r.x+.62,r.z-1.55,r.z+1.55])});
+}
+
+/* ---------- resource nodes ---------- */
+function makeTree(x,z){
+  const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
+  cyl(.26,.32,.3,0x7a4a24,8,0,.15,0,g);
+  const top=new THREE.Group();g.add(top);
+  cyl(.2,.27,1.7,0x8b5a2b,7,0,.85,0,top);
+  const s=.9+Math.random()*.3;
+  mesh(new THREE.IcosahedronGeometry(1*s,0),0x3f8f3a,0,2.05,0,top);
+  mesh(new THREE.IcosahedronGeometry(.7*s,0),0x52a845,.1,2.75,.05,top);
+  nodes.push({type:'log',g,top,pos:new V3(x,0,z),alive:true,regrow:0,shake:0,fall:1,grow:1,reserved:null,dir:Math.random()<.5?1:-1,on:()=>true,hard:1});
+}
+function makeRock(x,z,type){
+  const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
+  const iron=type==='iron';
+  flat(1.3,1.3,iron?0x4a4f56:0x8e6248,0,0,.02,g);
+  const top=new THREE.Group();g.add(top);
+  mesh(new THREE.IcosahedronGeometry(.75,0),iron?0x5b6470:0xb5653d,0,.45,0,top);mesh(new THREE.IcosahedronGeometry(.45,0),iron?0x8a949c:0xc97b52,.35,.75,.15,top);
+  if(iron){mesh(new THREE.IcosahedronGeometry(.18,0),0xc8743a,-.35,.7,.35,top);mesh(new THREE.IcosahedronGeometry(.14,0),0xc8743a,.1,.95,-.3,top)}
+  const n={type,hard:iron?1.8:1.5,g,top,pos:new V3(x,0,z),alive:true,regrow:0,shake:0,fall:1,grow:1,reserved:null,dir:1,on:()=>!!S.owned.sink,rock:true};
+  g.visible=n.on();nodes.push(n);
+}
+function updNode(t,dt){
+  t.g.visible=t.on();
+  if(!t.alive){
+    if(t.fall<1){t.fall=Math.min(1,t.fall+dt*2.6);
+      if(t.rock)t.top.scale.setScalar(Math.max(.01,1-t.fall));else t.top.rotation.z=t.dir*t.fall*t.fall*1.5;
+      if(t.fall>=1)t.top.visible=false}
+    t.regrow-=dt;if(t.regrow<=0){t.alive=true;t.top.visible=true;t.top.rotation.set(0,0,0);t.grow=0}
+  }
+  if(t.grow<1){t.grow=Math.min(1,t.grow+dt*1.8);const k=t.grow,s=1+2.7*Math.pow(k-1,3)+1.7*Math.pow(k-1,2);t.top.scale.setScalar(Math.max(.01,s))}
+  if(t.shake>0){t.shake=Math.max(0,t.shake-dt*4);t.top.rotation.x=Math.sin(t.shake*30)*.06*t.shake}
+}
+function nearestNode(p,type,forAgent){let best=null,bd=1e9;for(const t of nodes){if(!t.alive||!t.on())continue;if(type&&t.type!==type)continue;if(forAgent&&t.reserved&&t.reserved!==forAgent)continue;const d=d2(p,t.pos);if(d<bd){bd=d;best=t}}return best}
+function tryChop(a,node,dt,rate){
+  const s=a.stack;if(!node||!node.alive||s.n>=a.cap()||(s.type&&s.type!==node.type))return false;
+  a.chopping=true;a.chopT+=dt*rate;a.hitT+=dt;
+  if(a.hitT>.3){a.hitT=0;node.shake=1;if(a===P)sfx('chop')}
+  if(a.chopT>=st.chop()*node.hard){
+    a.chopT=0;node.alive=false;node.fall=0;node.regrow=node.rock?12:9;if(node.reserved)node.reserved=null;
+    const n=Math.min(2,a.cap()-s.n);
+    for(let i=0;i<n;i++){const m=makeItem(node.type);m.position.set(node.pos.x,1.1+i*.35,node.pos.z);scene.add(m);sendTo(m,s,.32)}
+    if(a===P)emit('chop');
+  }
+  return true;
+}
+
+/* ---------- machines ---------- */
+function updMachine(mc,dt){
+  if(!mc.on())return;
+  const b=mc.bld;if(b.pop<1){b.pop=Math.min(1,b.pop+dt*2.2);const k=b.pop;b.g.scale.setScalar(Math.max(.01,1+2.2*Math.pow(k-1,3)+1.2*Math.pow(k-1,2)))}
+  else if(b.bounce>0){b.bounce=Math.max(0,b.bounce-dt*1.8);const k=b.bounce,w=Math.sin((1-k)*PI*4)*k;b.g.scale.set(1-.06*w,1+.16*w,1-.06*w)}
+  b.fans.forEach(f=>f.rotation.y+=dt*(mc.busy?14:2.5));
+  if(b.flag)b.flag.rotation.y=Math.sin(T*3)*.25;
+  if(b.chimneys.length){b.smokeT-=dt*(mc.busy?1:.3)*(1+.2*b.s);if(b.smokeT<=0){b.smokeT=.45;b.chimneys.forEach(c=>puff(b.g.localToWorld(c.clone())))}}
+  const slots=1+lvOf(mc.pad+'_qty'),time=mc.base/(1+.35*lvOf(mc.pad+'_speed'));
+  if(!mc.busy){
+    const room=Math.floor((mc.out.capFn()-mc.out.stack.n)/mc.outN);
+    const k=Math.min(slots,Math.floor(mc.in.stack.items.length/mc.inN),room);
+    if(k>=1){
+      for(let i=0;i<k*mc.inN;i++){const m=mc.in.stack.pop();fly(m,()=>mc.mouth,.3+i*.02,()=>scene.remove(m),.5)}
+      mc.busy=true;mc.t=0;mc.batch=k;
+    }
+  }else{
+    mc.t+=dt;
+    if(mc.t>=time){
+      for(let i=0;i<mc.batch*mc.outN;i++){const m=makeItem(mc.outType);m.position.copy(mc.mouth);scene.add(m);sendTo(m,mc.out.stack,.35+i*.05)}
+      mc.busy=false;
+    }
+  }
+  if(mc.kind==='saw'){if(mc.busy)b.part.rotation.z-=dt*18}
+  else b.part.rotation.x=mc.busy?Math.max(0,Math.sin(T*16))*.7:b.part.rotation.x*.9;
+}
+
+/* ---------- particles: chimney smoke + upgrade confetti ---------- */
+const parts=[],PUFF_GEO=new THREE.IcosahedronGeometry(.2,0),BIT_GEO=new THREE.BoxGeometry(.14,.14,.14);
+function puff(p){if(parts.length>160)return;const m=new THREE.Mesh(PUFF_GEO,new THREE.MeshStandardMaterial({color:0xf3efe8,transparent:true,opacity:.8,flatShading:true}));
+  m.position.copy(p);scene.add(m);parts.push({m,v:new V3((Math.random()-.5)*.3,1.1,(Math.random()-.5)*.3),t:0,life:2,smoke:true})}
+function burst(p){const cols=[0xf3b33d,0x5cae4a,0xfbf1de,0xd9573b];for(let i=0;i<28;i++){const m=new THREE.Mesh(BIT_GEO,M(pick(cols)));m.position.copy(p);scene.add(m);
+  const a=Math.random()*2*PI,sp=2+Math.random()*3;parts.push({m,v:new V3(Math.cos(a)*sp,4+Math.random()*3,Math.sin(a)*sp),t:0,life:1.4,spin:Math.random()*10})}}
+function updParticles(dt){for(let i=parts.length-1;i>=0;i--){const q=parts[i];q.t+=dt;q.m.position.addScaledVector(q.v,dt);
+  if(q.smoke){q.m.scale.setScalar(1+q.t*1.4);q.m.material.opacity=.8*(1-q.t/q.life)}else{q.v.y-=12*dt;q.m.rotation.x+=q.spin*dt;q.m.rotation.y+=q.spin*dt;if(q.m.position.y<.05){q.m.position.y=.05;q.v.set(0,0,0)}}
+  if(q.t>=q.life){scene.remove(q.m);if(q.smoke)q.m.material.dispose();parts.splice(i,1)}}}
+const ghostCache={};
+function ghostOf(m){let g=ghostCache[m.uuid];if(!g){g=m.clone();g.transparent=true;g.opacity=.22;g.depthWrite=false;g.userData.isGhost=true;ghostCache[m.uuid]=g}return g}
+function setGhost(b,on){
+  if(!!b.ghost===on)return;b.ghost=on;
+  b.g.traverse(o=>{if(!o.isMesh)return;
+    if(on){if(!o.material.userData.isGhost){o.userData.mat=o.material;o.material=ghostOf(o.material);o.castShadow=false}}
+    else if(o.userData.mat){o.material=o.userData.mat;o.userData.mat=null;o.castShadow=true}});
+}
+function fadeBuildings(){
+  for(const mc of machines){const b=mc.bld,gp=b.g.position;
+    const on=mode==='play'&&b.g.visible&&Math.abs(P.pos.x-gp.x)<4.2&&P.pos.z<gp.z-2.3&&P.pos.z>gp.z-15;
+    setGhost(b,on);}
+}
+const capMul=mc=>1+.6*lvOf(mc.pad+'_qty')+.1*lvOf(mc.pad+'_speed');
+function refreshBuilding(id,fx){const mc=machines.find(m=>m.pad===id);if(!mc)return;const b=mc.bld;
+  setBuildingLevel(b,lvOf(id+'_speed'),lvOf(id+'_qty'));
+  if(fx){b.bounce=1;burst(b.g.position.clone().setY(b.top));sfx('level');
+    floatText(b.g.position.clone().setY(b.top+1.2),t('f.cap',{k:1+lvOf(id+'_qty'),c:mc.out.capFn()}))}}
+
+/* ================= player ================= */
+const P=makeAgent(skinById(S.skin),{cap:()=>st.cap(),still:0});
+P.pos.set(-4,0,0);
+function setSkin(id){
+  const old=P.ch,ch=makeChar(skinById(id));
+  ch.g.position.copy(old.g.position);ch.g.rotation.copy(old.g.rotation);scene.remove(old.g);scene.add(ch.g);
+  P.ch=ch;P.pos=ch.g.position;P.stack.anchor=ch.anchor;P.stack.items.forEach(m=>ch.anchor.add(m));
+  S.skin=id;save();
+}
+function collide(p){
+  p.x=clamp(p.x,-31.5,100);p.z=clamp(p.z,-39.4,25.6);
+  if(p.z<-13.2&&p.x>=62){if(p.z<-25.6)p.z=-25.6}
+  else if(p.z<-13.2){if(p.x<=15&&p.z<-27.2)p.z=-27.2;if(p.x>15&&p.z<-24.6)p.z=-24.6;const sk=p.x>15,ok=sk?S.owned.sink:true,a=sk?34.4:-18.2,b=sk?59.6:-1.8;
+    if(!ok)p.z=-13.2;else if(p.x<a||p.x>b){if(p.z>-13.9)p.z=-13.2;else p.x=clamp(p.x,a,b)}}
+  for(const [x1,x2,z1,z2] of blocks){const r=.3;
+    if(p.x>x1-r&&p.x<x2+r&&p.z>z1-r&&p.z<z2+r){const dl=p.x-(x1-r),dr=x2+r-p.x,du=p.z-(z1-r),dd=z2+r-p.z,m=Math.min(dl,dr,du,dd);
+      if(m===dl)p.x=x1-r;else if(m===dr)p.x=x2+r;else if(m===du)p.z=z1-r;else p.z=z2+r}}
+}
+function updPlayer(dt){
+  const iv=inputVec();const mag=Math.hypot(iv.x,iv.z);
+  P.moving=false;P.chopping=false;
+  if(mag>.12){const sp=st.speed()*Math.min(1,mag);P.pos.x+=iv.x/mag*sp*dt;P.pos.z+=iv.z/mag*sp*dt;P.face=Math.atan2(iv.x,iv.z);P.moving=true}
+  P.still=P.moving?0:P.still+dt;
+  collide(P.pos);
+  const nd=nearestNode(P.pos);
+  if(nd&&d2(P.pos,nd.pos)<1.6&&tryChop(P,nd,dt,1)){if(!P.moving)P.face=Math.atan2(nd.pos.x-P.pos.x,nd.pos.z-P.pos.z)}
+  P.cool-=dt;if(P.cool>0)return;
+  for(const z of zones){
+    if(!z.active()||d2(P.pos,z.pos)>z.r)continue;let m=null;
+    if(z.kind==='drop'){if(P.stack.items.length&&z.accepts(P.stack.type)&&z.canAccept()){m=move(P.stack,z.stack);if(m)emit('drop',z.id)}}
+    else if(z.kind==='pickup'){if(z.stack.items.length&&(!P.stack.type||P.stack.type===z.stack.type)&&P.stack.n<P.cap()){m=move(z.stack,P.stack);if(m)emit('pick',z.id)}}
+    else if(z.kind==='cash'&&z.stack.items.length){
+      m=z.stack.pop();const b=m,v=b.userData.v;
+      fly(b,()=>P.pos.clone().setY(1.3),.22,()=>{scene.remove(b);addMoney(v)},.6);emit('cash');
+    }
+    if(m){P.cool=z.kind==='cash'?.035:.075;break}
+  }
+}
+function throwAll(){
+  if(!P.stack.items.length)return;
+  const items=P.stack.items.splice(0);if(P.stack.incoming===0)P.stack.type=null;
+  items.forEach((m,i)=>{const tg=new V3(P.pos.x+Math.sin(P.face)*1.5+(Math.random()-.5)*1.2,.05,P.pos.z+Math.cos(P.face)*1.5+(Math.random()-.5)*1.2);
+    fly(m,()=>tg,.3+i*.03,()=>shrinks.push({m,t:0}),.9)});
+  sfx('throw');
+}
+
+/* ================= workers ================= */
+const REST=[new V3(-6,0,-1.2),new V3(-4.5,0,-1.2),new V3(-3,0,-1.2),new V3(-1.5,0,-1.2)];
+const WORKER_SKIN={
+  lumber:{shirt:0xe07a1f,pants:0x3b4a3a,hat:0xf0a020,hatType:'hard'},
+  carrier:{shirt:0x2b8c8c,pants:0x34404f,hat:0x1f6b6b,hatType:'cap'},
+  cashier:{shirt:0xfbf1de,pants:0x2b1d14,hat:0xd9573b,hatType:'cap'},
+  stocker:{shirt:0x5cae4a,pants:0x2a3a2a,hat:0x3d8a31,hatType:'cap'},
+  manager:{shirt:0x34495e,pants:0x1f2a36,hat:0x1f2a36,hatType:'none'},
+  consult:{shirt:0x8d5fd3,pants:0x2b1d14,hat:0x8d5fd3,hatType:'none'},
+  robot:{robot:true},
+  secCarrier:{shirt:0x3a6ea5,pants:0x2a3a5c,hat:0xf3b33d,hatType:'hard'},
+  secCashier:{shirt:0xc9ccd1,pants:0x2b1d14,hat:0x5a6470,hatType:'cap'},
+  miner:{shirt:0x6b4e16,pants:0x34404f,hat:0xf4c430,hatType:'hard'},
+};
+const SHOP_STAFF=['cashier','stocker','manager','consult','secCashier'];
+function spawnWorker(kind){
+  const sk=WORKER_SKIN[kind];
+  const w=makeAgent(sk,{kind,speed:kind==='robot'?5.2:3.4,cap:()=>kind==='lumber'?4:kind==='robot'?8:5,mode:'chop',job:null,phase:'get',idx:workers.filter(o=>o.kind===kind).length,stuck:0});
+  if(kind==='secCashier')w.pos.set(51.5,0,8);else if(SHOP_STAFF.includes(kind))w.pos.set(20,0,8);else if(kind==='miner'||kind==='secCarrier')w.pos.set(44,0,-5);else if(kind==='robot'){w.pos.set(2,0,5);addLabel(()=>w.pos.clone().setY(2.3+w.stack.n*.04),()=>w.job&&w.job.label?(w.job.urgent?'<b>!</b> ':'')+w.job.label():null,'bot')}else w.pos.set(kind==='lumber'?-16:-6,0,kind==='lumber'?-2:-1.5);workers.push(w);
+}
+/* cashiers first, then robots, each take the next free active register; main and building-materials registers interleave */
+const REG_ORDER=[0,6,1,2,7,3,4,5];
+function assignStaff(){
+  const used=new Set(),annex=[6,7].map(i=>regs[i]).filter(r=>r&&r.active());
+  workers.filter(w=>w.kind==='secCashier').forEach((w,j)=>{w.reg=annex[j]||null;if(w.reg)used.add(w.reg)});
+  const order=REG_ORDER.map(i=>regs[i]).filter(r=>r&&r.active()&&!used.has(r));
+  workers.filter(w=>w.kind==='cashier').forEach((w,j)=>{w.reg=order[j]||null});
+}
+function updCashier(w,dt){
+  const r=w.reg;w.post=false;
+  if(!r){moveTo(w,w.kind==='secCashier'?new V3(47.6+w.idx*1.2,0,8.4):new V3(5+w.idx*1.2,0,8.6),dt,w.speed*.6);if(!w.moving)w.face=0;return}
+  if(moveTo(w,new V3(r.x-1.15,0,r.z+.1),dt,w.speed)){w.face=PI/2;w.post=true}
+}
+const GAP_FRONT=new V3(44,0,-6.2),GAP_BACK=new V3(44,0,-14.6);
+function updMiner(w,dt){
+  const s=w.stack;w.chopping=false;
+  if(!S.owned.sink){moveTo(w,new V3(44,0,-5),dt,w.speed*.6);return}
+  if(w.way&&w.way.length){if(moveTo(w,w.way[0],dt,w.speed))w.way.shift();return}
+  if(w.mode==='deliver'){
+    if(s.n===0){w.mode='mine';w.res=null;w.way=[GAP_FRONT.clone(),GAP_BACK.clone()];return}
+    const z=s.type==='iron'?Z.in_material:Z.in_sink;
+    if(!moveTo(w,z.pos,dt,w.speed))return;
+    w.cool-=dt;if(w.cool<=0&&s.items.length&&z.canAccept()){move(s,z.stack);w.cool=.12}
+    return;
+  }
+  if(w.pos.z>-13.4){w.way=[GAP_FRONT.clone(),GAP_BACK.clone()];return}
+  if(!w.res){const a=Z.in_sink,b=Z.in_material;w.res=a.stack.n/a.capFn()<=b.stack.n/b.capFn()?'clay':'iron'}
+  if(s.n>=w.cap()){w.mode='deliver';if(w.tree){w.tree.reserved=null;w.tree=null}w.way=[GAP_BACK.clone(),GAP_FRONT.clone()];return}
+  if(!w.tree||!w.tree.alive){if(w.tree)w.tree.reserved=null;w.tree=nearestNode(w.pos,w.res,w);if(w.tree)w.tree.reserved=w;else{w.moving=false;if(s.n>0){w.mode='deliver';w.way=[GAP_BACK.clone(),GAP_FRONT.clone()]}return}}
+  const tp=w.tree.pos;
+  if(d2(w.pos,tp)>1.1)moveTo(w,tp,dt,w.speed);
+  else{w.moving=false;w.face=Math.atan2(tp.x-w.pos.x,tp.z-w.pos.z);tryChop(w,w.tree,dt,.75)}
+}
+function updManager(w,dt){
+  if(!w.tg||!w.tg.zone.stack.items.length){w.tg=regs.filter(r=>r.active()&&!r.bulk&&r.zone.stack.items.length).sort((a,b)=>b.zone.stack.items.length-a.zone.stack.items.length)[0]||null}
+  if(!w.tg){moveTo(w,new V3(8+w.idx*2,0,7.4),dt,w.speed*.6);if(!w.moving)w.face=0;return}
+  const z=w.tg.zone;if(!moveTo(w,new V3(z.pos.x-.3,0,z.pos.z+(w.idx?.7:-.4)),dt,w.speed))return;
+  w.face=PI/2;w.cool-=dt;
+  if(w.cool<=0){w.cool=.08;const b=z.stack.pop();if(b){const v=b.userData.v;fly(b,()=>w.pos.clone().setY(1.3),.22,()=>{scene.remove(b);addMoney(v,d2(P.pos,w.pos)>8)},.6)}}
+}
+function updConsult(w,dt){if(moveTo(w,new V3(7+w.idx*7,0,6.4),dt,w.speed*.7))w.face=Math.sin(T*.6+w.idx*2)*1.2+PI*0}
+function regServer(r){
+  if(d2(P.pos,r.zone.pos)<r.zone.r)return 'player';
+  const w=workers.find(w=>w.reg===r&&w.post);if(w)return w.kind;
+  return null;
+}
+function updLumber(w,dt){
+  const s=w.stack;w.chopping=false;
+  if(w.mode==='deliver'){
+    if(s.n===0){w.mode='chop';return}
+    if(!w.dst)w.dst=sawIns()[0];const si=w.dst;
+    if(!moveTo(w,si.pos,dt,w.speed))return;
+    w.cool-=dt;if(w.cool<=0&&s.items.length&&si.canAccept()){move(s,si.stack);w.cool=.12}
+    if(s.n===0)w.dst=null;
+    return;
+  }
+  if(s.n>=w.cap()){w.mode='deliver';if(w.tree){w.tree.reserved=null;w.tree=null}return}
+  if(!w.tree||!w.tree.alive){if(w.tree)w.tree.reserved=null;w.tree=nearestNode(w.pos,'log',w);if(w.tree)w.tree.reserved=w;else{if(s.n>0)w.mode='deliver';w.moving=false;return}}
+  const tp=w.tree.pos;
+  if(d2(w.pos,tp)>1.1)moveTo(w,tp,dt,w.speed);
+  else{w.moving=false;w.face=Math.atan2(tp.x-w.pos.x,tp.z-w.pos.z);tryChop(w,w.tree,dt,.75)}
+}
+const ownedProducts=()=>PRODUCTS.filter(p=>S.owned[p.id]);
+function freeDock(){const b=bays.find(b=>b.active()&&b.zone.canAccept());return b?b.zone:null}
+function plankTarget(){let best=null,br=1;for(const p of ownedProducts()){if(p.inType!=='plank')continue;const z=Z['in_'+p.id],r=z.stack.n/z.capFn();if(r<br){br=r;best=z}}return best}
+function goodsTarget(type,dockFirst){const opts=[SH[type],BULK[type]].filter(z=>z&&z.active()&&z.stack.n<z.capFn()).sort((a,b)=>a.stack.n/a.capFn()-b.stack.n/b.capFn());const sh=opts[0]||SH[type],room=!!opts[0];if(dockFirst)return freeDock()||(room?sh:null);return room?sh:freeDock()}
+const sawOuts=()=>[Z.sawOut,Z.saw2Out].filter(z=>z.active()&&z.stack.items.length).sort((a,b)=>b.stack.items.length-a.stack.items.length);
+const sawIns=()=>[Z.sawIn,Z.saw2In].filter(z=>z.active()).sort((a,b)=>a.stack.n-b.stack.n);
+/* robots score every possible delivery by how badly it is needed and take the most urgent one:
+   customers waiting at an empty shelf > factory standing idle without planks > truck waiting at the dock > full factory output */
+function robotJob(w){
+  const jobs=[];
+  const busy=to=>workers.filter(o=>o!==w&&o.kind==='robot'&&o.job&&o.job.to===to).length;
+  const waiting=t=>customers.filter(c=>c.state==='shelf'&&c.want===t&&c.takeT<0).length;
+  for(const p of ownedProducts()){
+    const out=Z['out_'+p.id];if(!out.stack.items.length)continue;
+    const full=out.stack.n/out.capFn()>.8?1:0;
+    const sh=SH[p.id],room=sh.capFn()-sh.stack.n;
+    for(const sz of [sh,BULK[p.id]]){if(!sz||!sz.active())continue;const rm=sz.capFn()-sz.stack.n;if(rm<=0)continue;
+      const wt=customers.filter(c=>c.state==='shelf'&&c.shelf===sz&&c.takeT<0).length,empty=sz.stack.n===0;
+      jobs.push({from:out,to:sz,want:rm,sc:(1-sz.stack.n/sz.capFn())+wt*1.5+(empty?1:0)+full-busy(sz)*.9,label:()=>t(sz===sh?'job.shelf':'z.bulk',{name:pn(p)})+(sz===sh?'':' · '+pn(p)),urgent:wt>0||empty})}
+    const dk=freeDock();
+    if(dk){const n=dk.stack.n;jobs.push({from:out,to:dk,want:ORDER-n,sc:1.1+n/ORDER*.8+full-busy(dk)*.9,label:()=>t('job.truck'),urgent:false})}
+  }
+  const so=sawOuts()[0];
+  if(so)for(const p of ownedProducts()){
+    if(p.inType!=='plank')continue;const zi=Z['in_'+p.id],room=zi.capFn()-zi.stack.n;if(room<=0)continue;
+    const starving=zi.stack.items.length<p.inN&&!machines.find(m=>m.id===p.id).busy;
+    jobs.push({from:so,to:zi,want:room,sc:(1-zi.stack.n/zi.capFn())*1.2+(starving?1.6:0)-busy(zi)*.9,label:()=>t('job.planks',{name:pn(p)}),urgent:starving});
+  }
+  jobs.forEach(j=>j.sc-=d2(w.pos,j.from.pos)/60);
+  jobs.sort((a,b)=>b.sc-a.sc);
+  return jobs[0]&&jobs[0].sc>.15?jobs[0]:null;
+}
+/* walk between the front yard and the back sales area through the gap east of the materials factory */
+function routeVia(from,to){
+  if(to.x>30&&from.x>30&&(from.z<-13.4)!==(to.z<-13.4)){const a=new V3(53,0,-6.2),b=new V3(53,0,-14.4);return from.z<-13.4?[b,a]:[a,b]}
+  return [];
+}
+function goTo(w,tg,dt,sp){
+  if(w.viaFor!==tg){w.viaFor=tg;w.via=routeVia(w.pos,tg)}
+  if(w.via.length){if(moveTo(w,w.via[0],dt,sp))w.via.shift();return false}
+  return moveTo(w,tg,dt,sp);
+}
+function pickJob(only,dockFirst,sec){
+  const outs=ownedProducts().filter(p=>!sec||p.annex).map(p=>Z['out_'+p.id]).filter(z=>z.stack.items.length).sort((a,b)=>b.stack.items.length-a.stack.items.length);
+  for(const o of outs){const sh=SH[o.type],to=only?(sh.stack.n<sh.capFn()?sh:null):goodsTarget(o.type,dockFirst);if(to)return{from:o,to}}
+  if(!only&&!sec){const so=sawOuts()[0];if(so){const to=plankTarget();if(to)return{from:so,to}}}
+  return null;
+}
+function updCarrier(w,dt){
+  const s=w.stack,only=w.kind==='stocker',bot=w.kind==='robot',sec=w.kind==='secCarrier',rest=sec?new V3(43.4+w.idx*1.2,0,-3.4):only?new V3(6+w.idx*1.4,0,-.8):bot?new V3(3+w.idx*1.3,0,6.2):REST[w.idx%4];
+  if(!w.job){
+    if(s.n>0){
+      const to=s.type==='plank'?plankTarget():s.type==='log'?sawIns()[0]:s.type==='clay'?Z.in_sink:s.type==='iron'?Z.in_material:only?(SH[s.type].stack.n<SH[s.type].capFn()?SH[s.type]:null):goodsTarget(s.type,bot);
+      if(!to){moveTo(w,rest,dt,w.speed*.6);return}
+      w.phase='put';w.job={to};
+    }else{w.job=bot?robotJob(w):pickJob(only,bot,sec);w.phase='get';if(!w.job){moveTo(w,rest,dt,w.speed*.6);if(!w.moving)w.face=0;return}}
+  }
+  if(w.phase==='get'){
+    const z=w.job.from;if(!goTo(w,z.pos,dt,w.speed))return;
+    w.cool-=dt;
+    if(s.n>=w.cap()||(w.job.want&&s.n>=w.job.want)||(!z.stack.items.length&&s.n>0)){w.phase='put';return}
+    if(!z.stack.items.length){w.job=null;return}
+    if(w.cool<=0&&(!s.type||s.type===z.stack.type)){move(z.stack,s);w.cool=.12}
+  }else{
+    const z=w.job.to;if(!goTo(w,z.pos,dt,w.speed))return;
+    w.cool-=dt;
+    if(s.n===0){w.job=null;return}
+    if(z.active()&&z.canAccept()){w.stuck=0;if(w.cool<=0&&s.items.length){move(s,z.stack);w.cool=.12}}
+    else{w.stuck+=dt;if(w.stuck>1.5){w.stuck=0;w.job=null}}
+  }
+}
+
+/* ================= customers ================= */
+const SHIRTS=[0xe76f51,0x2a9d8f,0x8d5fd3,0xf4a261,0x457b9d,0xe9c46a,0xd1495b,0x6a994e,0xef8fb5];
+const ICON={
+ chair:'<path d="M8 3v18M8 12h9v9M8 12"/>',
+ sofa:'<path d="M5 10V7h14v3M3 10h3v4h12v-4h3v7H3zM5 17v2M19 17v2"/>',
+ wardrobe:'<path d="M6 3h12v17H6zM12 3v17M10 11v2M14 11v2M7 20v1M17 20v1"/>',
+ table:'<path d="M3 9h18M5 9v11M19 9v11M7 9v-1h10v1"/>',
+ kitchen:'<path d="M4 9h16v11H4zM3 9h18M12 9v11M9 13h-2M17 13h-2M8 5h3v4"/>',
+ sink:'<path d="M5 9h14l-2 5H7zM12 14v6M9 20h6M12 9V5h3"/>',
+ material:'<path d="M3 8h18M3 12h18M3 16h18M7 6v12M17 6v12"/>',
+};
+const icon=id=>`<svg viewBox="0 0 24 24" fill="none" stroke="#2b1d14" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">${ICON[id]}</svg>`;
+const CASH_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="#3d8a31" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="2"/><circle cx="12" cy="12.5" r="2.4"/><path d="M6 10v5M18 10v5"/></svg>';
+const ANGRY='<svg viewBox="0 0 24 24" fill="none" stroke="#d9573b" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8 9l2 1M16 9l-2 1M8.5 16.5c2-1.6 5-1.6 7 0"/></svg>';
+let spawnT=1.5,custSeq=0,bulkT=4;
+const EXIT=new V3(42,0,17.5),DOOR_OUT=new V3(20,0,11.4),DOOR_IN=new V3(20,0,8.5);
+const ANNEX_OUT=new V3(51.5,0,11.4),ANNEX_IN=new V3(51.5,0,8.5);
+const BULK_OUT=new V3(63,0,-29.6),BULK_IN=new V3(58,0,-29.6),BULK_EXIT=new V3(66,0,-46);
+const doorsOf=c=>c.bulk?[BULK_OUT,BULK_IN]:PROD[c.want].annex?[ANNEX_OUT,ANNEX_IN]:[DOOR_OUT,DOOR_IN];
+function leave(c,angry){const[o,i]=doorsOf(c);c.state='out';c.angry=!!angry;
+  if(c.car){const sx=c.car.slot.x+1.15;c.way=[i.clone(),o.clone(),new V3(o.x,0,18),new V3(sx,0,LOT.aisleZ),new V3(sx,0,LOT.slotZ)]}
+  else c.way=[i.clone(),o.clone(),c.bulk?BULK_EXIT:EXIT]}
+function spawnCustomer(bulk,car){
+  const owned=bulk?[PROD.sink,PROD.material]:ownedProducts();if(!owned.length)return;
+  const sk=bulk?{shirt:0xe07a1f,pants:0x34404f,skin:pick([0xf1c27d,0xe0ac69,0xc68642]),hat:0xf4c430,hatType:'hard'}:{shirt:pick(SHIRTS),pants:pick([0x264653,0x3d405b,0x5b4636,0x22333b]),skin:pick([0xf1c27d,0xe0ac69,0xc68642,0xffdbac]),hat:pick(SHIRTS),hatType:pick(['none','none','cap','beanie'])};
+  const c=makeAgent(sk,{state:'shelf',want:pick(owned).id,seq:custSeq++,wait:0,patience:(bulk?70:45)*(S.lv.consult?1.6:1),serve:0,reg:0,takeT:-1,qi:0,angry:false,bulk:!!bulk,need:bulk?3:1,partial:0});
+  c.shelf=bulk?BULK[c.want]:SH[c.want];c.stack.cap=c.need;if(bulk)c.pos.set(66,0,-45);else c.pos.set(34,0,17.5);{const[o,i]=doorsOf(c);c.way=[o.clone(),i.clone().add(new V3((Math.random()-.5)*2,0,-.4))];
+    if(car){c.car=car;const sx=car.slot.x+1.15;c.pos.set(sx,0,LOT.slotZ);c.way=[new V3(sx,0,LOT.aisleZ),new V3(o.x,0,18)].concat(c.way)}}customers.push(c);
+  c.label=addLabel(()=>c.pos.clone().setY(2.45),()=>{
+    if(c.angry)return ANGRY;
+    if(c.state==='reg'&&c.qi===0&&c.waitReg>1)return CASH_ICON;
+    if(c.state==='shelf'&&c.qi===0&&c.wait>.5&&c.takeT<0&&!c.shelf.stack.items.length)return icon(c.want);
+    return null},'bubble');
+}
+function chooseReg(c){if(c.bulk)return 8;const an=!!PROD[c.want].annex;const act=regs.filter(r=>r.annex===an&&!r.bulk&&r.active());const cnt=r=>customers.filter(c=>c.state==='reg'&&c.reg===r.i).length;act.sort((a,b)=>cnt(a)-cnt(b));return act[0].i}
+function updCustomers(dt){
+  spawnT-=dt;
+  if(spawnT<=0){spawnT=st.spawn();if(customers.filter(c=>c.state!=='out'&&!c.bulk&&!c.car).length<st.maxCust())spawnCustomer()}
+  carT-=dt;if(carT<=0){carT=6+Math.random()*5;const free=LOT.slots.filter(sl=>!sl.car&&sl.i<lotSlots());if(free.length&&ownedProducts().length)spawnCar(pick(free))}
+  const sq={},rq={};
+  for(const c of customers){if(c.state==='shelf'){(sq[c.shelf.id]=sq[c.shelf.id]||[]).push(c)}else if(c.state==='reg'){(rq[c.reg]=rq[c.reg]||[]).push(c)}}
+  for(const k in sq)sq[k].forEach((c,i)=>c.qi=i);for(const k in rq)rq[k].forEach((c,i)=>c.qi=i);
+  for(let i=customers.length-1;i>=0;i--){const c=customers[i];
+    if(c.way&&c.way.length){if(moveTo(c,c.way[0],dt,2.9))c.way.shift();if(c.state==='out'&&!c.way.length){if(c.car)carLeave(c.car);scene.remove(c.ch.g);removeLabel(c.label);customers.splice(i,1)}continue}
+    if(c.state==='shelf'){
+      const sh=c.shelf;
+      if(moveTo(c,new V3(sh.pos.x+(c.qi?(c.qi%2?.35:-.35):0),0,sh.pos.z+1.45+c.qi*.85),dt,2.9)){
+        c.face=PI;
+        if(c.qi===0){c.wait+=dt;if(c.takeT<0&&c.wait>.3&&sh.stack.items.length&&c.stack.n<c.need){c.takeT=.35;move(sh.stack,c.stack,.3)}
+          if(c.stack.items.length&&!sh.stack.items.length)c.partial+=dt}
+      }
+      const toReg=()=>{c.state='reg';c.reg=chooseReg(c);c.serve=0;const r=regs[c.reg];c.way=[new V3(r.x+1.25,0,r.qz0+3.6)]};
+      if(c.takeT>=0){c.takeT-=dt;if(c.takeT<0){const n=c.stack.items.length;if(n>=c.need||(n&&c.partial>5))toReg();else c.takeT=-1}}
+      else{if(c.stack.items.length&&c.partial>5)toReg();else if(!c.stack.items.length){c.patience-=dt;if(c.patience<=0)leave(c,true)}}
+    }else if(c.state==='reg'){
+      const r=regs[c.reg];
+      if(moveTo(c,new V3(r.x+1.25,0,r.qz0+c.qi*1.05),dt,2.9)){
+        c.face=-PI/2;
+        if(c.qi===0){const sv=regServer(r);c.waitReg=sv?0:(c.waitReg||0)+dt;if(sv)c.serve+=dt*(sv==='player'?1.4:sv==='robot'?1.7:1);if(c.serve>=.9){c.serve=0;
+          const p=PROD[c.want],n=Math.max(1,c.stack.items.length),v=Math.round(prodPrice(p)*(1+.15*S.lv.consult)*n*(c.bulk?1.15:1)/10)*10,b=sv==='robot'?null:makeItem('bill');if(b){b.userData.v=v;b.position.set(c.pos.x,1.4,c.pos.z);scene.add(b);sendTo(b,r.zone.stack,.35)}else addMoney(v,d2(P.pos,c.pos)>9);
+          addXP(p.xp*n);floatText(c.pos.clone().setY(2.2),`+${fmt(v)} ֏`);leave(c);
+        }}
+      }
+    }
+  }
+}
+
+/* ================= trucks ================= */
+function makeTruck(){
+  const g=new THREE.Group();
+  box(1.7,.35,4.3,0x3a3a3a,0,.55,0,g);
+  box(1.7,1.3,1.35,0xd9573b,0,1.38,1.4,g);box(1.5,.5,.05,0xbfe3f0,0,1.65,2.08,g);
+  box(1.7,.12,2.8,0x8b5a2b,0,.78,-.62,g);
+  box(.08,.4,2.8,0x6d4325,.82,1.02,-.62,g);box(.08,.4,2.8,0x6d4325,-.82,1.02,-.62,g);box(1.7,.4,.08,0x6d4325,0,1.02,-2,g);
+  const wh=[];[[.86,1.3],[-.86,1.3],[.86,-1.25],[-.86,-1.25]].forEach(([x,z])=>{const w=mesh(new THREE.CylinderGeometry(.38,.38,.28,12),0x222222,x,.38,z,g);w.rotation.z=PI/2;wh.push(w)});
+  const anchor=new THREE.Group();anchor.position.set(0,.84,-.62);g.add(anchor);
+  g.rotation.y=PI/2;g.position.set(-80,0,LANE);g.visible=false;scene.add(g);
+  const t={g,wh,stack:new Stack(anchor,pileLayout(2,4,.66,.64),ORDER,'goods'),state:'away',t:0,v:0,bay:null,pay:0,xp:0};
+  trucks.push(t);return t;
+}
+function updTrucks(dt){
+  for(const t of trucks){
+    const x=t.g.position;
+    if(t.state==='away'){t.t-=dt;if(t.t<=0){const b=bays.find(b=>b.active()&&!b.truck);if(b){b.truck=t;t.bay=b;t.state='in';x.set(-80,0,LANE);t.g.visible=true}}}
+    else if(t.state==='in'){const sp=clamp((t.bay.x-x.x)*1.6,3,18);x.x=Math.min(t.bay.x,x.x+sp*dt);t.wh.forEach(w=>w.rotation.x-=sp*dt*2.6);if(x.x>=t.bay.x)t.state='park'}
+    else if(t.state==='park'){x.z=Math.max(PARK,x.z-dt*3);if(x.z<=PARK){t.state='bay';t.t=0}}
+    else if(t.state==='bay'){if(t.stack.items.length>=ORDER){t.t+=dt;if(t.t>.6){
+      t.pay=0;t.xp=0;t.stack.items.forEach(m=>{const p=PROD[m.userData.type];t.pay+=Math.round(prodPrice(p)*ECON.truck);t.xp+=p.xp});
+      t.state='unpark'}}}
+    else if(t.state==='unpark'){x.z=Math.min(LANE,x.z+dt*3);if(x.z>=LANE){t.state='out';t.v=0;t.bay.truck=null;t.bay=null}}
+    else if(t.state==='out'){t.v=Math.min(18,t.v+dt*9);x.x+=t.v*dt;t.wh.forEach(w=>w.rotation.x-=t.v*dt*2.6);
+      if(x.x>80){t.state='away';t.t=10;t.g.visible=false;t.stack.items.forEach(m=>t.stack.anchor.remove(m));t.stack.items=[];
+        addMoney(t.pay);addXP(t.xp);moneyPop(t.pay)}}
+  }
+}
+
+/* ================= money, xp, sound ================= */
+let AC=null,lastCoin=0;
+function sfx(k){
+  if(!AC)return;const now=AC.currentTime;if(k==='coin'){if(now-lastCoin<.05)return;lastCoin=now}
+  const o=AC.createOscillator(),g=AC.createGain(),f={coin:900,chop:170,quest:620,buy:700,throw:260,level:520}[k]||440;
+  o.type=k==='chop'?'square':'triangle';o.frequency.setValueAtTime(f,now);
+  if(k==='throw')o.frequency.exponentialRampToValueAtTime(f*.5,now+.15);else if(k!=='chop')o.frequency.exponentialRampToValueAtTime(f*1.5,now+.09);
+  g.gain.setValueAtTime(k==='chop'?.035:.06,now);g.gain.exponentialRampToValueAtTime(.0001,now+(k==='quest'||k==='level'?.35:.15));
+  o.connect(g).connect(AC.destination);o.start(now);o.stop(now+.4);
+}
+let shopDirty=false;
+function addMoney(v,quiet){S.money+=v;S.total+=v;if(S.total>=100000&&!S.seen.skin_gold)checkUnlocks();if(!quiet)sfx('coin');hudMoney(quiet);shopDirty=true}
+function hudMoney(quiet){
+  $('#money').textContent=fmt(S.money);
+  if(!quiet){const b=$('#moneyBox');b.classList.add('bump');clearTimeout(hudMoney.t);hudMoney.t=setTimeout(()=>b.classList.remove('bump'),110)}
+  $('#badge').hidden=!UPG.some(u=>!upLocked(u)&&S.lv[u.id]<u.max&&S.money>=upPrice(u,S.lv[u.id]));
+}
+function addXP(v){S.xp+=v;while(S.xp>=xpNeed(S.level)){S.xp-=xpNeed(S.level);S.level++;onLevel(S.level)}hudLevel()}
+function onLevel(l){
+  const un=PRODUCTS.filter(p=>p.unlock===l&&p.cost);
+  toast(t('t.level',{n:l}),un.length?t('t.newFactory',{list:un.map(pn).join(', ')}):t('t.keepGoing'));sfx('level');checkUnlocks();
+}
+function hudLevel(){$('#lvNum').textContent='Lv '+S.level;$('#lvBar').style.width=(100*S.xp/xpNeed(S.level)).toFixed(1)+'%'}
+function moneyPop(v){const box=$('#moneyBox'),el=document.createElement('span');el.className='mpop';
+  el.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 7h11v9H2zM13 10h4l3 3v3h-7"/><circle cx="6" cy="17.5" r="1.6"/><circle cx="16.5" cy="17.5" r="1.6"/></svg>+${fmt(v)} ֏`;
+  box.appendChild(el);setTimeout(()=>el.remove(),2300)}
+let toastT=0;
+function toast(t,s){const el=$('#toast');$('#toastT').textContent=t;$('#toastS').textContent=s||'';el.hidden=false;el.classList.remove('show');void el.offsetWidth;el.classList.add('show');toastT=2.4}
+
+/* ================= quest ================= */
+const QUEST=[
+ {k:'q1',done:e=>e==='chop',target:()=>{const t=nearestNode(P.pos,'log');return t&&t.pos.clone().setY(3.6)}},
+ {k:'q2',done:(e,a)=>e==='drop'&&a==='sawIn',target:()=>Z.sawIn.pos},
+ {k:'q3',done:(e,a)=>e==='pick'&&a==='sawOut',target:()=>Z.sawOut.pos},
+ {k:'q4',done:(e,a)=>e==='drop'&&a==='in_chair',target:()=>Z.in_chair.pos},
+ {k:'q5',done:(e,a)=>e==='pick'&&a==='out_chair',target:()=>Z.out_chair.pos},
+ {k:'q6',done:(e,a)=>e==='drop'&&a==='shelf_chair',target:()=>Z.shelf_chair.pos},
+ {k:'q7',done:e=>e==='cash',target:()=>Z.cash0.pos},
+ {k:'q8',done:e=>e==='pad',target:()=>pads[0].pos},
+];
+function emit(e,a){const q=QUEST[S.quest];if(q&&q.done(e,a)){S.quest++;renderQuest();sfx('quest');save();if(S.quest>=QUEST.length)checkUnlocks()}}
+function renderQuest(){
+  const q=QUEST[S.quest];$('#quest').hidden=!q;
+  if(q){$('#qStep').textContent=`${S.quest+1}/${QUEST.length}`;$('#qText').textContent=t(q.k)}
+  $('#hint').hidden=S.quest>1;
+}
+const arrow=new THREE.Mesh(new THREE.ConeGeometry(.34,.7,4),new THREE.MeshBasicMaterial({color:0xf3b33d}));arrow.rotation.x=PI;scene.add(arrow);
+
+/* ================= labels & floats ================= */
+const labels=[],floats=[],tmp=new V3();
+function addLabel(getPos,getText,cls){const el=document.createElement('div');el.className='chip '+(cls||'');el.hidden=true;$('#labels').appendChild(el);const L={el,getPos,getText,last:undefined};labels.push(L);return L}
+function removeLabel(L){const i=labels.indexOf(L);if(i>=0)labels.splice(i,1);L.el.remove()}
+function project(p){tmp.copy(p).project(camera);return{x:(tmp.x+1)/2*innerWidth,y:(1-tmp.y)/2*innerHeight,ok:tmp.z<1&&tmp.x>-1.3&&tmp.x<1.3&&tmp.y>-1.3&&tmp.y<1.3}}
+function updLabels(){
+  for(const L of labels){
+    const txt=mode==='play'?L.getText():null;
+    if(!txt){if(!L.el.hidden)L.el.hidden=true;continue}
+    const p=project(L.getPos());if(!p.ok){L.el.hidden=true;continue}
+    if(txt!==L.last){L.el.innerHTML=txt;L.last=txt}
+    L.el.hidden=false;L.el.style.transform=`translate(${p.x.toFixed(1)}px,${p.y.toFixed(1)}px) translate(-50%,${L.below?'2px':'-100%'})`;
+  }
+}
+function floatText(pos,text){const el=document.createElement('div');el.className='float';el.textContent=text;$('#labels').appendChild(el);floats.push({el,pos,t:0})}
+function updFloats(dt){for(let i=floats.length-1;i>=0;i--){const f=floats[i];f.t+=dt;const p=project(f.pos.clone().setY(f.pos.y+f.t*1.4));
+  f.el.style.transform=`translate(${p.x}px,${p.y}px) translate(-50%,-100%)`;f.el.style.opacity=String(Math.max(0,1-f.t*f.t));
+  if(f.t>1){f.el.remove();floats.splice(i,1)}}}
+function setupLabels(){
+  const stackChip=z=>{const p=z.stack.anchor.position.clone().setY(1.9);addLabel(()=>p,()=>z.active()?`${z.stack.n}<span>/${z.capFn()}</span>`:null)};
+  stackChip(Z.sawIn);stackChip(Z.sawOut);
+  machines.forEach(mc=>{const b=mc.bld,v=new V3();addLabel(()=>v.set(b.g.position.x,b.top*b.g.scale.y+.4,b.g.position.z-.6),()=>{if(!mc.on()||b.ghost)return null;const l=b.s+b.q;return (l>=11?t('ui.max'):`Lv ${l+1}`)+` · ×${1+b.q}`},'lvl')});
+  PRODUCTS.forEach(p=>{stackChip(Z['in_'+p.id]);stackChip(Z['out_'+p.id]);const sh=SH[p.id];const sp=new V3(sh.pos.x,2.4,1.6);addLabel(()=>sp,()=>sh.active()?`${sh.stack.n}<span>/${sh.capFn()}</span>`:null)});
+  regs.forEach(r=>{const cp=r.zone.stack.anchor.position.clone().setY(2);addLabel(()=>cp,()=>{if(!r.active())return null;let s=0;r.zone.stack.items.forEach(b=>s+=b.userData.v);return s?`${fmt(s)} ֏`:null},'cash')});
+  bays.forEach(b=>{const dp=b.zone.pos.clone().setY(1.4);addLabel(()=>dp,()=>{
+    if(!b.active())return null;
+    if(!trucks.length)return b.i===0?t('c.noTruck'):null;
+    const tr=b.truck;if(tr)return tr.state==='bay'?`${tr.stack.n}<span>/${ORDER}</span>`:t('c.arriving');
+    const w=trucks.filter(o=>o.state==='away').sort((x,y)=>x.t-y.t)[0];
+    return w?t('c.freeIn',{n:Math.max(0,Math.ceil(w.t))}):t('c.free')})});
+  for(const id in BULK){const z=BULK[id],cp=z.stack.anchor.position.clone().setY(1.9);addLabel(()=>cp,()=>z.active()?`${ps(PROD[id])} ${z.stack.n}<span>/${z.capFn()}</span>`:null)}
+  {const dp=new V3(81,1.4,-17);addLabel(()=>dp,()=>t('dream.chip'),'locked')}
+  addLabel(()=>P.pos.clone().setY(2.6+(P.stack.n*.05)),()=>P.stack.n>=P.cap()?t('c.full'):null,'max');
+}
+
+/* ================= input ================= */
+const keys=new Set(),joy={id:null,ox:0,oy:0,x:0,y:0};
+addEventListener('keydown',e=>{const k=e.key.toLowerCase();keys.add(k);if(e.key==='Escape'&&!$('#sheet').hidden)closeSheet();if((k==='q'||k==='й')&&mode==='play')throwAll()});
+addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));
+addEventListener('blur',()=>keys.clear());
+function inputVec(){
+  if(!$('#sheet').hidden)return{x:0,z:0};
+  let x=joy.x,z=joy.y;
+  if(keys.has('a')||keys.has('arrowleft')||keys.has('ф'))x-=1;if(keys.has('d')||keys.has('arrowright')||keys.has('в'))x+=1;
+  if(keys.has('w')||keys.has('arrowup')||keys.has('ц'))z-=1;if(keys.has('s')||keys.has('arrowdown')||keys.has('ы'))z+=1;
+  const m=Math.hypot(x,z);if(m>1){x/=m;z/=m}return{x,z};
+}
+const joyEl=$('#joy'),knob=$('#knob');
+canvas.addEventListener('pointerdown',e=>{
+  initAudio();if(mode!=='play'||!$('#sheet').hidden||joy.id!==null)return;
+  joy.id=e.pointerId;joy.ox=e.clientX;joy.oy=e.clientY;joy.x=joy.y=0;
+  joyEl.style.transform=`translate(${e.clientX}px,${e.clientY}px)`;knob.style.transform='';joyEl.hidden=false;
+  try{canvas.setPointerCapture(e.pointerId)}catch(_){}
+});
+canvas.addEventListener('pointermove',e=>{
+  if(e.pointerId!==joy.id)return;let dx=e.clientX-joy.ox,dy=e.clientY-joy.oy;const l=Math.hypot(dx,dy),mx=52;
+  if(l>mx){dx*=mx/l;dy*=mx/l}joy.x=dx/mx;joy.y=dy/mx;knob.style.transform=`translate(${dx}px,${dy}px)`;
+});
+const endJoy=e=>{if(e.pointerId!==joy.id)return;joy.id=null;joy.x=joy.y=0;joyEl.hidden=true};
+canvas.addEventListener('pointerup',endJoy);canvas.addEventListener('pointercancel',endJoy);
+function initAudio(){if(AC)return;try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(_){}}
+$('#btnThrow').addEventListener('click',throwAll);
+
+/* ================= UI ================= */
+let mode='menu',menuAng=0;
+function renderSkins(){
+  $('#skins').innerHTML=SKINS.map(s=>{const locked=s.unlock&&S.total<s.unlock;
+    return `<button type="button" class="skin ${S.skin===s.id?'on':''}" data-id="${s.id}" ${locked?'disabled':''} aria-pressed="${S.skin===s.id}">
+      <span class="sw" style="--a:${hex(s.shirt)};--b:${hex(s.hat)}"></span><span>${t('skin.'+s.id)}</span>${locked?`<span class="lock">${t('ui.earn',{v:fmt(s.unlock)})}</span>`:''}</button>`}).join('');
+}
+$('#skins').addEventListener('click',e=>{const b=e.target.closest('.skin');if(!b||b.disabled)return;setSkin(b.dataset.id);renderSkins()});
+function openMenu(){mode='menu';$('#menu').hidden=false;$('#hud').hidden=true;joy.id=null;joy.x=joy.y=0;joyEl.hidden=true;playKey='ui.continue';$('#btnPlay').textContent=t(playKey);resetArm();renderSkins();save()}
+function startPlay(){initAudio();mode='play';$('#menu').hidden=true;$('#hud').hidden=false;renderQuest();hudMoney(true);hudLevel()}
+$('#btnPlay').addEventListener('click',startPlay);
+$('#btnMenu').addEventListener('click',openMenu);
+$('#btnTest').addEventListener('click',()=>{
+  const from=S.level;S.level+=25;S.money+=250000;
+  const un=PRODUCTS.filter(p=>p.unlock>from&&p.unlock<=S.level).map(pn);
+  $('#btnTest').textContent=`Lv ${S.level}${un.length?' · '+t('ui.unlocked')+un.join(', '):''}`;
+  hudMoney(true);hudLevel();save();checkUnlocks();
+});
+let resetArmed=false;
+function resetArm(){resetArmed=false;const b=$('#btnReset');b.textContent=t('ui.new');b.classList.remove('warn')}
+$('#btnReset').addEventListener('click',()=>{
+  const b=$('#btnReset');
+  if(!resetArmed){resetArmed=true;b.textContent=t('ui.reset');b.classList.add('warn');return}
+  try{localStorage.removeItem(KEY)}catch(_){}
+  location.reload();
+});
+
+function renderShop(){
+  shopDirty=false;$('#bal').textContent=t('ui.balance',{v:fmt(S.money)});
+  let html=`<div class="note">${t('ui.padNote')}</div>`;
+  for(const u of UPG){
+    if(u.grp)html+=`<div class="grp">${t(u.grp)}</div>`;
+    const l=S.lv[u.id],maxed=l>=u.max,p=upPrice(u,l);
+    const pips=Array.from({length:u.max},(_,i)=>`<i class="${i<l?'f':''}"></i>`).join('');
+    html+=`<div class="up"><div><h3>${u.name}</h3><div class="d">${t('upgd.'+u.id)}</div>
+      <div class="v"><span class="pips">${pips}</span><span>${maxed?u.val(l):`${u.val(l)} → ${u.val(l+1)}`}</span></div></div>
+      ${maxed?`<button class="buy maxed" type="button" disabled>${t('ui.max')}</button>`:upLocked(u)?`<button class="buy locked" type="button" disabled>${lockText(u)}</button>`:`<button class="buy" type="button" data-id="${u.id}" ${S.money<p?'disabled':''}>${fmt(p)} ֏</button>`}</div>`;
+  }
+  $('#upList').innerHTML=html;
+}
+function openSheet(){joy.id=null;joy.x=joy.y=0;joyEl.hidden=true;renderShop();$('#sheet').hidden=false;$('#btnClose').focus()}
+function closeSheet(){$('#sheet').hidden=true}
+$('#btnUp').addEventListener('click',openSheet);
+$('#btnClose').addEventListener('click',closeSheet);
+$('#sheet').addEventListener('click',e=>{if(e.target.id==='sheet')closeSheet()});
+$('#upList').addEventListener('click',e=>{
+  const b=e.target.closest('.buy[data-id]');if(!b)return;
+  const u=UPG.find(x=>x.id===b.dataset.id),l=S.lv[u.id],p=upPrice(u,l);
+  if(l>=u.max||S.money<p||upLocked(u))return;
+  S.money-=p;S.lv[u.id]++;
+  if(WORKER_SKIN[u.id])spawnWorker(u.id);
+  sfx('buy');hudMoney();renderShop();save();
+});
+
+/* ================= camera ================= */
+const camLook=new V3();
+function updCamera(dt){
+  if(mode==='play'){
+    const portrait=innerHeight>innerWidth*1.1,k=portrait?1.45:1;
+    const tg=new V3(P.pos.x,14.5*k,P.pos.z+13.5*k);
+    camera.position.lerp(tg,1-Math.exp(-dt*4.5));camLook.lerp(P.pos,1-Math.exp(-dt*6));
+    camera.lookAt(camLook.x,.4,camLook.z);
+  }else{
+    menuAng+=dt*.22;const portrait=innerHeight>innerWidth;const r=portrait?6.2:5.4;
+    const tg=new V3(P.pos.x+Math.sin(menuAng)*r,1.7,P.pos.z+Math.cos(menuAng)*r);
+    camera.position.lerp(tg,1-Math.exp(-dt*3));camLook.lerp(P.pos,1-Math.exp(-dt*3));
+    camera.lookAt(camLook.x,portrait?-.55:-.05,camLook.z);
+    P.face=menuAng;P.moving=false;P.chopping=false;
+  }
+  sun.position.set(P.pos.x+14,26,P.pos.z+12);sun.target.position.set(P.pos.x,0,P.pos.z);
+}
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+
+/* ================= loop ================= */
+let last=performance.now(),saveT=0,throwVis=false;
+function frame(now){
+  const dt=Math.min(.05,(now-last)/1000);last=now;T+=dt;
+  if(mode==='play'){
+    updPlayer(dt);
+    assignStaff();
+    for(const w of workers){const k=w.kind;k==='lumber'?updLumber(w,dt):k==='miner'?updMiner(w,dt):(k==='cashier'||k==='secCashier')?updCashier(w,dt):k==='manager'?updManager(w,dt):k==='consult'?updConsult(w,dt):updCarrier(w,dt)}
+    machines.forEach(m=>updMachine(m,dt));
+    updCustomers(dt);updCars(dt);updTrucks(dt);updTweens(dt);updPads(dt);
+    saveT+=dt;if(saveT>3){saveT=0;save()}
+    if(shopDirty&&!$('#sheet').hidden)renderShop();
+    const tv=P.stack.items.length>0;if(tv!==throwVis){throwVis=tv;$('#btnThrow').hidden=!tv}
+    if(toastT>0){toastT-=dt;if(toastT<=0)$('#toast').hidden=true}
+  }
+  nodes.forEach(t=>updNode(t,dt));updParticles(dt);
+  animChar(P,dt);workers.forEach(w=>animChar(w,dt));customers.forEach(c=>animChar(c,dt));
+  zones.forEach(z=>{z.marker.visible=z.active()});
+  regs.forEach(r=>{r.g.visible=r.active()});
+  {const tw=shopW();SHOP.cur+=(tw-SHOP.cur)*Math.min(1,dt*3);if(Math.abs(tw-SHOP.cur)>.005)layoutShop(SHOP.cur)}
+  {const hb=$('#btnHome'),ho=!!S.owned.house;if(hb.hidden===ho)hb.hidden=!ho}
+  {const o=!!S.owned.sink;SHOP.annex.visible=o;BACK.g.visible=o;BACK.gate.visible=!o;HOUSE.g.visible=true}
+  fadeBuildings();
+  bays.forEach(b=>{b.g.visible=b.active();b.zone.marker.material.opacity=b.truck&&b.truck.state==='bay'?1:.4});
+  const q=QUEST[S.quest];let tp=q&&mode==='play'?q.target():null;
+  if(!tp&&guide&&mode==='play'){if(T<guide.until&&d2(P.pos,guide.pos)>1.5)tp=guide.pos;else guide=null}
+  arrow.visible=!!tp;if(tp){arrow.position.set(tp.x,(tp.y||3)+Math.sin(T*4)*.25,tp.z);arrow.rotation.y+=dt*2}
+  updUnlock(dt);
+  updCamera(dt);updLabels();updFloats(dt);
+  renderer.render(scene,camera);
+  requestAnimationFrame(frame);
+}
+
+/* ================= unlock cards: anything new shows up on screen, once ================= */
+const UN_ICON={
+ fac:'<path d="M3 21V10l6 3V10l6 3V6h4v15z"/><path d="M7 17h2M13 17h2"/>',
+ staff:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20c.8-4 3.6-6 7-6s6.2 2 7 6"/>',
+ reg:'<rect x="3" y="9" width="18" height="10" rx="2"/><path d="M7 9V5h10v4M12 12v4"/>',
+ saw:'<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/>',
+ mine:'<path d="M4 20l9-9M14 4c3 0 6 3 6 6l-4-2-2-4z"/>',
+ shop:'<path d="M4 10h16l-1-5H5zM5 10v10h14V10M10 20v-5h4v5"/>',
+ house:'<path d="M3 11l9-7 9 7v9H3z"/><path d="M9 20v-6h6v6"/>',
+ skin:'<path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/>',
+};
+const unQ=[];let unCur=null,unT=0,guide=null;
+function notify(id,ic,build,target,silent){
+  if(S.seen[id])return;S.seen[id]=1;save();if(silent)return;
+  unQ.push({ic,build,target});
+}
+function padPos(id){const p=pads.find(p=>p.id===id);return p?p.pos.clone():null}
+function checkUnlocks(silent){
+  for(const p of PRODUCTS){
+    if(p.cost&&S.level>=p.unlock&&!S.owned[p.id]){const pp=pads.find(x=>x.id===p.id+'_buy');
+      notify('fac_'+p.id,'fac',()=>[t('un.fac.t',{name:pn(p)}),t('un.fac.s',{price:fmt(pp.price()-pp.st.paid)})],pp.pos.clone(),silent)}
+    if(p.with&&S.owned[p.id])notify('fac_'+p.id,'fac',()=>[t('un.fac.t',{name:pn(p)}),t('un.with.s')],new V3(p.x,0,-6),silent);
+  }
+  for(const u of UPG){if((u.need&&lvOf('shop')>=u.need)||(u.needSink&&S.owned.sink))notify('staff_'+u.id,'staff',()=>[t('un.staff.t',{name:u.name}),t('un.staff.s')],null,silent)}
+  if(lvOf('reg')<lvOf('shop')&&lvOf('reg')<5)notify('reg_'+lvOf('shop'),'reg',()=>[t('un.reg.t'),t('un.reg.s')],padPos('reg'),silent);
+  if(S.quest>=QUEST.length&&!S.owned.saw2)notify('saw2','saw',()=>[t('un.saw2.t'),t('un.saw2.s')],padPos('saw2_buy'),silent);
+  if(S.owned.sink){notify('mines','mine',()=>[t('un.mines.t'),t('un.mines.s')],new V3(47,0,-17),silent);
+    notify('matshop','shop',()=>[t('un.matshop.t'),t('un.matshop.s')],new V3(51.5,0,6),silent)}
+  if(S.quest>=QUEST.length)notify('dream','house',()=>[t('un.dream.t'),t('un.dream.s')],new V3(85,0,-6),silent);
+  for(const sk of SKINS)if(sk.unlock&&S.total>=sk.unlock)notify('skin_'+sk.id,'skin',()=>[t('un.skin.t',{name:t('skin.'+sk.id)}),t('un.skin.s')],null,silent);
+}
+function updUnlock(dt){
+  if(unCur){unT-=dt;if(unT<=0){unCur=null;$('#unlock').hidden=true}return}
+  if(!unQ.length||mode!=='play')return;
+  unCur=unQ.shift();unT=4.6;
+  const [a,b]=unCur.build();
+  $('#unIc').innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="#2b1d14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${UN_ICON[unCur.ic]}</svg>`;
+  $('#unT').textContent=a;$('#unS').textContent=b;
+  const el=$('#unlock');el.hidden=false;el.classList.remove('show');void el.offsetWidth;el.classList.add('show');
+  if(unCur.target)guide={pos:unCur.target,until:T+12};sfx('quest');
+}
+let lastSkinCheck=0;
+
+/* ================= language ================= */
+let playKey='ui.play';
+function applyLang(){
+  document.documentElement.lang=LANG;document.title=t('ui.title');
+  document.querySelectorAll('[data-i18n]').forEach(e=>e.textContent=t(e.dataset.i18n));
+  document.querySelectorAll('[data-i18n-html]').forEach(e=>e.innerHTML=t(e.dataset.i18nHtml));
+  document.querySelectorAll('[data-i18n-aria]').forEach(e=>e.setAttribute('aria-label',t(e.dataset.i18nAria)));
+  document.querySelectorAll('#langs [data-lang]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  $('#btnPlay').textContent=t(playKey);resetArm();renderSkins();renderQuest();
+  if(!$('#sheet').hidden)renderShop();
+  TEXT_REDRAW.forEach(f=>f());
+}
+function setLang(l){
+  if(!I18N[l])return;LANG=l;S.lang=l;save();applyLang();
+  try{document.fonts.load(`900 40px ${FONT}`,'ԱաAaЯяЖж').then(()=>TEXT_REDRAW.forEach(f=>f()))}catch(_){}
+}
+$('#langs').addEventListener('click',e=>{const b=e.target.closest('[data-lang]');if(b)setLang(b.dataset.lang)});
+
+/* ================= boot ================= */
+(async function boot(){
+  try{await Promise.race([document.fonts.load(`900 40px ${FONT}`,'ԱաAaЯяЖж'),new Promise(r=>setTimeout(r,1600))])}catch(_){}
+  buildWorld();SHOP.cur=shopW();layoutShop(SHOP.cur);machines.forEach(mc=>refreshBuilding(mc.pad,false));setupLabels();
+  for(let i=0;i<S.lv.lumber;i++)spawnWorker('lumber');
+  for(const k of['carrier','robot','miner','secCarrier',...SHOP_STAFF])for(let i=0;i<S.lv[k];i++)spawnWorker(k);
+  for(let i=0;i<lvOf('truck');i++)makeTruck();
+  if(hadSave)playKey='ui.continue';
+  checkUnlocks(true);applyLang();
+  renderSkins();hudMoney(true);hudLevel();
+  camera.position.set(P.pos.x,1.7,P.pos.z+6);camLook.copy(P.pos);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});
+  requestAnimationFrame(t=>{last=t;frame(t)});
+})();
+})();
+</script>

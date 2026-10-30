@@ -1,0 +1,317 @@
+{
+  "_coords": "Prototype: three.js, Y up, +x east, +z south (toward road/camera). Unity mapping: (x, y, -z). 1 unit = 1 metre.",
+  "camera": {
+    "play": "follows player: offset (0, 14.5, 13.5) [portrait x1.45], lookAt player y=0.4, lerp 4.5/s; FOV 42",
+    "menu": "orbit around player r=5.4 (6.2 portrait), height 1.7, 0.22 rad/s"
+  },
+  "fenceLine_z": -13.6,
+  "sawmill1": {
+    "center": [
+      -10,
+      -10
+    ],
+    "footprint": [
+      5.4,
+      4
+    ],
+    "facing": "+z",
+    "zones": {
+      "sawIn": [
+        -11.7,
+        -5.3
+      ],
+      "sawOut": [
+        -8.3,
+        -5.3
+      ]
+    },
+    "machineMouth": [
+      -10,
+      1.1,
+      -7.6
+    ]
+  },
+  "sawmill2_backyard": {
+    "yard": {
+      "x": [
+        -18.5,
+        -1.5
+      ],
+      "z": [
+        -27.6,
+        -13.6
+      ]
+    },
+    "accessRoad": {
+      "x": [
+        -18.6,
+        -13
+      ],
+      "z": [
+        -13.9,
+        -5.3
+      ]
+    },
+    "building": [
+      -10,
+      -23.5
+    ],
+    "zones": {
+      "saw2In": [
+        -11.7,
+        -18.8
+      ],
+      "saw2Out": [
+        -8.3,
+        -18.8
+      ]
+    }
+  },
+  "productFactories": {
+    "row_z": -10,
+    "footprint": [
+      5.4,
+      4
+    ],
+    "x": {
+      "chair": -2,
+      "sofa": 6,
+      "wardrobe": 14,
+      "table": 22,
+      "kitchen": 30,
+      "sink": 40,
+      "material": 48
+    },
+    "zones": "in=(x-1.7,-5.3), out=(x+1.7,-5.3)",
+    "pads": "speed=(x+4,-11.1), qty=(x+4,-8.8), buy=(x,-9.6)"
+  },
+  "forest": {
+    "grid": "5 cols x 7 rows",
+    "origin": [
+      -30.5,
+      -11.8
+    ],
+    "step": [
+      2.4,
+      2.55
+    ],
+    "jitter": 0.7
+  },
+  "minesYard": {
+    "x": [
+      34,
+      60
+    ],
+    "z": [
+      -25,
+      -13.6
+    ],
+    "clay": {
+      "grid": "4x4",
+      "origin": [
+        36.5,
+        -15.8
+      ],
+      "step": [
+        2.4,
+        -2.4
+      ]
+    },
+    "iron": {
+      "grid": "5x4",
+      "origin": [
+        47,
+        -15.8
+      ],
+      "step": [
+        2.4,
+        -2.4
+      ]
+    },
+    "opensWith": "plumbing"
+  },
+  "mainShop": {
+    "floor": {
+      "x": "2.9..wallX(shop lv)",
+      "z": [
+        0.5,
+        9.7
+      ]
+    },
+    "door": {
+      "x": [
+        17.95,
+        22.05
+      ],
+      "z": 9.7
+    },
+    "shelves": {
+      "x": "4.6+i*2.8 (i=product index 0..4)",
+      "pileZ": 1.6,
+      "zoneZ": 3.3
+    },
+    "registers": {
+      "x": [
+        22.2,
+        26.4,
+        30.6,
+        34.8,
+        39,
+        43.2
+      ],
+      "stallCenterZ": 3.5,
+      "cashZone": "(x-1.45, 3.4)",
+      "queue": "(x+1.25, 3+qi*1.05)",
+      "cashierPost": "(x-1.15, 3.6)"
+    },
+    "expansionPad": [
+      14.4,
+      8.3
+    ]
+  },
+  "materialsShop": {
+    "x": [
+      46.4,
+      60.6
+    ],
+    "z": [
+      0.5,
+      9.7
+    ],
+    "door": {
+      "x": [
+        50,
+        53
+      ]
+    },
+    "shelves": {
+      "sink": 48,
+      "material": 50.6
+    },
+    "registers": [
+      54.4,
+      58.2
+    ]
+  },
+  "delivery": {
+    "bays_x": [
+      -4,
+      -9.2,
+      -14.4
+    ],
+    "truckParkZ": 12.3,
+    "truckLaneZ": 14.6,
+    "dockZoneZ": 10.1,
+    "truckPad": [
+      1.2,
+      10.4
+    ],
+    "parkingPad": [
+      -1.4,
+      7.6
+    ]
+  },
+  "road": {
+    "z": [
+      11.2,
+      15.8
+    ],
+    "laneWestbound_z": 12.3,
+    "laneEastbound_z": 14.6,
+    "sidewalk_z": [
+      16.7,
+      18.3
+    ],
+    "zebraCrossing_x": 20
+  },
+  "carPark": {
+    "x": [
+      9.6,
+      34.8
+    ],
+    "z": [
+      18.6,
+      25.2
+    ],
+    "slots_x": "11.5+2.6*i (i 0..7)",
+    "aisleZ": 19.6,
+    "slotZ": 22.6,
+    "drivewayX": 33
+  },
+  "customerPaths": {
+    "spawn": [
+      34,
+      17.5
+    ],
+    "exit": [
+      42,
+      17.5
+    ],
+    "mainDoorOut": [
+      20,
+      11.4
+    ],
+    "mainDoorIn": [
+      20,
+      8.5
+    ],
+    "annexDoorOut": [
+      51.5,
+      11.4
+    ],
+    "annexDoorIn": [
+      51.5,
+      8.5
+    ]
+  },
+  "dreamHouse": {
+    "plot": {
+      "x": [
+        72,
+        98
+      ],
+      "z": [
+        -26,
+        -4
+      ]
+    },
+    "accessRoad": {
+      "x": 85,
+      "z": [
+        11.2,
+        -4
+      ]
+    },
+    "arch_z": -4,
+    "foundation": {
+      "center": [
+        81,
+        -17
+      ],
+      "size": [
+        11,
+        8
+      ]
+    },
+    "billboard": [
+      81,
+      -23.2
+    ],
+    "workArea": [
+      93.5,
+      -15
+    ],
+    "status": "placeholder, always visible, no gameplay yet"
+  },
+  "playerBounds": {
+    "x": [
+      -31.5,
+      100
+    ],
+    "z": [
+      -39.4,
+      25.6
+    ],
+    "rules": "z<-13.2 allowed only inside saw back-yard (x -18.2..-1.8), mines yard when plumbing owned (x 34.4..59.6, z>=-24.6), dream plot (x>=62, z>=-25.6)"
+  }
+}

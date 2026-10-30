@@ -1,0 +1,50 @@
+[
+  {
+    "step": 1,
+    "key": "q1",
+    "completeOn": "player finishes chopping any tree",
+    "arrowTarget": "nearest alive tree"
+  },
+  {
+    "step": 2,
+    "key": "q2",
+    "completeOn": "drop logs on sawIn",
+    "arrowTarget": "sawIn zone"
+  },
+  {
+    "step": 3,
+    "key": "q3",
+    "completeOn": "pick planks from sawOut",
+    "arrowTarget": "sawOut zone"
+  },
+  {
+    "step": 4,
+    "key": "q4",
+    "completeOn": "drop planks on in_chair",
+    "arrowTarget": "in_chair zone"
+  },
+  {
+    "step": 5,
+    "key": "q5",
+    "completeOn": "pick chairs from out_chair",
+    "arrowTarget": "out_chair zone"
+  },
+  {
+    "step": 6,
+    "key": "q6",
+    "completeOn": "drop chairs on shelf_chair",
+    "arrowTarget": "shelf_chair zone"
+  },
+  {
+    "step": 7,
+    "key": "q7",
+    "completeOn": "collect cash from any register",
+    "arrowTarget": "cash0 zone"
+  },
+  {
+    "step": 8,
+    "key": "q8",
+    "completeOn": "complete any upgrade pad",
+    "arrowTarget": "saw_speed pad"
+  }
+]

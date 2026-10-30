@@ -1,0 +1,104 @@
+{
+  "_note": "All formulas exactly as in reference/prototype.html. lv(x)=pad level, S.lv[x]=panel upgrade level.",
+  "ECON": {
+    "price": 0.85,
+    "cost": 1.25,
+    "truck": 1.4
+  },
+  "xpNeededForNextLevel": "round(8 + 4.5*level)",
+  "salePrice": "round(basePrice*ECON.price*(1+0.25*S.lv.quality)/10)*10  (x(1+0.15*S.lv.consult) at registers)",
+  "truckPayout": "sum over 8 items of round(salePrice*ECON.truck); XP = sum of item xp",
+  "truckOrderSize": 8,
+  "truckAwaySeconds": 10,
+  "player": {
+    "carryCapacity": "5+2*S.lv.cap",
+    "walkSpeed": "4.4*(1+0.12*S.lv.speed) units/s",
+    "chopSeconds": "1.1/(1+0.35*S.lv.axe) (x node hardness: tree 1, clay 1.5, iron 1.8)",
+    "itemsPerChop": 2,
+    "transferInterval": "0.075s per item (0.035 for cash)",
+    "zoneRadius": 1.3,
+    "padRadius": 0.95
+  },
+  "factoryCycleSeconds": "baseCycle/(1+0.35*lv(id_speed))",
+  "factoryParallelBatches": "1+lv(id_qty)",
+  "factoryStorageMultiplier": "1+0.6*lv(id_qty)+0.1*lv(id_speed)",
+  "factoryBaseStorage": {
+    "sawmill": {
+      "in_logs": 24,
+      "out_planks": 30
+    },
+    "plank_factories": {
+      "in": 24,
+      "out": 12
+    },
+    "clay_iron_factories": {
+      "in": 16,
+      "out": 12
+    }
+  },
+  "sawmill": {
+    "input": "1 log",
+    "output": "2 planks",
+    "baseCycle": 1.6
+  },
+  "shop": {
+    "shelfCap": "8+3*lv(shop)",
+    "wallX": "25+4.2*lv(shop)",
+    "customerSpawnSeconds": "max(1.1, 5-0.5*S.lv.ads-0.3*lv(shop))",
+    "maxWalkInCustomers": "4+S.lv.ads+2*lv(shop)",
+    "patienceSeconds": "45 (x1.6 if consultant hired)",
+    "serveSeconds": 0.9,
+    "serveRate": {
+      "player": 1.4,
+      "cashier": 1.0,
+      "robot": 1.7
+    }
+  },
+  "carPark": {
+    "slots": "min(8, 4+lv(shop))",
+    "spawnEverySeconds": "6..11 random",
+    "roadSpeed": 10,
+    "lotSpeed": 3.4
+  },
+  "workers": {
+    "lumber": {
+      "speed": 3.4,
+      "cap": 4,
+      "chopRate": 0.75
+    },
+    "carrier": {
+      "speed": 3.4,
+      "cap": 5
+    },
+    "robot": {
+      "speed": 5.2,
+      "cap": 8
+    },
+    "miner": {
+      "speed": 3.4,
+      "cap": 5
+    },
+    "secCarrier": {
+      "speed": 3.4,
+      "cap": 5
+    },
+    "stocker": {
+      "speed": 3.4,
+      "cap": 5
+    }
+  },
+  "nodeRegrowSeconds": {
+    "tree": 9,
+    "clay": 12,
+    "iron": 12
+  },
+  "skins": "gold skin unlocks at total earned >= 100000",
+  "startingState": {
+    "money": 0,
+    "level": 1,
+    "owned": [
+      "chair"
+    ],
+    "quest": 0
+  }
+}
