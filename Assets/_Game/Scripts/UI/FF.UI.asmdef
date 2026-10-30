@@ -1,0 +1,7 @@
+{
+    "name": "FF.UI",
+    "rootNamespace": "FF.UI",
+    "references": ["FF.Core", "FF.Data", "Unity.TextMeshPro", "UnityEngine.UI", "Unity.Localization"],
+    "autoReferenced": true,
+    "noEngineReferences": false
+}

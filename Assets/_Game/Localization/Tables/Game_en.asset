@@ -1,0 +1,743 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Game_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: a3de81d28c48c44338ace6f6b40f4956, type: 2}
+  m_Metadata:
+    m_Items:
+    - rid: 7053691049560244357
+  m_TableData:
+  - m_Id: 288350208
+    m_Localized: Furniture Factory
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738816
+    m_Localized: Furniture <em>Factory</em>
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738817
+    m_Localized: "Prototype \xB7 v0.3"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738818
+    m_Localized: Chop trees, saw planks, build furniture and sell it. Level up to unlock new factories.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738819
+    m_Localized: Choose your character
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738820
+    m_Localized: Language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738821
+    m_Localized: Play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738822
+    m_Localized: Continue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738823
+    m_Localized: "Test: +25 Lv, +250K \u058F"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738824
+    m_Localized: New game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738825
+    m_Localized: Everything will be erased. Tap again
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738826
+    m_Localized: "WASD or arrows \xB7 Q: throw \xB7 Phone: drag your finger"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738827
+    m_Localized: Upgrades
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738828
+    m_Localized: Upgrades
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738829
+    m_Localized: Menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738830
+    m_Localized: Close
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738831
+    m_Localized: Drag on the screen or press WASD
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738832
+    m_Localized: Throw
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738833
+    m_Localized: Throw away what you carry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738834
+    m_Localized: "Balance: {v} \u058F"
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933120
+    m_Localized: Factory, truck, parking and register upgrades are the <b>yellow pads</b> on the ground. Stand on a pad and the money flows in.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933121
+    m_Localized: MAX
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933122
+    m_Localized: Plumbing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933123
+    m_Localized: Shop Lv {n}
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933124
+    m_Localized: "earn {v} \u058F"
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933125
+    m_Localized: 'unlocked: '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933126
+    m_Localized: Player
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933127
+    m_Localized: Workers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933128
+    m_Localized: Shop staff
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933129
+    m_Localized: Business
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933130
+    m_Localized: '{n} items'
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933131
+    m_Localized: '{n} s'
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933132
+    m_Localized: '{n} people'
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933133
+    m_Localized: '{n} units'
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933134
+    m_Localized: +{n}% price
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933135
+    m_Localized: '{n} customers'
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933136
+    m_Localized: Capacity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933137
+    m_Localized: Carry more items at once
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933138
+    m_Localized: Speed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933139
+    m_Localized: Walk faster
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933140
+    m_Localized: Sharp axe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933141
+    m_Localized: Chop trees and rocks faster
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933142
+    m_Localized: Lumberjack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933143
+    m_Localized: Chops trees and brings logs to the sawmill
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933144
+    m_Localized: Carrier
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933145
+    m_Localized: Takes planks to factories, furniture to the shop or trucks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933146
+    m_Localized: Robot carrier
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933147
+    m_Localized: Fast and carries a lot. Figures out what is missing (empty shelf, waiting truck, idle factory) and handles that first
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933148
+    m_Localized: Miner
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933149
+    m_Localized: Digs clay and iron and brings them to the Plumbing and Building materials factories
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933150
+    m_Localized: Cashier
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933151
+    m_Localized: Stands at a free register and serves customers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933152
+    m_Localized: Stocker
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933153
+    m_Localized: Brings finished furniture from the factories to the shop shelves
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933154
+    m_Localized: Manager
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933155
+    m_Localized: Collects money from every register into your balance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933156
+    m_Localized: Consultant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933157
+    m_Localized: Customers are more patient and pay more
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933158
+    m_Localized: Advertising
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933159
+    m_Localized: Customers come more often
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933160
+    m_Localized: Quality
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933161
+    m_Localized: All furniture sells for more
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933162
+    m_Localized: Chair
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933163
+    m_Localized: CHAIRS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933164
+    m_Localized: Sofa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933165
+    m_Localized: SOFAS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933166
+    m_Localized: Hallway wardrobe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933167
+    m_Localized: WARDROBES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933168
+    m_Localized: Table
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933169
+    m_Localized: TABLES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933170
+    m_Localized: Kitchen furniture
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933171
+    m_Localized: KITCHENS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933172
+    m_Localized: Plumbing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933173
+    m_Localized: PLUMBING
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933174
+    m_Localized: Building materials
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933175
+    m_Localized: MATERIALS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933176
+    m_Localized: PLANKS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933177
+    m_Localized: CLAY
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933178
+    m_Localized: IRON
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933179
+    m_Localized: LOGS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933180
+    m_Localized: SAWMILL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933181
+    m_Localized: SAWMILL 2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933182
+    m_Localized: SHOP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933183
+    m_Localized: DELIVERY
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933184
+    m_Localized: CLAY PIT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933185
+    m_Localized: IRON MINE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933186
+    m_Localized: SHELF
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933187
+    m_Localized: REGISTER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933188
+    m_Localized: TRUCK
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933189
+    m_Localized: Faster!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933190
+    m_Localized: +1 floor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933191
+    m_Localized: Factory opened
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933192
+    m_Localized: Sawmill opened
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933193
+    m_Localized: New register
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933194
+    m_Localized: Shop expanded
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933195
+    m_Localized: Truck on its way
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933196
+    m_Localized: +1 parking spot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933197
+    m_Localized: Upgraded
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933198
+    m_Localized: '{sign}<br><b>Opens at Lv {n}</b>'
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933199
+    m_Localized: '{sign}<br><b>Opens with {name}</b>'
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933200
+    m_Localized: No truck
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933201
+    m_Localized: "Arriving\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933202
+    m_Localized: "Free \xB7 {n} s"
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933203
+    m_Localized: Free
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933204
+    m_Localized: FULL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933205
+    m_Localized: "\xD7{k} output \xB7 {c} slots"
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933206
+    m_Localized: "Shelf \xB7 {name}"
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933207
+    m_Localized: Truck
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933208
+    m_Localized: "Planks \u2192 {name}"
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933209
+    m_Localized: Level {n}
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933210
+    m_Localized: 'New factory: {list}'
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933211
+    m_Localized: Keep growing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933212
+    m_Localized: Delivery paid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933213
+    m_Localized: New factory opened
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933214
+    m_Localized: Building materials, the mines and a new shop opened too
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933215
+    m_Localized: New sawmill opened
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933216
+    m_Localized: Shop Lv {n}
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933217
+    m_Localized: "You can hire: {list} \xB7 "
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933218
+    m_Localized: +1 register slot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933219
+    m_Localized: Walk up to a tree to chop it
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933220
+    m_Localized: Take the logs to the sawmill
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933221
+    m_Localized: Pick up the finished planks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933222
+    m_Localized: Take the planks to the chair workshop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933223
+    m_Localized: Pick up the finished chairs
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933224
+    m_Localized: Put the chairs on the shop shelf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933225
+    m_Localized: Stand at the register, serve the customer and collect the money
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933226
+    m_Localized: Stand on a yellow pad to upgrade the sawmill
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933227
+    m_Localized: Lumberjack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933228
+    m_Localized: Craftsman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933229
+    m_Localized: Ranger
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933230
+    m_Localized: Night owl
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933231
+    m_Localized: Golden
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933232
+    m_Localized: NEW
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933233
+    m_Localized: '{name} factory'
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933234
+    m_Localized: "Buy it on its lot \xB7 {price} \u058F"
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933235
+    m_Localized: Opened together with Plumbing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933236
+    m_Localized: 'New staff: {name}'
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933237
+    m_Localized: Hire in the Upgrades panel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933238
+    m_Localized: New register slot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933239
+    m_Localized: "Buy it in the shop on the \u201C+\u058F\u201D pad"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933240
+    m_Localized: Second sawmill
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933241
+    m_Localized: In the back yard, behind the first sawmill
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933242
+    m_Localized: Clay pit and iron mine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933243
+    m_Localized: Behind the factories
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933244
+    m_Localized: Building materials shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933245
+    m_Localized: Next to the main shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933246
+    m_Localized: 'New character: {name}'
+    m_Metadata:
+      m_Items:
+      - rid: 7053691049560244357
+  - m_Id: 300933247
+    m_Localized: Pick it in the menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933248
+    m_Localized: Plumbing & Materials
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933249
+    m_Localized: Section carrier
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933250
+    m_Localized: Takes plumbing and building materials to the materials shop or trucks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933251
+    m_Localized: Section cashier
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933252
+    m_Localized: Works only at the building materials shop registers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933253
+    m_Localized: DREAM HOUSE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933254
+    m_Localized: Coming soon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933255
+    m_Localized: Dream house<br><b>Coming soon</b>
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933256
+    m_Localized: HOME STORE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933257
+    m_Localized: SALES AREA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933258
+    m_Localized: Dream house plot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933259
+    m_Localized: "East of the factories, at the end of the road \xB7 soon you will build your house here"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933260
+    m_Localized: Sales area seller
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933261
+    m_Localized: Stands at the back sales area register and sells in bulk to contractors
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933262
+    m_Localized: WHOLESALE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933263
+    m_Localized: Sales area is open
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933264
+    m_Localized: Contractors buy building materials and plumbing in bulk
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933265
+    m_Localized: Home
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933266
+    m_Localized: "P \xB7 CUSTOMERS"
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 7053691049560244357
+      type: {class: SmartFormatTag, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_Entries: 
+        m_SharedEntries:
+        - id: 296738834
+        - id: 300933123
+        - id: 300933124
+        - id: 300933130
+        - id: 300933131
+        - id: 300933132
+        - id: 300933133
+        - id: 300933134
+        - id: 300933135
+        - id: 300933198
+        - id: 300933199
+        - id: 300933202
+        - id: 300933205
+        - id: 300933206
+        - id: 300933208
+        - id: 300933209
+        - id: 300933210
+        - id: 300933216
+        - id: 300933217
+        - id: 300933233
+        - id: 300933234
+        - id: 300933236
+        - id: 300933246

@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b830495df1f44c52820af54986b19ec, type: 3}
+  m_Name: material
+  m_EditorClassIdentifier: FF.Data::FF.Data.ProductDef
+  id: material
+  item: 12
+  nameKey: p.material
+  signKey: s.material
+  input: 4
+  inputPerCycle: 2
+  cycleSeconds: 5.5
+  basePrice: 24000
+  xpPerSale: 30
+  unlockLevel: 150
+  factoryCost: 0
+  unlocksWith: {fileID: 11400000, guid: f86f77d96181d4a9c987a4b58fffb179, type: 2}
+  factoryX: 48
+  shelfX: 50.6
+  sellsIn: 1
+  wallColor: {r: 0.7882353, g: 0.8, b: 0.81960785, a: 1}
+  roofColor: {r: 0.3529412, g: 0.39215687, b: 0.4392157, a: 1}

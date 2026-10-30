@@ -1,0 +1,696 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Game Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: Game
+  m_TableCollectionNameGuidString: a3de81d28c48c44338ace6f6b40f4956
+  m_Entries:
+  - m_Id: 288350208
+    m_Key: ui.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738816
+    m_Key: ui.h1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738817
+    m_Key: ui.kicker
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738818
+    m_Key: ui.intro
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738819
+    m_Key: ui.skin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738820
+    m_Key: ui.lang
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738821
+    m_Key: ui.play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738822
+    m_Key: ui.continue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738823
+    m_Key: ui.test
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738824
+    m_Key: ui.new
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738825
+    m_Key: ui.reset
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738826
+    m_Key: ui.controls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738827
+    m_Key: ui.upgrade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738828
+    m_Key: ui.upTitle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738829
+    m_Key: ui.menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738830
+    m_Key: ui.close
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738831
+    m_Key: ui.hint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738832
+    m_Key: ui.throw
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738833
+    m_Key: ui.throwAria
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296738834
+    m_Key: ui.balance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933120
+    m_Key: ui.padNote
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933121
+    m_Key: ui.max
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933122
+    m_Key: ui.lockSink
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933123
+    m_Key: ui.lockShop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933124
+    m_Key: ui.earn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933125
+    m_Key: ui.unlocked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933126
+    m_Key: g.player
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933127
+    m_Key: g.workers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933128
+    m_Key: g.staff
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933129
+    m_Key: g.biz
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933130
+    m_Key: u.items
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933131
+    m_Key: u.sec
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933132
+    m_Key: u.people
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933133
+    m_Key: u.bots
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933134
+    m_Key: u.price
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933135
+    m_Key: u.cust
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933136
+    m_Key: upg.cap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933137
+    m_Key: upgd.cap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933138
+    m_Key: upg.speed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933139
+    m_Key: upgd.speed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933140
+    m_Key: upg.axe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933141
+    m_Key: upgd.axe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933142
+    m_Key: upg.lumber
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933143
+    m_Key: upgd.lumber
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933144
+    m_Key: upg.carrier
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933145
+    m_Key: upgd.carrier
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933146
+    m_Key: upg.robot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933147
+    m_Key: upgd.robot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933148
+    m_Key: upg.miner
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933149
+    m_Key: upgd.miner
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933150
+    m_Key: upg.cashier
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933151
+    m_Key: upgd.cashier
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933152
+    m_Key: upg.stocker
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933153
+    m_Key: upgd.stocker
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933154
+    m_Key: upg.manager
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933155
+    m_Key: upgd.manager
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933156
+    m_Key: upg.consult
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933157
+    m_Key: upgd.consult
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933158
+    m_Key: upg.ads
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933159
+    m_Key: upgd.ads
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933160
+    m_Key: upg.quality
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933161
+    m_Key: upgd.quality
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933162
+    m_Key: p.chair
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933163
+    m_Key: s.chair
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933164
+    m_Key: p.sofa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933165
+    m_Key: s.sofa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933166
+    m_Key: p.wardrobe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933167
+    m_Key: s.wardrobe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933168
+    m_Key: p.table
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933169
+    m_Key: s.table
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933170
+    m_Key: p.kitchen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933171
+    m_Key: s.kitchen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933172
+    m_Key: p.sink
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933173
+    m_Key: s.sink
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933174
+    m_Key: p.material
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933175
+    m_Key: s.material
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933176
+    m_Key: in.plank
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933177
+    m_Key: in.clay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933178
+    m_Key: in.iron
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933179
+    m_Key: in.log
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933180
+    m_Key: sign.saw
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933181
+    m_Key: sign.saw2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933182
+    m_Key: sign.shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933183
+    m_Key: sign.delivery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933184
+    m_Key: sign.clay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933185
+    m_Key: sign.iron
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933186
+    m_Key: z.shelf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933187
+    m_Key: z.reg
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933188
+    m_Key: z.truck
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933189
+    m_Key: done.speed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933190
+    m_Key: done.floor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933191
+    m_Key: done.factory
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933192
+    m_Key: done.saw
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933193
+    m_Key: done.reg
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933194
+    m_Key: done.shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933195
+    m_Key: done.truck
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933196
+    m_Key: done.parking
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933197
+    m_Key: done.generic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933198
+    m_Key: lk.lv
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933199
+    m_Key: lk.with
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933200
+    m_Key: c.noTruck
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933201
+    m_Key: c.arriving
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933202
+    m_Key: c.freeIn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933203
+    m_Key: c.free
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933204
+    m_Key: c.full
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933205
+    m_Key: f.cap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933206
+    m_Key: job.shelf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933207
+    m_Key: job.truck
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933208
+    m_Key: job.planks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933209
+    m_Key: t.level
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933210
+    m_Key: t.newFactory
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933211
+    m_Key: t.keepGoing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933212
+    m_Key: t.delivered
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933213
+    m_Key: t.factoryOpened
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933214
+    m_Key: t.sinkOpened
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933215
+    m_Key: t.saw2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933216
+    m_Key: t.shopLv
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933217
+    m_Key: t.canHire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933218
+    m_Key: t.regSlot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933219
+    m_Key: q1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933220
+    m_Key: q2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933221
+    m_Key: q3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933222
+    m_Key: q4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933223
+    m_Key: q5
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933224
+    m_Key: q6
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933225
+    m_Key: q7
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933226
+    m_Key: q8
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933227
+    m_Key: skin.lumber
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933228
+    m_Key: skin.master
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933229
+    m_Key: skin.forest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933230
+    m_Key: skin.night
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933231
+    m_Key: skin.gold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933232
+    m_Key: un.new
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933233
+    m_Key: un.fac.t
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933234
+    m_Key: un.fac.s
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933235
+    m_Key: un.with.s
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933236
+    m_Key: un.staff.t
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933237
+    m_Key: un.staff.s
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933238
+    m_Key: un.reg.t
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933239
+    m_Key: un.reg.s
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933240
+    m_Key: un.saw2.t
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933241
+    m_Key: un.saw2.s
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933242
+    m_Key: un.mines.t
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933243
+    m_Key: un.mines.s
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933244
+    m_Key: un.matshop.t
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933245
+    m_Key: un.matshop.s
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933246
+    m_Key: un.skin.t
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933247
+    m_Key: un.skin.s
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933248
+    m_Key: g.section
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933249
+    m_Key: upg.secCarrier
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933250
+    m_Key: upgd.secCarrier
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933251
+    m_Key: upg.secCashier
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933252
+    m_Key: upgd.secCashier
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933253
+    m_Key: dream.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933254
+    m_Key: dream.soon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933255
+    m_Key: dream.chip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933256
+    m_Key: sign.houseShop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933257
+    m_Key: sign.sales
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933258
+    m_Key: un.dream.t
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933259
+    m_Key: un.dream.s
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933260
+    m_Key: upg.bulkSeller
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933261
+    m_Key: upgd.bulkSeller
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933262
+    m_Key: z.bulk
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933263
+    m_Key: un.bulk.t
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933264
+    m_Key: un.bulk.s
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933265
+    m_Key: ui.home
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300933266
+    m_Key: sign.lot
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 7053691049560244356
+  references:
+    version: 2
+    RefIds:
+    - rid: 7053691049560244356
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1793402542847

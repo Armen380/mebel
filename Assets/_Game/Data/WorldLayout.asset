@@ -1,0 +1,273 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebf781920827b469eb06c0db06f5a52c, type: 3}
+  m_Name: WorldLayout
+  m_EditorClassIdentifier: FF.Data::FF.Data.WorldLayout
+  camera:
+    playOffset: {x: 0, y: 14.5, z: 13.5}
+    portraitMultiplier: 1.45
+    portraitAspect: 1.1
+    lookAtHeight: 0.4
+    positionLerpRate: 4.5
+    lookLerpRate: 6
+    fieldOfView: 42
+    nearClip: 0.1
+    farClip: 200
+    menuOrbitRadius: 5.4
+    menuOrbitRadiusPortrait: 6.2
+    menuOrbitHeight: 1.7
+    menuOrbitSpeed: 0.22
+  fenceLineZ: -13.6
+  sawmill1:
+    center: {x: -10, y: -10}
+    footprint: {x: 5.4, y: 4}
+    sawIn: {x: -11.7, y: -5.3}
+    sawOut: {x: -8.3, y: -5.3}
+    machineMouth: {x: -10, y: 1.1, z: -7.6}
+  sawmill2:
+    yardX:
+      min: -18.5
+      max: -1.5
+    yardZ:
+      min: -27.6
+      max: -13.6
+    accessRoadX:
+      min: -18.6
+      max: -13
+    accessRoadZ:
+      min: -13.9
+      max: -5.3
+    building: {x: -10, y: -23.5}
+    saw2In: {x: -11.7, y: -18.8}
+    saw2Out: {x: -8.3, y: -18.8}
+  factories:
+    rowZ: -10
+    footprint: {x: 5.4, y: 4}
+    inZoneDx: -1.7
+    outZoneDx: 1.7
+    zoneZ: -5.3
+    padDx: 4
+    speedPadZ: -11.1
+    qtyPadZ: -8.8
+    buyPadZ: -9.6
+  forest:
+    cols: 5
+    rows: 7
+    origin: {x: -30.5, y: -11.8}
+    step: {x: 2.4, y: 2.55}
+    jitter: 0.7
+  mines:
+    x:
+      min: 34
+      max: 60
+    z:
+      min: -25
+      max: -13.6
+    clay:
+      cols: 4
+      rows: 4
+      origin: {x: 36.5, y: -15.8}
+      step: {x: 2.4, y: -2.4}
+      jitter: 0.5
+    iron:
+      cols: 5
+      rows: 4
+      origin: {x: 47, y: -15.8}
+      step: {x: 2.4, y: -2.4}
+      jitter: 0.5
+  mainShop:
+    floorMinX: 2.9
+    floorZ:
+      min: 0.5
+      max: 9.7
+    doorX:
+      min: 17.95
+      max: 22.05
+    doorZ: 9.7
+    shelfBaseX: 4.6
+    shelfStepX: 2.8
+    shelfPileZ: 1.6
+    shelfZoneZ: 3.3
+    registersX:
+    - 22.2
+    - 26.4
+    - 30.6
+    - 34.8
+    - 39
+    - 43.2
+    stallCenterZ: 3.5
+    expansionPad: {x: 14.4, y: 8.3}
+  materialsShop:
+    x:
+      min: 46.4
+      max: 60.6
+    z:
+      min: 0.5
+      max: 9.7
+    doorX:
+      min: 50
+      max: 53
+    shelfSinkX: 48
+    shelfMaterialX: 50.6
+    registersX:
+    - 54.4
+    - 58.2
+  delivery:
+    baysX:
+    - -4
+    - -9.2
+    - -14.4
+    truckParkZ: 12.3
+    truckLaneZ: 14.6
+    dockZoneZ: 10.1
+    truckPad: {x: 1.2, y: 10.4}
+    parkingPad: {x: -1.4, y: 7.6}
+  road:
+    z:
+      min: 11.2
+      max: 15.8
+    laneWestboundZ: 12.3
+    laneEastboundZ: 14.6
+    sidewalkZ:
+      min: 16.7
+      max: 18.3
+    zebraX: 20
+  carPark:
+    x:
+      min: 9.6
+      max: 34.8
+    z:
+      min: 18.6
+      max: 25.2
+    slotBaseX: 11.5
+    slotStepX: 2.6
+    slotCount: 8
+    aisleZ: 19.6
+    slotZ: 22.6
+    drivewayX: 33
+  customerPaths:
+    spawn: {x: 34, y: 17.5}
+    exit: {x: 42, y: 17.5}
+    mainDoorOut: {x: 20, y: 11.4}
+    mainDoorIn: {x: 20, y: 8.5}
+    annexDoorOut: {x: 51.5, y: 11.4}
+    annexDoorIn: {x: 51.5, y: 8.5}
+  dreamHouse:
+    plotX:
+      min: 72
+      max: 98
+    plotZ:
+      min: -26
+      max: -4
+    accessRoadX: 85
+    accessRoadZ:
+      min: -4
+      max: 11.2
+    archZ: -4
+    foundationCenter: {x: 81, y: -17}
+    foundationSize: {x: 11, y: 8}
+    billboard: {x: 81, y: -23.2}
+    workArea: {x: 93.5, y: -15}
+  playerBounds:
+    x:
+      min: -31.5
+      max: 100
+    z:
+      min: -39.4
+      max: 25.6
+    fenceZ: -13.2
+    gateDepthZ: -13.9
+    backAreaSplitX: 15
+    sawYardX:
+      min: -18.2
+      max: -1.8
+    sawYardMinZ: -27.2
+    minesYardX:
+      min: 34.4
+      max: 59.6
+    minesYardMinZ: -24.6
+    dreamPlotMinX: 62
+    dreamPlotMinZ: -25.6
+    collisionRadius: 0.3
+    playerSpawn: {x: -4, y: 0}
+  blockers:
+    sawmill1:
+      x1: -12.7
+      x2: -7.3
+      z1: -12
+      z2: -7.2
+    sawmill2:
+      x1: -12.7
+      x2: -7.3
+      z1: -25.5
+      z2: -20.7
+    shopLeftWall:
+      x1: 2.75
+      x2: 3.05
+      z1: 0.4
+      z2: 9.85
+    shopFrontLeftWall:
+      x1: 2.75
+      x2: 17.95
+      z1: 9.55
+      z2: 9.85
+    shopWallHalfThickness: 0.15
+    shopWallZ:
+      min: 0.4
+      max: 9.85
+    shopFrontWallZ:
+      min: 9.55
+      max: 9.85
+    shopFrontRightMinX: 22.05
+    dreamPlotFence:
+    - x1: 71.85
+      x2: 72.15
+      z1: -26
+      z2: -4
+    - x1: 97.85
+      x2: 98.15
+      z1: -26
+      z2: -4
+    - x1: 72
+      x2: 98
+      z1: -26.15
+      z2: -25.85
+    - x1: 72
+      x2: 82.6
+      z1: -4.15
+      z2: -3.85
+    - x1: 87.4
+      x2: 98
+      z1: -4.15
+      z2: -3.85
+    materialsShopWalls:
+    - x1: 46.25
+      x2: 46.55
+      z1: 0.4
+      z2: 9.85
+    - x1: 60.45
+      x2: 60.75
+      z1: 0.4
+      z2: 9.85
+    - x1: 46.25
+      x2: 50
+      z1: 9.55
+      z2: 9.85
+    - x1: 53
+      x2: 60.75
+      z1: 9.55
+      z2: 9.85
+    factoryHalfX: 2.7
+    factoryZ:
+      min: -12
+      max: -7.2
+    registerHalfSize: {x: 0.62, y: 1.55}

@@ -17,20 +17,28 @@ Notes:
 - Branches: `m0-setup`, `m1-player-world`, merged into `main` after the user's play-test.
 - Open question to user: change "Communication" rule to "reply in the language of the user's message (Armenian or Russian)"?
 
-### M0 — Project setup — 2026-10-31
-Decisions: M0 fully + M1, separate commits; asmdef + EditMode tests; Cinemachine 3; fonts downloaded from github.com/google/fonts;
+### M0 — Project setup — 2026-10-31 (branch `m0-setup`)
+Decisions: M0 fully + M1, separate commits; asmdef + EditMode tests; Cinemachine 3; fonts downloaded;
 remove packages ai.assistant, ai.inference, collab-proxy.
-- [ ] A. Packages: add cinemachine 3, localization, test-framework, nuget.newtonsoft-json; remove ai.assistant/ai.inference/collab-proxy; TMP Essentials
-- [ ] A. URP Mobile_RPAsset: HDR off, MSAA 2x, shadow distance 35, 1 cascade
-- [ ] B. Folders `Assets/_Game/...`; asmdefs FF.Core, FF.Data, FF.Gameplay, FF.UI, FF.Editor, FF.Tests.EditMode; delete SampleScene + default InputSystem_Actions
-- [ ] C. Core: ProtoCoords, NumberFormat (fmt), GameEvents, Services
-- [ ] D. Data SOs: ProductDef, UpgradeDef, PadDef, SkinDef, EconomyConfig, TutorialDef, WorldLayout
-- [ ] D. Editor DataImporter (`FF/Import Design Data`), idempotent
-- [ ] E. Localization: locales hy (default)/en/ru, String Table Collection `Game` imported from JSON; device language → else hy
-- [ ] F. Fonts: Noto Sans Armenian + Noto Sans → TMP dynamic font assets with fallback, TMP default
-- [ ] G. Scenes: Boot.unity (GameBootstrap, 60 fps, load Game), Game.unity (Systems/CameraRig/World/Actors/UI); temporary M0Check
-- [ ] H. EditMode tests: ProtoCoords, NumberFormat, EconomyConfig, DataImport
-- [ ] Verify (no Console errors, tests green, Armenian + Cyrillic render) → commit `M0: ...`
+- [x] A. Packages: cinemachine 6.6.0 (CM3 API, Unity 6.6 built-in version), localization 1.5.13, test-framework 1.8.0, newtonsoft-json 3.2.2; removed ai.assistant/ai.inference/collab-proxy; TMP Essentials → `Assets/TextMesh Pro`
+- [x] A. URP Mobile_RPAsset: HDR off, MSAA 2x, shadow distance 35, 1 cascade; Mobile quality for Editor/Standalone/Android/iOS (`FF/Setup Render Settings`)
+- [x] B. Folders `Assets/_Game/...`; asmdefs FF.Core, FF.Data, FF.Gameplay, FF.UI, FF.Editor, FF.Tests.EditMode; SampleScene deleted (default InputSystem_Actions is replaced in M1.E)
+- [x] C. Core: ProtoCoords, Aabb2D, NumberFormat (exact JS toFixed), JsMath (JS Math.round), GameEvents, Services, AppSettings, IMoveInput
+- [x] D. Data SOs: ProductDef, UpgradeDef, PadDef, SkinDef, EconomyConfig (+formulas), TutorialDef, WorldLayout, GameDatabase
+- [x] D. Editor DataImporter (`FF/Import Design Data`), idempotent
+- [x] E. Localization (`FF/Import Localization`, also run by the data import): hy/en/ru, table `Game` (167 keys), Smart Strings for `{x}`; selectors: command line → device → hy
+- [x] F. Fonts (`FF/Setup Fonts`): Noto Sans Armenian + Noto Sans Bold/ExtraBold/Black (from notofonts, OFL) → TMP dynamic SDF; default = Armenian ExtraBold → fallback Noto Sans ExtraBold
+- [x] G. Scenes (`FF/Setup Scenes`): Boot.unity (BootLoader: 60 fps, wait localization, load Game), Game.unity (Systems/GameInstaller, CameraRig, World, Actors, UI); temporary M0Check
+- [x] H. EditMode tests: ProtoCoords, NumberFormat (401 cases generated from the prototype fmt() in Node), EconomyConfig, DataImport — 428/428 green
+- [x] Verify: Play Mode shows "Կահույքի Գործարան / Мебельная фабрика" + ֏, data log correct (chair 430 ֏, xp(Lv1) 13, saw_speed 1.9K ֏), no Console errors
+- [ ] Commit `M0: ...`
+
+Notes / discrepancies:
+- pads.json `costPerLevel_beforeECON` used banker's rounding in 3 places (saw_speed lv1 2600, chair_speed lv1 2600, table_speed lv2 55100); prototype Math.round gives 2650/2650/55150 → prototype wins (test has explicit overrides).
+- pads.json `reg` position is text ("next register slot") → imported as register 1 (26.4, 3.5) like `placeRegPad()` on a fresh save.
+- Fonts come from github.com/notofonts (official Noto static TTFs; google/fonts only has variable fonts).
+- `capture game_view --save_path` writes under `Assets/` — move the file out and delete `Assets/Temp` after use.
+- Editor tooling run order on a fresh clone: FF/Import Design Data → FF/Setup Fonts → FF/Setup Render Settings → FF/Setup Scenes.
 
 ### M1 — Player, camera, input, world blockout — 2026-10-31
 - [ ] A. Look: fog/background #bfe3f0 (42–95), ambient gradient #ffffff/#7a9a55, sun #fff1d6 from SE; MaterialLibrary SO (one Simple Lit material per colour, instancing)

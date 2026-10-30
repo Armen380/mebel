@@ -1,0 +1,8 @@
+{
+    "name": "FF.Editor",
+    "rootNamespace": "FF.Editor",
+    "references": ["FF.Core", "FF.Data", "FF.Gameplay", "FF.UI", "Unity.InputSystem", "Unity.Cinemachine", "Unity.Localization", "Unity.Localization.Editor", "Unity.TextMeshPro", "Unity.TextMeshPro.Editor", "UnityEngine.UI", "Unity.RenderPipelines.Universal.Runtime", "Unity.RenderPipelines.Core.Runtime"],
+    "includePlatforms": ["Editor"],
+    "autoReferenced": false,
+    "noEngineReferences": false
+}
