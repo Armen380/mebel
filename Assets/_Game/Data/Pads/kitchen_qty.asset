@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: kitchen_qty
   m_EditorClassIdentifier: FF.Data::FF.Data.PadDef
   id: kitchen_qty
-  protoPos: {x: 34, y: -8.8}
+  protoPos: {x: 18, y: -22.3}
   glyph: +
   baseCost: 120000
   costMultiplier: 2.4
   maxLevel: 3
   effect: parallel batches = 1+lv; +1 floor; storage x(1+0.6*qty+0.1*speed)
   visibleWhen: owned.kitchen
+  doneKey: done.floor

@@ -52,7 +52,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 296738823
-    m_Localized: "Test: +25 Lv, +250K \u058F"
+    m_Localized: 'Test: +25 Lv, +$250K'
     m_Metadata:
       m_Items: []
   - m_Id: 296738824
@@ -96,7 +96,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 296738834
-    m_Localized: "Balance: {v} \u058F"
+    m_Localized: 'Balance: ${v}'
     m_Metadata:
       m_Items:
       - rid: 7053691049560244357
@@ -118,7 +118,7 @@ MonoBehaviour:
       m_Items:
       - rid: 7053691049560244357
   - m_Id: 300933124
-    m_Localized: "earn {v} \u058F"
+    m_Localized: earn ${v}
     m_Metadata:
       m_Items:
       - rid: 7053691049560244357
@@ -576,7 +576,7 @@ MonoBehaviour:
       m_Items:
       - rid: 7053691049560244357
   - m_Id: 300933234
-    m_Localized: "Buy it on its lot \xB7 {price} \u058F"
+    m_Localized: "Buy it on its lot \xB7 ${price}"
     m_Metadata:
       m_Items:
       - rid: 7053691049560244357
@@ -598,7 +598,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 300933239
-    m_Localized: "Buy it in the shop on the \u201C+\u058F\u201D pad"
+    m_Localized: "Buy it in the shop on the \u201C+$\u201D pad"
     m_Metadata:
       m_Items: []
   - m_Id: 300933240

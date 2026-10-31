@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: saw2_qty
   m_EditorClassIdentifier: FF.Data::FF.Data.PadDef
   id: saw2_qty
-  protoPos: {x: -4.4, y: -22.3}
+  protoPos: {x: -6, y: -22.3}
   glyph: +
   baseCost: 6000
   costMultiplier: 2.4
   maxLevel: 3
   effect: as saw_qty for sawmill 2
   visibleWhen: owned.saw2
+  doneKey: done.floor

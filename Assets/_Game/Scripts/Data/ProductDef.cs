@@ -25,6 +25,7 @@ namespace FF.Data
 
         [Header("World (prototype coordinates)")]
         public float factoryX;
+        public FactoryRow factoryRow;
         [Tooltip("Shelf x in its shop. Prototype: 4.6 + index*2.8 in the main shop; sink 48, material 50.6.")]
         public float shelfX;
         public ShopKind sellsIn;

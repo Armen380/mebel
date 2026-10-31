@@ -22,7 +22,11 @@ namespace FF.Tests
         [TearDown]
         public void TearDown() => UnityEngine.Object.DestroyImmediate(_layout);
 
-        /// <summary>Direct port of the prototype's collide() region part, in prototype coordinates.</summary>
+        // Factory back yard: the prototype's sawmill yard (x −18.2…−1.8, split at 15) widened for the user's two-row
+        // factory layout (2026-10-31): x −18.2…20.2, split halfway to the mines yard.
+        const float YardMinX = -18.2f, YardMaxX = 20.2f, SplitX = (20.5f + 34.4f) / 2f;
+
+        /// <summary>Port of the prototype's collide() region part (prototype coordinates) with the widened back yard.</summary>
         static void PrototypeCollide(ref float x, ref float z, bool sink)
         {
             x = Mathf.Clamp(x, -31.5f, 100f);
@@ -30,10 +34,10 @@ namespace FF.Tests
             if (z < -13.2f && x >= 62) { if (z < -25.6f) z = -25.6f; }
             else if (z < -13.2f)
             {
-                if (x <= 15 && z < -27.2f) z = -27.2f;
-                if (x > 15 && z < -24.6f) z = -24.6f;
-                bool sk = x > 15, ok = !sk || sink;
-                float a = sk ? 34.4f : -18.2f, b = sk ? 59.6f : -1.8f;
+                if (x <= SplitX && z < -27.2f) z = -27.2f;
+                if (x > SplitX && z < -24.6f) z = -24.6f;
+                bool sk = x > SplitX, ok = !sk || sink;
+                float a = sk ? 34.4f : YardMinX, b = sk ? 59.6f : YardMaxX;
                 if (!ok) z = -13.2f;
                 else if (x < a || x > b) { if (z > -13.9f) z = -13.2f; else x = Mathf.Clamp(x, a, b); }
             }
@@ -63,9 +67,10 @@ namespace FF.Tests
         }
 
         [Test] public void FrontYard_Free() => Assert.AreEqual(new Vector2(10, 0), ApplyProto(10, 0, false));
-        [Test] public void InFenceGap_PushedBackToFence() => Assert.AreEqual(-13.2f, ApplyProto(10, -13.5f, false).y, 1e-5f);
-        [Test] public void DeepBehindFence_SlidesToSawYardWall() => Assert.AreEqual(new Vector2(-1.8f, -20), ApplyProto(10, -20, false));
+        [Test] public void InFenceGap_PushedBackToFence() => Assert.AreEqual(-13.2f, ApplyProto(25, -13.5f, false).y, 1e-5f);
+        [Test] public void DeepBehindFence_SlidesToBackYardWall() => Assert.AreEqual(new Vector2(20.2f, -20), ApplyProto(25, -20, false));
         [Test] public void SawBackYard_Allowed() => Assert.AreEqual(new Vector2(-10, -20), ApplyProto(-10, -20, false));
+        [Test] public void BackRowFactories_Reachable() => Assert.AreEqual(new Vector2(14, -18.8f), ApplyProto(14, -18.8f, false));
         [Test] public void MinesYard_ClosedWithoutPlumbing() => Assert.AreEqual(-13.2f, ApplyProto(45, -20, false).y, 1e-5f);
         [Test] public void MinesYard_OpenWithPlumbing() => Assert.AreEqual(new Vector2(45, -20), ApplyProto(45, -20, true));
         [Test] public void DreamPlot_Allowed() => Assert.AreEqual(new Vector2(85, -20), ApplyProto(85, -20, false));

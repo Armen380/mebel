@@ -85,6 +85,15 @@ namespace FF.Editor
 
         // ---------- world ----------
 
+        static void PlayerBoundsSettingsFromYard(WorldLayout w)
+        {
+            const float sideInset = 0.3f, backInset = 0.4f;
+            ProtoRange yardX = w.sawmill2.yardX;
+            w.playerBounds.sawYardX = new ProtoRange(yardX.min + sideInset, yardX.max - sideInset);
+            w.playerBounds.sawYardMinZ = w.sawmill2.yardZ.min + backInset;
+            w.playerBounds.backAreaSplitX = (yardX.max + w.playerBounds.minesYardX.min) / 2f;
+        }
+
         static WorldLayout ImportWorld(JObject j)
         {
             var w = GetOrCreate<WorldLayout>(DataRoot + "/WorldLayout.asset");
@@ -109,6 +118,9 @@ namespace FF.Editor
             JObject pf = (JObject)j["productFactories"];
             w.factories.rowZ = (float)pf["row_z"];
             w.factories.footprint = V2(pf["footprint"]);
+            w.factories.backRowZ = (float)pf["back_row_z"];
+            w.factories.backZoneZ = (float)pf["back_zone_z"];
+            w.factories.backMouthZ = (float)pf["back_mouth_z"];
 
             JObject forest = (JObject)j["forest"];
             ParseGrid((string)forest["grid"], out w.forest.cols, out w.forest.rows);
@@ -121,6 +133,10 @@ namespace FF.Editor
             w.mines.z = Range(mines["z"]);
             ImportRockGrid((JObject)mines["clay"], w.mines.clay);
             ImportRockGrid((JObject)mines["iron"], w.mines.iron);
+
+            // back-yard region rule from the yard fence (prototype: 0.3 inside the fence, 0.4 from the back fence);
+            // the split between the factory yard and the mines yard sits halfway between them
+            PlayerBoundsSettingsFromYard(w);
 
             JObject shop = (JObject)j["mainShop"];
             w.mainShop.floorZ = Range(shop["floor"]["z"]);
@@ -228,6 +244,7 @@ namespace FF.Editor
                 p.unlockLevel = (int)j["unlockLevel"];
                 p.factoryCost = (long)j["factoryCost"];
                 p.factoryX = (float)j["factoryX"];
+                p.factoryRow = (string)j["factoryRow"] == "back" ? FactoryRow.Back : FactoryRow.Front;
                 p.sellsIn = (string)j["sellsIn"] == "materials_shop" ? ShopKind.Materials : ShopKind.Main;
                 p.wallColor = Hex((string)j["wallColor"]);
                 p.roofColor = Hex((string)j["roofColor"]);
@@ -288,10 +305,29 @@ namespace FF.Editor
                 p.maxLevel = (int)j["maxLevel"];
                 p.effect = (string)j["effect"];
                 p.visibleWhen = (string)j["visibleWhen"];
+                p.doneKey = PadDoneKey(id);
                 EditorUtility.SetDirty(p);
                 list.Add(p);
             }
             return list;
+        }
+
+        /// <summary>Prototype addPad({done}) per pad family; pads.json does not carry it.</summary>
+        static string PadDoneKey(string id)
+        {
+            if (id.EndsWith("_speed")) return "done.speed";
+            if (id.EndsWith("_qty")) return "done.floor";
+            if (id == "saw2_buy") return "done.saw";
+            if (id.EndsWith("_buy")) return "done.factory";
+            switch (id)
+            {
+                case "reg":
+                case "reg_annex": return "done.reg";
+                case "shop": return "done.shop";
+                case "truck": return "done.truck";
+                case "parking": return "done.parking";
+                default: return "done.generic";
+            }
         }
 
         static List<SkinDef> ImportSkins(JArray items)
@@ -314,17 +350,72 @@ namespace FF.Editor
             return list;
         }
 
+        /// <summary>
+        /// Turns the design sentences of tutorial_quest.json ("drop logs on sawIn", "saw_speed pad", …) into
+        /// trigger / target fields; prototype zone ids (sawIn, in_chair, …) become scene zone ids (saw_in, chair_in, …).
+        /// </summary>
+        public static void ParseTutorialStep(TutorialDef.Step step)
+        {
+            string on = step.completeOn.Trim();
+            string[] words = on.Split(' ');
+            if (on.StartsWith("drop ") || on.StartsWith("pick "))
+            {
+                step.trigger = on.StartsWith("drop ") ? TutorialTrigger.Drop : TutorialTrigger.Pick;
+                step.triggerId = ZoneId(words[words.Length - 1]);
+            }
+            else if (on.Contains("chop")) step.trigger = TutorialTrigger.Chop;
+            else if (on.Contains("cash")) step.trigger = TutorialTrigger.Cash;
+            else if (on.Contains("pad")) step.trigger = TutorialTrigger.Pad;
+            else throw new System.FormatException($"Unknown tutorial trigger '{on}'.");
+
+            string target = step.arrowTarget.Trim();
+            if (target.Contains("tree"))
+            {
+                step.target = TutorialTarget.NearestTree;
+                step.targetId = "";
+            }
+            else if (target.EndsWith(" pad"))
+            {
+                step.target = TutorialTarget.Pad;
+                step.targetId = target.Substring(0, target.Length - " pad".Length);
+            }
+            else
+            {
+                step.target = TutorialTarget.Zone;
+                step.targetId = ZoneId(target.Replace(" zone", ""));
+            }
+        }
+
+        /// <summary>Prototype zone id → scene zone id.</summary>
+        public static string ZoneId(string protoId)
+        {
+            switch (protoId)
+            {
+                case "sawIn": return "saw_in";
+                case "sawOut": return "saw_out";
+                case "saw2In": return "saw2_in";
+                case "saw2Out": return "saw2_out";
+            }
+            if (protoId.StartsWith("in_")) return protoId.Substring(3) + "_in";
+            if (protoId.StartsWith("out_")) return protoId.Substring(4) + "_out";
+            return protoId; // shelf_chair, cash0, …
+        }
+
         static TutorialDef ImportTutorial(JArray items)
         {
             var t = GetOrCreate<TutorialDef>(DataRoot + "/Tutorial.asset");
             t.steps.Clear();
             foreach (JObject j in items)
-                t.steps.Add(new TutorialDef.Step
+            {
+                var step = new TutorialDef.Step
                 {
                     textKey = (string)j["key"],
                     completeOn = (string)j["completeOn"],
                     arrowTarget = (string)j["arrowTarget"],
-                });
+                };
+                ParseTutorialStep(step);
+                t.steps.Add(step);
+            }
             EditorUtility.SetDirty(t);
             return t;
         }

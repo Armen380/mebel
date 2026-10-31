@@ -22,15 +22,30 @@ namespace FF.UI.WorldTags
         [SerializeField] Color counterText = new Color32(0xfb, 0xf1, 0xde, 0xff);
         [SerializeField] Color fullColor = new Color32(0xd9, 0x57, 0x3b, 0xff);
         [SerializeField] Color fullText = Color.white;
+        [SerializeField] Color cashColor = new Color32(0x3d, 0x8a, 0x31, 0xff);
+        [SerializeField] Color bubbleColor = Color.white;
         [SerializeField] LocalizedString fullLabel = new LocalizedString("Game", "c.full");
+        [Tooltip("Bubble icons by id: product ids, \"cash\", \"angry\".")]
+        [SerializeField] List<BubbleIcon> icons = new List<BubbleIcon>();
+
+        [System.Serializable]
+        public struct BubbleIcon
+        {
+            public string id;
+            public Sprite sprite;
+            public Color color;
+        }
 
         sealed class Pill
         {
             public RectTransform Rect;
             public Image Background;
             public TMP_Text Label;
+            public Image Icon;
             public WorldTagStyle Style = (WorldTagStyle)(-1);
             public int Count = -1, Capacity = -1;
+            public long ValueKey = -1;
+            public string IconId;
             public bool TextDirty = true;
         }
 
@@ -102,16 +117,38 @@ namespace FF.UI.WorldTags
             if (pill.Style != style)
             {
                 pill.Style = style;
-                bool full = style == WorldTagStyle.Full;
-                pill.Background.color = full ? fullColor : counterColor;
-                pill.Label.color = full ? fullText : counterText;
+                bool full = style == WorldTagStyle.Full, bubble = style == WorldTagStyle.Bubble;
+                pill.Background.color = full ? fullColor : style == WorldTagStyle.Cash ? cashColor : bubble ? bubbleColor : counterColor;
+                pill.Label.color = style == WorldTagStyle.Counter ? counterText : fullText;
                 pill.Label.characterSpacing = full ? 6f : 0f;
+                pill.Label.gameObject.SetActive(!bubble);
+                pill.Icon.gameObject.SetActive(bubble);
                 pill.TextDirty = true;
+                pill.IconId = null;
+                pill.ValueKey = -1;
             }
 
             if (style == WorldTagStyle.Full)
             {
                 if (pill.TextDirty) pill.Label.SetText(_fullText);
+            }
+            else if (style == WorldTagStyle.Cash)
+            {
+                long value = s.TagValue, key = NumberFormat.CompactChangeKey(value);
+                if (key != pill.ValueKey)
+                {
+                    pill.ValueKey = key;
+                    pill.Label.SetText(NumberFormat.Money(value));
+                }
+            }
+            else if (style == WorldTagStyle.Bubble)
+            {
+                string id = s.TagIcon;
+                if (!ReferenceEquals(id, pill.IconId) && id != pill.IconId)
+                {
+                    pill.IconId = id;
+                    SetIcon(pill.Icon, id);
+                }
             }
             else
             {
@@ -126,6 +163,21 @@ namespace FF.UI.WorldTags
             pill.TextDirty = false;
         }
 
+        /// <summary>Editor tools only.</summary>
+        public void SetIcons(List<BubbleIcon> list) => icons = list;
+
+        void SetIcon(Image image, string id)
+        {
+            for (int i = 0; i < icons.Count; i++)
+            {
+                if (icons[i].id != id) continue;
+                image.sprite = icons[i].sprite;
+                image.color = icons[i].color;
+                return;
+            }
+            image.sprite = null;
+        }
+
         Pill CreatePill()
         {
             RectTransform rect = Instantiate(pillTemplate, transform);
@@ -135,6 +187,7 @@ namespace FF.UI.WorldTags
                 Rect = rect,
                 Background = rect.GetComponent<Image>(),
                 Label = rect.GetComponentInChildren<TMP_Text>(true),
+                Icon = rect.Find("Icon").GetComponent<Image>(),
             };
             _pills.Add(pill);
             return pill;

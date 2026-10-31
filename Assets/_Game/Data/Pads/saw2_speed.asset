@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: saw2_speed
   m_EditorClassIdentifier: FF.Data::FF.Data.PadDef
   id: saw2_speed
-  protoPos: {x: -4.4, y: -24.6}
+  protoPos: {x: -6, y: -24.6}
   glyph: "\xBB"
   baseCost: 2500
   costMultiplier: 1.75
   maxLevel: 8
   effect: as saw_speed for sawmill 2
   visibleWhen: owned.saw2
+  doneKey: done.speed

@@ -80,7 +80,7 @@ namespace FF.Data
         [Serializable]
         public sealed class Sawmill2Settings
         {
-            public ProtoRange yardX = new ProtoRange(-18.5f, -1.5f);
+            public ProtoRange yardX = new ProtoRange(-18.5f, 20.5f);
             public ProtoRange yardZ = new ProtoRange(-27.6f, -13.6f);
             public ProtoRange accessRoadX = new ProtoRange(-18.6f, -13f);
             public ProtoRange accessRoadZ = new ProtoRange(-13.9f, -5.3f);
@@ -105,6 +105,13 @@ namespace FF.Data
             public float speedPadZ = -11.1f;
             public float qtyPadZ = -8.8f;
             public float buyPadZ = -9.6f;
+            [Tooltip("Back row behind the fence (user layout, like Sawmill 2): building z, zone z, machine mouth z.")]
+            public float backRowZ = -23.5f;
+            public float backZoneZ = -18.8f;
+            public float backMouthZ = -21.1f;
+
+            public float RowZ(FactoryRow row) => row == FactoryRow.Back ? backRowZ : rowZ;
+            public float ZoneZ(FactoryRow row) => row == FactoryRow.Back ? backZoneZ : zoneZ;
         }
 
         /// <summary>Prototype <c>pileLayout(cols, rows, sx, sz)</c> placed at zone + offset (<c>addZone</c> pile option).</summary>
@@ -143,6 +150,8 @@ namespace FF.Data
             public float factoryMouthZ = -7.5f;
             [Tooltip("Counter tag height above a pile anchor (prototype stackChip setY(1.9)).")]
             public float counterTagHeight = 1.9f;
+            [Tooltip("Side of an upgrade pad (m). Prototype PlaneGeometry(1.8, 1.8).")]
+            public float padSize = 1.8f;
         }
 
         [Serializable]
@@ -178,6 +187,25 @@ namespace FF.Data
             public float[] registersX = { 22.2f, 26.4f, 30.6f, 34.8f, 39f, 43.2f };
             public float stallCenterZ = 3.5f;
             public Vector2 expansionPad = new Vector2(14.4f, 8.3f);
+            [Tooltip("Shelf pile relative to the shelf zone (prototype pile [0, .14, −1.7], pileLayout(2, 2, .74, .6)).")]
+            public PileSettings shelfPile = new PileSettings(2, 2, 0.74f, 0.6f, new Vector3(0f, 0.14f, -1.7f));
+            public float shelfCounterHeight = 2.4f;
+            [Tooltip("Shelf queue: slot i at (x ± side (alternating, 0 for the front), zoneZ + first + i·step).")]
+            public float shelfQueueFirst = 1.45f;
+            public float shelfQueueStep = 0.85f;
+            public float shelfQueueSide = 0.35f;
+            [Tooltip("Register queue: slot i at (x + dx, stallZ + z0 + i·step); customers come in via (x + dx, stallZ + z0 + approach).")]
+            public float registerQueueDx = 1.25f;
+            public float registerQueueZ0 = -0.5f;
+            public float registerQueueStep = 1.05f;
+            public float registerApproach = 3.6f;
+            [Tooltip("Cash zone = register + offset; its bill pile is placed relative to the zone.")]
+            public Vector2 cashZoneOffset = new Vector2(-1.45f, -0.1f);
+            public PileSettings cashPile = new PileSettings(2, 2, 0.5f, 0.3f, new Vector3(1.45f, 1.09f, 1.1f));
+            public float cashCounterHeight = 2f;
+            [Tooltip("Customers enter through doorIn + random x in ±jitter/2 and this z offset.")]
+            public float doorJitter = 2f;
+            public float doorInsideOffset = -0.4f;
         }
 
         [Serializable]
@@ -262,8 +290,9 @@ namespace FF.Data
             [Tooltip("Inside the fence gap (z > this) the player is pushed back to fenceZ instead of sideways.")]
             public float gateDepthZ = -13.9f;
             [Tooltip("x ≤ this belongs to the sawmill back yard, x > this to the mines yard.")]
-            public float backAreaSplitX = 15f;
-            public ProtoRange sawYardX = new ProtoRange(-18.2f, -1.8f);
+            public float backAreaSplitX = 27.45f;
+            [Tooltip("Factory back yard (all back-row factories; the importer derives it from the yard fence).")]
+            public ProtoRange sawYardX = new ProtoRange(-18.2f, 20.2f);
             public float sawYardMinZ = -27.2f;
             public ProtoRange minesYardX = new ProtoRange(34.4f, 59.6f);
             public float minesYardMinZ = -24.6f;
@@ -304,6 +333,10 @@ namespace FF.Data
             [Tooltip("Owned factory = (x ± factoryHalfX) × factoryZ.")]
             public float factoryHalfX = 2.7f;
             public ProtoRange factoryZ = new ProtoRange(-12f, -7.2f);
+            [Tooltip("Owned back-row factory z range (same as sawmill 2).")]
+            public ProtoRange backFactoryZ = new ProtoRange(-25.5f, -20.7f);
+
+            public ProtoRange FactoryZ(FactoryRow row) => row == FactoryRow.Back ? backFactoryZ : factoryZ;
             [Tooltip("Active register stall = (x ± halfX) × (stallZ ± halfZ).")]
             public Vector2 registerHalfSize = new Vector2(0.62f, 1.55f);
         }

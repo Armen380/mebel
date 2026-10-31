@@ -10,7 +10,10 @@ using FF.Gameplay.CameraRig;
 using FF.Gameplay.Input;
 using FF.Gameplay.Items;
 using FF.Gameplay.Nodes;
+using FF.Gameplay.Pads;
 using FF.Gameplay.Player;
+using FF.Gameplay.Shop;
+using FF.Gameplay.Tutorial;
 using FF.Gameplay.Zones;
 using FF.UI.DevTools;
 using FF.UI.HUD;
@@ -43,7 +46,7 @@ namespace FF.Editor
         static readonly Color32 Walnut = new Color32(0x2b, 0x1d, 0x14, 0xff);
         static readonly Color32 Cream = new Color32(0xfb, 0xf1, 0xde, 0xff);
         /// <summary>CSS px of the prototype (390 px wide phone) → HUD canvas units (1080 reference width).</summary>
-        const float Px = 1080f / 390f;
+        internal const float Px = 1080f / 390f;
 
         [MenuItem("FF/Build Game Scene", priority = 10)]
         public static void Build()
@@ -52,13 +55,15 @@ namespace FF.Editor
             var db = AssetDatabase.LoadAssetAtPath<GameDatabase>(DataImporter.DatabasePath);
 
             SetupEnvironment(db.world);
-            ItemPrefabBuilder.Build();
+            ItemPrefabBuilder.Build(false);
             LayoutBuilder.Build();
             List<Zone> zones = ProductionBuilder.Build(db);
+            ShopBuilder.Result shop = ShopBuilder.Build(db);
+            zones.AddRange(shop.Zones);
             Transform player = SpawnPlayer(db.world);
-            SetupSystems(zones);
+            SetupSystems(zones, shop, player);
             MoveInputAggregator input = SetupInput();
-            VirtualJoystick joystick = SetupHud();
+            VirtualJoystick joystick = SetupHud(db);
             Wire(input, "joystickSource", joystick);
             Wire(player.GetComponent<PlayerMover>(), "input", input);
             SetupCamera(player, db.world);
@@ -104,10 +109,10 @@ namespace FF.Editor
 
         // ---------- systems ----------
 
-        static void SetupSystems(List<Zone> zones)
+        static void SetupSystems(List<Zone> zones, ShopBuilder.Result shop, Transform player)
         {
             Transform systems = Root("Systems");
-            foreach (string name in new[] { "Items", "Zones", "Nodes" })
+            foreach (string name in new[] { "Items", "Zones", "Nodes", "Customers", "Pads", "Tutorial" })
             {
                 Transform old = systems.Find(name);
                 if (old != null) Object.DestroyImmediate(old.gameObject);
@@ -128,13 +133,29 @@ namespace FF.Editor
             var nodeRegistry = nodeGo.AddComponent<NodeRegistry>();
             nodeRegistry.SetNodes(new List<ResourceNode>(Root("World").GetComponentsInChildren<ResourceNode>(true)));
 
+            var customers = new GameObject("Customers");
+            customers.transform.SetParent(systems, false);
+            var director = customers.AddComponent<CustomerDirector>();
+            director.Setup(ShopBuilder.BuildCustomerVariants(false), shop.Shelves, shop.Registers, player);
+
+            var padGo = new GameObject("Pads");
+            padGo.transform.SetParent(systems, false);
+            var padSystem = padGo.AddComponent<PadSystem>();
+            padSystem.Setup(shop.Pads, player.GetComponent<PlayerMover>());
+
+            var tutorialGo = new GameObject("Tutorial");
+            tutorialGo.transform.SetParent(systems, false);
+            var tutorial = tutorialGo.AddComponent<TutorialService>();
+            tutorial.Setup(player);
+            ShopBuilder.BuildTutorialArrow(Root("World"), tutorial);
+
             var installer = systems.GetComponentInChildren<GameInstaller>(true);
             Wire(installer, "itemPool", pool);
             Wire(installer, "itemFlights", flights);
             Wire(installer, "zones", zoneRegistry);
             Wire(installer, "nodes", nodeRegistry);
-            EditorUtility.SetDirty(zoneRegistry);
-            EditorUtility.SetDirty(nodeRegistry);
+            Wire(installer, "pads", padSystem);
+            foreach (Object o in new Object[] { zoneRegistry, nodeRegistry, director, padSystem, tutorial }) EditorUtility.SetDirty(o);
         }
 
         // ---------- player & input ----------
@@ -179,13 +200,14 @@ namespace FF.Editor
 
         // ---------- HUD ----------
 
-        static VirtualJoystick SetupHud()
+        static VirtualJoystick SetupHud(GameDatabase db)
         {
             Transform ui = Root("UI");
             Transform hud = ui.Find("HUD");
             for (int i = hud.childCount - 1; i >= 0; i--) Object.DestroyImmediate(hud.GetChild(i).gameObject);
 
-            BuildWorldTags(hud);
+            BuildWorldTags(hud, db);
+            BuildFloatingTexts(hud);
 
             RectTransform safe = Rect("SafeArea", hud);
             Stretch(safe);
@@ -223,13 +245,37 @@ namespace FF.Editor
             Wire(joystick, "stickBase", stickBase);
             Wire(joystick, "knob", knob);
 
+            HudBuilder.BuildTopLeft(safe);
+            HudBuilder.BuildQuestBar(safe);
+            HudBuilder.BuildToast(safe);
             BuildThrowButton(safe);
             BuildLocaleButton(safe);
             return joystick;
         }
 
+        /// <summary>Full-screen layer for floating world texts ("+$430", "Faster!"); ignores touches.</summary>
+        static void BuildFloatingTexts(Transform hud)
+        {
+            RectTransform layer = Rect("FloatingTexts", hud);
+            Stretch(layer);
+            RectTransform t = Rect("Template", layer);
+            t.anchorMin = t.anchorMax = Vector2.zero;
+            t.pivot = new Vector2(0.5f, 0f);
+            t.sizeDelta = new Vector2(400, 80);
+            var label = t.gameObject.AddComponent<TextMeshProUGUI>();
+            label.font = HudBuilder.Font("Black");
+            label.fontSize = 20 * Px;
+            label.color = HudBuilder.Honey;
+            label.alignment = TextAlignmentOptions.Bottom;
+            label.textWrappingMode = TextWrappingModes.NoWrap;
+            label.raycastTarget = false;
+            label.outlineColor = Walnut;
+            label.outlineWidth = 0.2f;
+            Wire(layer.gameObject.AddComponent<FloatingTextLayer>(), "template", label);
+        }
+
         /// <summary>Full-screen layer under everything else: world tags follow world positions, ignore touches.</summary>
-        static void BuildWorldTags(Transform hud)
+        static void BuildWorldTags(Transform hud, GameDatabase db)
         {
             RectTransform layer = Rect("WorldTags", hud);
             Stretch(layer);
@@ -256,8 +302,17 @@ namespace FF.Editor
             label.alignment = TextAlignmentOptions.Center;
             label.raycastTarget = false;
 
+            RectTransform iconRect = Rect("Icon", pill);
+            Image icon = iconRect.gameObject.AddComponent<Image>();
+            icon.raycastTarget = false;
+            icon.preserveAspect = true;
+            var iconSize = iconRect.gameObject.AddComponent<LayoutElement>();
+            iconSize.preferredWidth = iconSize.preferredHeight = 24 * Px;
+            iconRect.gameObject.SetActive(false);
+
             var tags = layer.gameObject.AddComponent<WorldTagLayer>();
             Wire(tags, "pillTemplate", pill);
+            tags.SetIcons(HudBuilder.BubbleIcons(db));
         }
 
         /// <summary>Prototype <c>.throw</c>: 72 px walnut circle bottom-right with a trash icon and "Throw".</summary>
@@ -388,14 +443,14 @@ namespace FF.Editor
 
         static Transform Root(string name) => (GameObject.Find(name) ?? new GameObject(name)).transform;
 
-        static RectTransform Rect(string name, Transform parent)
+        internal static RectTransform Rect(string name, Transform parent)
         {
             var go = new GameObject(name, typeof(RectTransform));
             go.transform.SetParent(parent, false);
             return (RectTransform)go.transform;
         }
 
-        static void Stretch(RectTransform r)
+        internal static void Stretch(RectTransform r)
         {
             r.anchorMin = Vector2.zero;
             r.anchorMax = Vector2.one;

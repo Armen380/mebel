@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: FF.Data::FF.Data.PadDef
   id: saw2_buy
   protoPos: {x: -10, y: -23.1}
-  glyph: "\u058F"
+  glyph: $
   baseCost: 20000
   costMultiplier: 1
   maxLevel: 1
   effect: build Sawmill 2 in back yard
   visibleWhen: '!owned.saw2'
+  doneKey: done.saw

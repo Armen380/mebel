@@ -5,13 +5,67 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
-### Next: M3 — 2026-10-31
-- [ ] Write the M3 plan from `Design/docs/04_IMPLEMENTATION_PLAN.md` and get the user's approval (no code before that)
+### Next: M4 — 2026-11-01
+- [ ] Write the M4 plan from `Design/docs/04_IMPLEMENTATION_PLAN.md` and get the user's approval (no code before that)
 
 Notes:
 - Open question to user: change "Communication" rule to "reply in the language of the user's message (Armenian or Russian)"? The user writes Russian; replies are in Russian until decided.
 
 ## Done
+
+### M3 play-test changes (user requests) — 2026-10-31 (branch `m3-shop`, before the M3 merge)
+Result: tutorial text wraps on phones, dollars before the number, factories in two lines (pairs across the fence); user play-test OK 2026-11-01. These are deliberate design changes away from the prototype (the user decides; the
+prototype no longer wins for layout and currency).
+- [x] 1. Tutorial text must fit a phone screen: the quest bar (and toast subtitle) wrap to the safe-area width minus 16 px margins (prototype `max-width: calc(100% - 32px)`)
+- [x] 2. Currency: dollars, sign before the number — `$430`, `$1.9K`, `+$430`; HUD coin shows `$`; cash zones and buy-pad glyphs `$`; the 5 localization strings with ֏ in hy/en/ru; CLAUDE.md non-negotiable updated
+- [x] 3. Factories in two lines, "pairs across the fence" like the sawmills (user picked this layout):
+  - front row (z −10, facing the road): Sawmill 1 (−10), Chair (−2), Wardrobe (6); front slot x 14 stays empty
+  - back row behind the fence (z −23.5, zones at z −18.8 between building and fence): Sawmill 2 (−10), Sofa (−2), Table (6), Kitchen (14)
+  - Sink (40) and Material (48) stay next to the mines yard
+  - back yard widened from x −18.5…−1.5 to −18.5…20.5; the fence is open over the whole yard width (as for the sawmill yard today); region rule yard split moves from x 15 to 27
+  - pads: every factory at x + 4 (front speed −11.1 / qty −8.8, back speed −24.6 / qty −22.3), buy pad on the building spot (front −9.6, back −23.1); saw2 pads move from x −4.4 to −6 (Sofa now stands there)
+  - data: products.json `factoryX` + new `factoryRow`, pads.json positions, world_layout.json back row + yard; blockers per row; tests that compare against the prototype layout get the new reference numbers
+  - Result: 503/503 tests green; Play Mode: phone portrait 1080×2340 wraps step 7 (ru) onto 2 lines, `$12K` / `$1.9K` everywhere, back yard reachable, back lots in a row behind the open fence. Unity rewrote two URP settings assets during the session (volume profile, shader prefiltering) — reverted, not part of this change.
+  - Game view is left at a custom 1920×1080 size after the portrait check (no API to restore "Free Aspect").
+- [x] 4. Tests green, Play Mode check (phone portrait text, $ everywhere, walk into the back yard, back factories behind the fence), commit, push
+
+### M3 — Shop, customers, registers, money, XP, HUD, tutorial — 2026-10-31 (branch `m3-shop`)
+Result: shop, walk-in customers, registers, cash, money/XP/levels, HUD, 8-step tutorial, 4 upgrade pads; 503 tests green; user play-test OK 2026-11-01; merged into main.
+Goal (04_IMPLEMENTATION_PLAN): full 8-step tutorial completes; money and XP match prototype formulas.
+Prototype refs: shelves + registers (~941–960), customers `spawnCustomer/chooseReg/updCustomers/leave` (~1336–1440),
+`regServer` (~1245), cash zone in `updPlayer` (~1170), `addMoney/addXP/onLevel/toast` (~1445–1462), `QUEST/emit/renderQuest`
++ arrow (~1464–1482, 1641), `addPad/drawPad/updPads` (~716–760), HUD markup/CSS (~24–60, 150–166), `floatText` (~1496).
+
+- [x] 0. Branch `m3-shop` from main
+- [x] A. Data
+  - EconomyConfig: customer numbers (spawn 5 − 0.5·ads − 0.3·shop, min 1.1; walk-ins 4 + ads + 2·shop; walk 2.9 m/s; patience 45 s ×1.6 with consultant; take delay 0.3 / take 0.35 s; serve 0.9 s, player serve ×1.4; bill value formula), bill/cash flight timings, floating text rise
+  - WorldLayout: shelf geometry (pile, queue slots 1.45 + 0.85·i, ±0.35), register queue (x + 1.25, z − 0.5 + 1.05·i, approach +3.6), cash zone offset (−1.45, −0.1) + cash pile, pad size 1.8
+  - TutorialDef: structured steps (event drop/pick/chop/cash/pad + zone id + arrow target); the importer maps the `completeOn` texts of tutorial_quest.json
+- [x] B. Progress (pure C#): `GameProgress` — money, total earned, xp, level, quest step, pad states {lv, paid}; implements `IUpgradeLevels` (pads by id, panel upgrades 0 until M4); `LevelMath.AddXp` (xpNeed = round(8 + 4.5·lv), multi-level-ups); GameEvents MoneyChanged / XpChanged / LevelUp / CashCollected. Saving comes in M5 (restart = new game until then)
+- [x] C. Shop: shelves for every product (LayoutBuilder; active when owned) with shelf zones (cap 8 + 3·shop level, pile 2×2); register cash zones (kind Cash, ֏ glyph, honey tint, bills pile on the counter); register active rule i < 1 + min(reg, shop)
+- [x] D. Customers: 12 pre-built skin variants (prototype palettes, seeded) pooled; `CustomerDirector` = port of `updCustomers` (spawn timer + cap, shelf/register queues, take item, choose least-busy register, served by the player standing on the cash zone, bill → counter pile, XP, "+430 ֏" float, leave, patience → angry); pure `CustomerQueues` (slot positions) + `CustomerRules`; bubbles (wanted product icon / cash icon / angry face) as a new world-tag style with icons generated from the prototype SVGs
+- [x] E. Cash: the player on a cash zone collects one bill per 0.035 s (bill flies to the player, then money is added)
+- [x] F. HUD: money pill (coin ֏ + `fmt`, bump on gain), level pill + XP bar, quest bar ("1/8" + text), bottom hint until step 2, level-up toast (`t.level`, `t.newFactory`/`t.keepGoing`), floating texts layer (pooled)
+- [x] G. Tutorial: `TutorialService` advances on GameEvents exactly like `emit()`; bobbing/spinning honey cone arrow over the target (nearest tree, zone, pad)
+- [x] H. Upgrade pads (needed for tutorial step 8 — see decision 1): `UpgradePad` paying mechanic (0.95 m, still ≥ 0.3 s, amt = min(money, remain, max(1, ⌈price·dt/1.4⌉)), bill flies every 0.07 s, level++, "done" float, PadCompleted event) + pad visual (honey rounded square, green fill from the bottom, glyph, remaining price). Active in M3: saw_speed, saw_qty, chair_speed, chair_qty (their effects already work through the machines); other pads come with their milestones
+- [x] I. EditMode tests: LevelMath/GameProgress, bill value / sale price, CustomerQueues slots, spawn interval / walk-in cap / patience, register choice, pad payment + prices, tutorial parsing + matching, CompactChangeKey — 502/502 green
+- [x] J. Play Mode check (scripted teleports): whole tutorial 1→8 completes; 5 chair sales = 2150 ֏ (5 × 430), XP 15 → Lv 2 with 2/17; saw_speed pad 1900 → Lv 1, next price 3300, sawmill storage 26/33; angry customers leave after 45 s; toast, bubbles, floats, cash pill seen; Console clean
+- [x] K. Commit `M3: shop, customers, registers, money, XP, HUD, tutorial` (e2d3353 + df46b3b), push, user play-test OK, PR → main
+
+Decisions (approved by the user):
+1. Tutorial step 8 needs an upgrade pad, pads are M4 [move the pad paying mechanic + visual into M3, only for the 4 sawmill/chair pads; M4 keeps building growth, confetti, Lv tags, occlusion fade, upgrades panel]
+2. Customer looks [12 pre-built colour variants from the prototype palettes, pooled; not a new random colour per customer]
+3. HUD buttons "Upgrades" and "Menu" [not in M3 — they come with the panel (M4) and the menu (M9)]
+
+Notes:
+- Zone order in ZoneRegistry: machine zones, then shelves, then cash zones (prototype interleaves shelves with factories; zones never overlap, so the first-match rule gives the same result).
+- `FF/Build Game Scene` keeps existing item / customer prefabs (stable file ids, no git churn); use `FF/Build Item Prefabs` / `FF/Build Customer Prefabs` to rebuild them after shape changes.
+- In landscape on a desktop-sized Game view the level toast overlaps the quest bar (HUD is scaled for phones); same layout as the prototype on a phone.
+
+Not in M3 (their milestones): car customers + car park (M7), unlock cards (with M5 product expansion), workers serving registers (M6), materials shop + bulk customers (M8), saving (M5), SFX (M9).
+
+Notes:
+- Open question to user: change "Communication" rule to "reply in the language of the user's message (Armenian or Russian)"? The user writes Russian; replies are in Russian until decided.
 
 ### M2 — Items, stacks, zones, trees, sawmill, chair factory — 2026-10-31 (branch `m2-production`)
 Result: chop → logs → sawmill → planks → chairs loop with prototype timings/capacities, zones, counters, FULL tag, Throw; 485 tests green; user play-test OK; merged into main.

@@ -1,7 +1,15 @@
 {
     "name": "FF.Gameplay",
     "rootNamespace": "FF.Gameplay",
-    "references": ["FF.Core", "FF.Data", "Unity.InputSystem", "Unity.Cinemachine", "Unity.Localization", "Unity.ResourceManager"],
+    "references": [
+        "FF.Core",
+        "FF.Data",
+        "Unity.InputSystem",
+        "Unity.Cinemachine",
+        "Unity.Localization",
+        "Unity.ResourceManager",
+        "Unity.TextMeshPro"
+    ],
     "autoReferenced": true,
     "noEngineReferences": false
 }

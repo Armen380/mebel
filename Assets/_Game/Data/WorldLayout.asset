@@ -36,7 +36,7 @@ MonoBehaviour:
   sawmill2:
     yardX:
       min: -18.5
-      max: -1.5
+      max: 20.5
     yardZ:
       min: -27.6
       max: -13.6
@@ -60,6 +60,9 @@ MonoBehaviour:
     speedPadZ: -11.1
     qtyPadZ: -8.8
     buyPadZ: -9.6
+    backRowZ: -23.5
+    backZoneZ: -18.8
+    backMouthZ: -21.1
   production:
     zoneMarkerSize: 2.4
     sawIn:
@@ -90,6 +93,7 @@ MonoBehaviour:
     factoryMouthY: 1.05
     factoryMouthZ: -7.5
     counterTagHeight: 1.9
+    padSize: 1.8
   forest:
     cols: 5
     rows: 7
@@ -137,6 +141,28 @@ MonoBehaviour:
     - 43.2
     stallCenterZ: 3.5
     expansionPad: {x: 14.4, y: 8.3}
+    shelfPile:
+      cols: 2
+      rows: 2
+      spacing: {x: 0.74, y: 0.6}
+      offset: {x: 0, y: 0.14, z: -1.7}
+    shelfCounterHeight: 2.4
+    shelfQueueFirst: 1.45
+    shelfQueueStep: 0.85
+    shelfQueueSide: 0.35
+    registerQueueDx: 1.25
+    registerQueueZ0: -0.5
+    registerQueueStep: 1.05
+    registerApproach: 3.6
+    cashZoneOffset: {x: -1.45, y: -0.1}
+    cashPile:
+      cols: 2
+      rows: 2
+      spacing: {x: 0.5, y: 0.3}
+      offset: {x: 1.45, y: 1.09, z: 1.1}
+    cashCounterHeight: 2
+    doorJitter: 2
+    doorInsideOffset: -0.4
   materialsShop:
     x:
       min: 46.4
@@ -217,10 +243,10 @@ MonoBehaviour:
       max: 25.6
     fenceZ: -13.2
     gateDepthZ: -13.9
-    backAreaSplitX: 15
+    backAreaSplitX: 27.45
     sawYardX:
       min: -18.2
-      max: -1.8
+      max: 20.2
     sawYardMinZ: -27.2
     minesYardX:
       min: 34.4
@@ -301,4 +327,7 @@ MonoBehaviour:
     factoryZ:
       min: -12
       max: -7.2
+    backFactoryZ:
+      min: -25.5
+      max: -20.7
     registerHalfSize: {x: 0.62, y: 1.55}

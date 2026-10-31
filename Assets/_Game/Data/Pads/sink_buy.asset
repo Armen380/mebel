@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: FF.Data::FF.Data.PadDef
   id: sink_buy
   protoPos: {x: 40, y: -9.6}
-  glyph: "\u058F"
+  glyph: $
   baseCost: 1500000
   costMultiplier: 1
   maxLevel: 1
   effect: build factory + its shop shelf
   visibleWhen: '!owned.sink && level>=150'
+  doneKey: done.factory

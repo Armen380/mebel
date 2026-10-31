@@ -27,7 +27,10 @@ namespace FF.Gameplay.World
 
             foreach (ProductDef p in products)
                 if (state.OwnedProducts.Contains(p.id))
-                    Add(result, new ProtoRect(p.factoryX - b.factoryHalfX, p.factoryX + b.factoryHalfX, b.factoryZ.min, b.factoryZ.max));
+                {
+                    ProtoRange z = b.FactoryZ(p.factoryRow);
+                    Add(result, new ProtoRect(p.factoryX - b.factoryHalfX, p.factoryX + b.factoryHalfX, z.min, z.max));
+                }
 
             float stallZ = layout.mainShop.stallCenterZ;
             float[] mainX = layout.mainShop.registersX;

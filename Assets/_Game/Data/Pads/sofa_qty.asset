@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: sofa_qty
   m_EditorClassIdentifier: FF.Data::FF.Data.PadDef
   id: sofa_qty
-  protoPos: {x: 10, y: -8.8}
+  protoPos: {x: 2, y: -22.3}
   glyph: +
   baseCost: 4500
   costMultiplier: 2.4
   maxLevel: 3
   effect: parallel batches = 1+lv; +1 floor; storage x(1+0.6*qty+0.1*speed)
   visibleWhen: owned.sofa
+  doneKey: done.floor

@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: table_buy
   m_EditorClassIdentifier: FF.Data::FF.Data.PadDef
   id: table_buy
-  protoPos: {x: 22, y: -9.6}
-  glyph: "\u058F"
+  protoPos: {x: 6, y: -23.1}
+  glyph: $
   baseCost: 150000
   costMultiplier: 1
   maxLevel: 1
   effect: build factory + its shop shelf
   visibleWhen: '!owned.table && level>=22'
+  doneKey: done.factory

@@ -25,6 +25,7 @@ MonoBehaviour:
   factoryCost: 0
   unlocksWith: {fileID: 11400000, guid: f86f77d96181d4a9c987a4b58fffb179, type: 2}
   factoryX: 48
+  factoryRow: 0
   shelfX: 50.6
   sellsIn: 1
   wallColor: {r: 0.7882353, g: 0.8, b: 0.81960785, a: 1}

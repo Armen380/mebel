@@ -87,6 +87,51 @@ namespace FF.Data
         public float shopWallPerLevel = 4.2f;
         public float serveSeconds = 0.9f;
 
+        [Header("Customers (prototype spawnCustomer / updCustomers)")]
+        [Tooltip("Spawn interval = max(min, base − perAds·ads − perShop·shopLv).")]
+        public float customerSpawnBase = 5f;
+        public float customerSpawnPerAds = 0.5f;
+        public float customerSpawnPerShop = 0.3f;
+        public float customerSpawnMin = 1.1f;
+        public float customerFirstSpawn = 1.5f;
+        [Tooltip("Walk-ins at once = base + ads + perShop·shopLv.")]
+        public int maxWalkInsBase = 4;
+        public int maxWalkInsPerShop = 2;
+        public float customerWalkSpeed = 2.9f;
+        public float customerPatience = 45f;
+        public float consultantPatienceMultiplier = 1.6f;
+        [Tooltip("The front customer waits this long at the shelf before taking an item.")]
+        public float customerTakeDelay = 0.3f;
+        public float customerTakeSeconds = 0.35f;
+        public float customerTakeFlightSeconds = 0.3f;
+        [Tooltip("With some items in hand and an empty shelf, go to the register after this many seconds.")]
+        public float customerPartialWait = 5f;
+        public float playerServeRate = 1.4f;
+        public float cashierServeRate = 1f;
+        public float robotServeRate = 1.7f;
+        public float billFlightSeconds = 0.35f;
+        public float billSpawnHeight = 1.4f;
+        [Tooltip("Bubbles: cash icon after waiting at a register with nobody serving; product icon at an empty shelf.")]
+        public float cashBubbleDelay = 1f;
+        public float shelfBubbleDelay = 0.5f;
+
+        [Header("Cash collection (player on a register cash zone)")]
+        public float cashFlightSeconds = 0.22f;
+        public float cashFlightArc = 0.6f;
+        public float cashTargetHeight = 1.3f;
+
+        [Header("Upgrade pads (prototype updPads)")]
+        public float padStillSeconds = 0.3f;
+        [Tooltip("A full price drains in this many seconds: amt = max(1, ⌈price·dt/payTime⌉).")]
+        public float padPaySeconds = 1.4f;
+        public float padBillInterval = 0.07f;
+        public float padBillFlightSeconds = 0.25f;
+        public float padBillArc = 0.6f;
+
+        [Header("Floating texts")]
+        public float floatTextRise = 1.4f;
+        public float floatTextSeconds = 1f;
+
         [Header("Delivery")]
         public int truckOrderSize = 8;
         public float truckAwaySeconds = 10f;
@@ -138,6 +183,25 @@ namespace FF.Data
         /// <summary>Machine pile capacity: round(base·capMul) (prototype capFn after setup).</summary>
         public int StorageCapacity(int baseCapacity, int qtyLevel, int speedLevel) =>
             (int)JsMath.RoundToLong(baseCapacity * (1 + (double)storagePerQtyLevel * qtyLevel + (double)storagePerSpeedLevel * speedLevel));
+
+        public float CustomerSpawnInterval(int adsLevel, int shopLevel) =>
+            Mathf.Max(customerSpawnMin, customerSpawnBase - customerSpawnPerAds * adsLevel - customerSpawnPerShop * shopLevel);
+
+        public int MaxWalkIns(int adsLevel, int shopLevel) => maxWalkInsBase + adsLevel + maxWalkInsPerShop * shopLevel;
+
+        public float CustomerPatience(int consultantLevel) =>
+            customerPatience * (consultantLevel > 0 ? consultantPatienceMultiplier : 1f);
+
+        /// <summary>Bill of one sale: round(salePrice·(1 + 0.15·consult)·n·(bulk ? 1.15 : 1)/10)·10.</summary>
+        public long BillValue(long salePrice, int consultantLevel, int items, bool bulk) =>
+            JsMath.RoundToLong(salePrice * (1 + consultantBonusPerLevel * consultantLevel) * items * (bulk ? 1.15 : 1) / 10) * 10;
+
+        /// <summary>One frame of paying into a pad: min(money, remaining, max(1, ⌈price·dt/payTime⌉)).</summary>
+        public long PadPayment(long money, long remaining, long price, float dt)
+        {
+            long rate = Math.Max(1L, (long)Math.Ceiling(price * (double)dt / padPaySeconds));
+            return Math.Max(0L, Math.Min(money, Math.Min(remaining, rate)));
+        }
 
         public int ShelfCapacity(int shopLevel) => shelfCapBase + shelfCapPerShopLevel * shopLevel;
 

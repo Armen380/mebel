@@ -35,7 +35,7 @@
     "yard": {
       "x": [
         -18.5,
-        -1.5
+        20.5
       ],
       "z": [
         -27.6,
@@ -75,15 +75,28 @@
     ],
     "x": {
       "chair": -2,
-      "sofa": 6,
-      "wardrobe": 14,
-      "table": 22,
-      "kitchen": 30,
+      "sofa": -2,
+      "wardrobe": 6,
+      "table": 6,
+      "kitchen": 14,
       "sink": 40,
       "material": 48
     },
-    "zones": "in=(x-1.7,-5.3), out=(x+1.7,-5.3)",
-    "pads": "speed=(x+4,-11.1), qty=(x+4,-8.8), buy=(x,-9.6)"
+    "zones": "front: in=(x-1.7,-5.3), out=(x+1.7,-5.3); back: in=(x-1.7,-18.8), out=(x+1.7,-18.8)",
+    "pads": "front: speed=(x+4,-11.1), qty=(x+4,-8.8), buy=(x,-9.6); back: speed=(x+4,-24.6), qty=(x+4,-22.3), buy=(x,-23.1)",
+    "rows": {
+      "chair": "front",
+      "sofa": "back",
+      "wardrobe": "front",
+      "table": "back",
+      "kitchen": "back",
+      "sink": "front",
+      "material": "front"
+    },
+    "_layout": "User layout 2026-10-31 (not the prototype): pairs across the fence like the sawmills. Front row z=-10 faces the road; back row z=-23.5 stands in the back yard behind the open fence and faces the front row.",
+    "back_row_z": -23.5,
+    "back_zone_z": -18.8,
+    "back_mouth_z": -21.1
   },
   "forest": {
     "grid": "5 cols x 7 rows",
@@ -312,6 +325,6 @@
       -39.4,
       25.6
     ],
-    "rules": "z<-13.2 allowed only inside saw back-yard (x -18.2..-1.8), mines yard when plumbing owned (x 34.4..59.6, z>=-24.6), dream plot (x>=62, z>=-25.6)"
+    "rules": "z<-13.2 allowed only inside the factory back yard (x -18.2..20.2, z>=-27.2), mines yard when plumbing owned (x 34.4..59.6, z>=-24.6), dream plot (x>=62, z>=-25.6)"
   }
 }

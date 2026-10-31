@@ -414,6 +414,6 @@ namespace FF.Tests
         public void Compact_FloorsFractions() => Assert.AreEqual("1.2K", NumberFormat.Compact(1249.99));
 
         [Test]
-        public void Money_AppendsDram() => Assert.AreEqual("1.5K ֏", NumberFormat.Money(1500));
+        public void Money_PutsDollarFirst() => Assert.AreEqual("$1.5K", NumberFormat.Money(1500));
     }
 }
