@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4da107e43fd442ba8adfc7f6a9e9c02, type: 3}
+  m_Name: EconomyConfig
+  m_EditorClassIdentifier: FF.Data::FF.Data.EconomyConfig
+  priceMultiplier: 0.85
+  costMultiplier: 1.25
+  truckMultiplier: 1.4
+  xpBase: 8
+  xpPerLevel: 4.5
+  qualityBonusPerLevel: 0.25
+  consultantBonusPerLevel: 0.15
+  playerBaseSpeed: 4.4
+  playerSpeedPerLevel: 0.12
+  carryCapacityBase: 5
+  carryCapacityPerLevel: 2
+  chopSecondsBase: 1.1
+  axeSpeedPerLevel: 0.35
+  itemsPerChop: 2
+  transferInterval: 0.075
+  cashTransferInterval: 0.035
+  zoneRadius: 1.3
+  padRadius: 0.95
+  factorySpeedPerLevel: 0.35
+  storagePerQtyLevel: 0.6
+  storagePerSpeedLevel: 0.1
+  sawmillCycleSeconds: 1.6
+  sawmillLogsIn: 1
+  sawmillPlanksOut: 2
+  sawmillInStorage: 24
+  sawmillOutStorage: 30
+  plankFactoryInStorage: 24
+  plankFactoryOutStorage: 12
+  mineFactoryInStorage: 16
+  mineFactoryOutStorage: 12
+  shelfCapBase: 8
+  shelfCapPerShopLevel: 3
+  shopWallBaseX: 25
+  shopWallPerLevel: 4.2
+  serveSeconds: 0.9
+  truckOrderSize: 8
+  truckAwaySeconds: 10
+  treeRegrowSeconds: 9
+  clayRegrowSeconds: 12
+  ironRegrowSeconds: 12

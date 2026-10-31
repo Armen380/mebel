@@ -1,0 +1,7 @@
+{
+    "name": "FF.Data",
+    "rootNamespace": "FF.Data",
+    "references": ["FF.Core"],
+    "autoReferenced": true,
+    "noEngineReferences": false
+}

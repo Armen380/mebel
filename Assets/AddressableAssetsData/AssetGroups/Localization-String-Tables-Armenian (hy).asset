@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Localization-String-Tables-Armenian (hy)
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Localization-String-Tables-Armenian (hy)
+  m_GUID: 4250eca4ba6a94db09a221d8c98d0fdf
+  m_SerializeEntries:
+  - m_GUID: 820d806eb7577402796b6d4a87e8ef39
+    m_Address: Game_hy
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-hy
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 1
+  m_Settings: {fileID: 11400000, guid: 8287c04757ec54825a938de6c6405bc0, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 1b37430a9721545e7bbfebd51aef867f, type: 2}
+    - {fileID: 11400000, guid: cf595bb594e7842ebb743985bdb9d1e3, type: 2}
+    - {fileID: 11400000, guid: d85e55b00008c417793bdee9fae556f0, type: 2}

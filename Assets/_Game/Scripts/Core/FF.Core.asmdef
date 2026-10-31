@@ -1,0 +1,7 @@
+{
+    "name": "FF.Core",
+    "rootNamespace": "FF.Core",
+    "references": [],
+    "autoReferenced": true,
+    "noEngineReferences": false
+}

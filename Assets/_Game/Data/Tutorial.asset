@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a303735521f024a1aa8d36c23557ca3d, type: 3}
+  m_Name: Tutorial
+  m_EditorClassIdentifier: FF.Data::FF.Data.TutorialDef
+  steps:
+  - textKey: q1
+    completeOn: player finishes chopping any tree
+    arrowTarget: nearest alive tree
+  - textKey: q2
+    completeOn: drop logs on sawIn
+    arrowTarget: sawIn zone
+  - textKey: q3
+    completeOn: pick planks from sawOut
+    arrowTarget: sawOut zone
+  - textKey: q4
+    completeOn: drop planks on in_chair
+    arrowTarget: in_chair zone
+  - textKey: q5
+    completeOn: pick chairs from out_chair
+    arrowTarget: out_chair zone
+  - textKey: q6
+    completeOn: drop chairs on shelf_chair
+    arrowTarget: shelf_chair zone
+  - textKey: q7
+    completeOn: collect cash from any register
+    arrowTarget: cash0 zone
+  - textKey: q8
+    completeOn: complete any upgrade pad
+    arrowTarget: saw_speed pad

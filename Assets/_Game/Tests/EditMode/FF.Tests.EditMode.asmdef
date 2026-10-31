@@ -1,0 +1,11 @@
+{
+    "name": "FF.Tests.EditMode",
+    "rootNamespace": "FF.Tests",
+    "references": ["FF.Core", "FF.Data", "FF.Gameplay", "FF.UI", "FF.Editor", "UnityEngine.TestRunner", "UnityEditor.TestRunner", "Unity.Localization", "Unity.Localization.Editor"],
+    "includePlatforms": ["Editor"],
+    "overrideReferences": true,
+    "precompiledReferences": ["nunit.framework.dll", "Newtonsoft.Json.dll"],
+    "autoReferenced": false,
+    "defineConstraints": ["UNITY_INCLUDE_TESTS"],
+    "noEngineReferences": false
+}
