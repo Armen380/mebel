@@ -313,3 +313,133 @@ MonoBehaviour:
       rgba: 4290293413
     unlit: 0
     material: {fileID: 2100000, guid: 7729d38a30a2e4f17b25977cd71573c3, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4285706464
+    unlit: 0
+    material: {fileID: 2100000, guid: cb7f024129281469aba256c1f4bdc8b6, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4286101730
+    unlit: 0
+    material: {fileID: 2100000, guid: a71cf3c8f72434ce4943e0b528739d49, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4284127177
+    unlit: 0
+    material: {fileID: 2100000, guid: f0276e4d4282347cbb40939556de5121, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4284254164
+    unlit: 0
+    material: {fileID: 2100000, guid: f64274036b50a45da9fd30a1424446c7, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4285555803
+    unlit: 0
+    material: {fileID: 2100000, guid: 41960bf50600c402582972cc543c089f, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4288451722
+    unlit: 0
+    material: {fileID: 2100000, guid: bf29a2a7f673748bbb37d3492de278bf, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4283082840
+    unlit: 0
+    material: {fileID: 2100000, guid: 0f6bd831ed8f848da86c48aef283b039, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4287618214
+    unlit: 0
+    material: {fileID: 2100000, guid: 196291f1fd38b425297334293757af3e, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4281757629
+    unlit: 0
+    material: {fileID: 2100000, guid: bf0fd325bf26c4777ba4acb4296e2a39, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4280438671
+    unlit: 0
+    material: {fileID: 2100000, guid: 0233d66aff11a4a8db5a5fb156d333c3, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4284915938
+    unlit: 0
+    material: {fileID: 2100000, guid: c3df45bf6f0db433e8da038b5ba4efd8, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4288302956
+    unlit: 0
+    material: {fileID: 2100000, guid: 5c08b6891933342288e322fa3c803760, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4291854234
+    unlit: 0
+    material: {fileID: 2100000, guid: f53cc970e860b45b2b6e35461d30284e, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4286857306
+    unlit: 0
+    material: {fileID: 2100000, guid: 033b4eadf8f1a43f9991541ccbe98ca4, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4282280860
+    unlit: 0
+    material: {fileID: 2100000, guid: 7d17ad2a10a1549798456bddd31dfe4f, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4280962938
+    unlit: 0
+    material: {fileID: 2100000, guid: 6851458b2e0ad4595ae9667bbd19725c, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4280171098
+    unlit: 0
+    material: {fileID: 2100000, guid: 149924fac1c33408f9f0bc0577607fd7, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4285579488
+    unlit: 0
+    material: {fileID: 2100000, guid: 08f3fb3e2ac5243ffaa59bceb510f9e2, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4283075273
+    unlit: 0
+    material: {fileID: 2100000, guid: d3c131355bdef4cd39a5ce9172a889d3, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4281227914
+    unlit: 0
+    material: {fileID: 2100000, guid: 2c8ed287b746a4d1ab21a7b0636496cb, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4292404972
+    unlit: 0
+    material: {fileID: 2100000, guid: 65292c6ce336247a5bac8b6a2add3b74, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4282203453
+    unlit: 0
+    material: {fileID: 2100000, guid: 169736cafdbec4f22b9b0c3a077590bf, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4288918201
+    unlit: 0
+    material: {fileID: 2100000, guid: 06ffb056896a2485f91669a60428f772, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4287269514
+    unlit: 0
+    material: {fileID: 2100000, guid: 3d87f2cf791c745d0af228055060c845, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4294309106
+    unlit: 0
+    material: {fileID: 2100000, guid: c7c5837e00a284520bde506900d33c0a, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4292662207
+    unlit: 0
+    material: {fileID: 2100000, guid: d15efd25b2ccd4c7e95fa66afa1a9ce0, type: 2}

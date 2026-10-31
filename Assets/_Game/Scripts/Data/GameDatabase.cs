@@ -10,6 +10,7 @@ namespace FF.Data
         public EconomyConfig economy;
         public WorldLayout world;
         public TutorialDef tutorial;
+        public ItemCatalog items;
         [Tooltip("In prototype order (shelf index = list index for the main shop).")]
         public List<ProductDef> products = new List<ProductDef>();
         public List<UpgradeDef> upgrades = new List<UpgradeDef>();

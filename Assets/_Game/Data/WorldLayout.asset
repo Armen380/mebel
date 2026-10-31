@@ -49,6 +49,7 @@ MonoBehaviour:
     building: {x: -10, y: -23.5}
     saw2In: {x: -11.7, y: -18.8}
     saw2Out: {x: -8.3, y: -18.8}
+    machineMouth: {x: -10, y: 1.1, z: -21.1}
   factories:
     rowZ: -10
     footprint: {x: 5.4, y: 4}
@@ -59,6 +60,36 @@ MonoBehaviour:
     speedPadZ: -11.1
     qtyPadZ: -8.8
     buyPadZ: -9.6
+  production:
+    zoneMarkerSize: 2.4
+    sawIn:
+      cols: 1
+      rows: 3
+      spacing: {x: 0, y: 0.34}
+      offset: {x: 0, y: 0.02, z: -1.55}
+    sawOut:
+      cols: 1
+      rows: 2
+      spacing: {x: 0, y: 0.36}
+      offset: {x: 0, y: 0.02, z: -1.55}
+    plankIn:
+      cols: 1
+      rows: 2
+      spacing: {x: 0, y: 0.36}
+      offset: {x: 0, y: 0.02, z: -1.55}
+    mineIn:
+      cols: 2
+      rows: 2
+      spacing: {x: 0.46, y: 0.38}
+      offset: {x: 0, y: 0.02, z: -1.55}
+    productOut:
+      cols: 2
+      rows: 2
+      spacing: {x: 0.72, y: 0.62}
+      offset: {x: 0, y: 0.02, z: -1.5}
+    factoryMouthY: 1.05
+    factoryMouthZ: -7.5
+    counterTagHeight: 1.9
   forest:
     cols: 5
     rows: 7

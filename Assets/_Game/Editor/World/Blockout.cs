@@ -100,6 +100,9 @@ namespace FF.Editor.World
             return sign;
         }
 
+        /// <summary>Rotation around Z in prototype radians (unchanged by the Z mirror).</summary>
+        public void RotateZ(GameObject go, float rad) => go.transform.localRotation = Quaternion.Euler(0, 0, rad * Mathf.Rad2Deg);
+
         public static void SetStaticRecursive(GameObject root)
         {
             foreach (Transform t in root.GetComponentsInChildren<Transform>(true))

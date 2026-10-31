@@ -30,6 +30,26 @@ MonoBehaviour:
   cashTransferInterval: 0.035
   zoneRadius: 1.3
   padRadius: 0.95
+  chopRange: 1.6
+  chopHitInterval: 0.3
+  transferFlightSeconds: 0.24
+  chopFlightSeconds: 0.32
+  chopSpawnHeight: 1.1
+  chopSpawnStep: 0.35
+  machineInFlightSeconds: 0.3
+  machineInFlightStep: 0.02
+  machineInArc: 0.5
+  machineOutFlightSeconds: 0.35
+  machineOutFlightStep: 0.05
+  flightArc: 1
+  throwDistance: 1.5
+  throwSpread: 1.2
+  throwFlightSeconds: 0.3
+  throwFlightStep: 0.03
+  throwArc: 0.9
+  throwLandHeight: 0.05
+  throwShrinkRate: 4
+  throwShrinkSeconds: 0.25
   factorySpeedPerLevel: 0.35
   storagePerQtyLevel: 0.6
   storagePerSpeedLevel: 0.1
@@ -52,3 +72,6 @@ MonoBehaviour:
   treeRegrowSeconds: 9
   clayRegrowSeconds: 12
   ironRegrowSeconds: 12
+  treeHardness: 1
+  clayHardness: 1.5
+  ironHardness: 1.8

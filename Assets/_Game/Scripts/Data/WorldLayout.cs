@@ -87,6 +87,8 @@ namespace FF.Data
             public Vector2 building = new Vector2(-10f, -23.5f);
             public Vector2 saw2In = new Vector2(-11.7f, -18.8f);
             public Vector2 saw2Out = new Vector2(-8.3f, -18.8f);
+            [Tooltip("Proto (x, y, z). Prototype machines.push({id:'saw2', mouth}).")]
+            public Vector3 machineMouth = new Vector3(-10f, 1.1f, -21.1f);
         }
 
         [Serializable]
@@ -103,6 +105,44 @@ namespace FF.Data
             public float speedPadZ = -11.1f;
             public float qtyPadZ = -8.8f;
             public float buyPadZ = -9.6f;
+        }
+
+        /// <summary>Prototype <c>pileLayout(cols, rows, sx, sz)</c> placed at zone + offset (<c>addZone</c> pile option).</summary>
+        [Serializable]
+        public struct PileSettings
+        {
+            public int cols;
+            public int rows;
+            [Tooltip("Spacing (x, z) between items in one layer, prototype units.")]
+            public Vector2 spacing;
+            [Tooltip("Pile anchor relative to the zone centre, proto (x, y, z).")]
+            public Vector3 offset;
+
+            public PileSettings(int cols, int rows, float sx, float sz, Vector3 offset)
+            {
+                this.cols = cols;
+                this.rows = rows;
+                spacing = new Vector2(sx, sz);
+                this.offset = offset;
+            }
+        }
+
+        /// <summary>Zones and piles of sawmills and factories (prototype ~905–933). Not in world_layout.json.</summary>
+        [Serializable]
+        public sealed class ProductionSettings
+        {
+            [Tooltip("Side of the dashed ground marker (m). Prototype groundPlane(…, 2.4).")]
+            public float zoneMarkerSize = 2.4f;
+            public PileSettings sawIn = new PileSettings(1, 3, 0f, 0.34f, new Vector3(0f, 0.02f, -1.55f));
+            public PileSettings sawOut = new PileSettings(1, 2, 0f, 0.36f, new Vector3(0f, 0.02f, -1.55f));
+            public PileSettings plankIn = new PileSettings(1, 2, 0f, 0.36f, new Vector3(0f, 0.02f, -1.55f));
+            public PileSettings mineIn = new PileSettings(2, 2, 0.46f, 0.38f, new Vector3(0f, 0.02f, -1.55f));
+            public PileSettings productOut = new PileSettings(2, 2, 0.72f, 0.62f, new Vector3(0f, 0.02f, -1.5f));
+            [Tooltip("Factory machine mouth = (factoryX, mouthY, mouthZ) proto.")]
+            public float factoryMouthY = 1.05f;
+            public float factoryMouthZ = -7.5f;
+            [Tooltip("Counter tag height above a pile anchor (prototype stackChip setY(1.9)).")]
+            public float counterTagHeight = 1.9f;
         }
 
         [Serializable]
@@ -273,6 +313,7 @@ namespace FF.Data
         public Sawmill1Settings sawmill1 = new Sawmill1Settings();
         public Sawmill2Settings sawmill2 = new Sawmill2Settings();
         public FactoryRowSettings factories = new FactoryRowSettings();
+        public ProductionSettings production = new ProductionSettings();
         public GridSettings forest = new GridSettings { cols = 5, rows = 7, origin = new Vector2(-30.5f, -11.8f), step = new Vector2(2.4f, 2.55f), jitter = 0.7f };
         public MinesSettings mines = new MinesSettings();
         public MainShopSettings mainShop = new MainShopSettings();

@@ -1,4 +1,5 @@
 using FF.Data;
+using FF.Gameplay.Nodes;
 using FF.Gameplay.World;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -432,17 +433,18 @@ namespace FF.Editor.World
             Transform forest = b.Group("Forest", root);
             WorldLayout.GridSettings f = w.forest;
             var rng = new System.Random(ForestSeed);
+            var fallRng = new System.Random(ForestSeed + 2); // separate stream: keeps the M1 tree positions
             for (int c = 0; c < f.cols; c++)
             for (int r = 0; r < f.rows; r++)
             {
                 float x = f.origin.x + c * f.step.x + ((float)rng.NextDouble() - 0.5f) * f.jitter;
                 float z = f.origin.y + r * f.step.y + ((float)rng.NextDouble() - 0.5f) * f.jitter;
-                Tree(b, forest, x, z, 0.9f + (float)rng.NextDouble() * 0.3f);
+                Tree(b, forest, x, z, 0.9f + (float)rng.NextDouble() * 0.3f, fallRng.NextDouble() < 0.5 ? 1f : -1f);
             }
         }
 
-        /// <summary>Prototype <c>makeTree()</c>: stump + "Top" (trunk and two crowns) that topples when chopped (M2).</summary>
-        static void Tree(Blockout b, Transform parent, float x, float z, float crown)
+        /// <summary>Prototype <c>makeTree()</c>: stump + "Top" (trunk and two crowns) that topples when chopped.</summary>
+        static void Tree(Blockout b, Transform parent, float x, float z, float crown, float fallDirection)
         {
             Transform g = b.Group("Tree", parent, x, z);
             b.Cyl(g, 0.26f, 0.32f, 0.3f, 0x7a4a24, 8, 0, 0.15f, 0, "Stump");
@@ -450,6 +452,7 @@ namespace FF.Editor.World
             b.Cyl(top, 0.2f, 0.27f, 1.7f, Trunk, 7, 0, 0.85f, 0, "Trunk");
             b.Ico(top, 1f * crown, Leaf, 0, 2.05f, 0, "Crown");
             b.Ico(top, 0.7f * crown, LeafLight, 0.1f, 2.75f, 0.05f, "CrownTop");
+            g.gameObject.AddComponent<ResourceNode>().Setup(ItemType.Log, top, fallDirection);
         }
 
         static int ToHex(Color c)

@@ -37,6 +37,34 @@ namespace FF.Data
         public float cashTransferInterval = 0.035f;
         public float zoneRadius = 1.3f;
         public float padRadius = 0.95f;
+        [Tooltip("Chop when the nearest node is closer than this (prototype d2 < 1.6).")]
+        public float chopRange = 1.6f;
+        [Tooltip("Shake + chop SFX every this many seconds while chopping.")]
+        public float chopHitInterval = 0.3f;
+
+        [Header("Item flights (prototype sendTo / fly durations, sine arc height)")]
+        public float transferFlightSeconds = 0.24f;
+        public float chopFlightSeconds = 0.32f;
+        [Tooltip("Chopped item i spawns at node + (0, base + i·step, 0).")]
+        public float chopSpawnHeight = 1.1f;
+        public float chopSpawnStep = 0.35f;
+        public float machineInFlightSeconds = 0.3f;
+        public float machineInFlightStep = 0.02f;
+        public float machineInArc = 0.5f;
+        public float machineOutFlightSeconds = 0.35f;
+        public float machineOutFlightStep = 0.05f;
+        public float flightArc = 1f;
+
+        [Header("Throw (prototype throwAll)")]
+        public float throwDistance = 1.5f;
+        public float throwSpread = 1.2f;
+        public float throwFlightSeconds = 0.3f;
+        public float throwFlightStep = 0.03f;
+        public float throwArc = 0.9f;
+        public float throwLandHeight = 0.05f;
+        [Tooltip("Thrown items shrink at this rate per second and vanish after shrinkSeconds.")]
+        public float throwShrinkRate = 4f;
+        public float throwShrinkSeconds = 0.25f;
 
         [Header("Factories")]
         public float factorySpeedPerLevel = 0.35f;
@@ -67,6 +95,10 @@ namespace FF.Data
         public float treeRegrowSeconds = 9f;
         public float clayRegrowSeconds = 12f;
         public float ironRegrowSeconds = 12f;
+        [Tooltip("Chop time multiplier per node type (economy.json chopSeconds note).")]
+        public float treeHardness = 1f;
+        public float clayHardness = 1.5f;
+        public float ironHardness = 1.8f;
 
         // ---------- formulas ----------
 
@@ -102,6 +134,10 @@ namespace FF.Data
 
         public float StorageMultiplier(int qtyLevel, int speedLevel) =>
             1 + storagePerQtyLevel * qtyLevel + storagePerSpeedLevel * speedLevel;
+
+        /// <summary>Machine pile capacity: round(base·capMul) (prototype capFn after setup).</summary>
+        public int StorageCapacity(int baseCapacity, int qtyLevel, int speedLevel) =>
+            (int)JsMath.RoundToLong(baseCapacity * (1 + (double)storagePerQtyLevel * qtyLevel + (double)storagePerSpeedLevel * speedLevel));
 
         public int ShelfCapacity(int shopLevel) => shelfCapBase + shelfCapPerShopLevel * shopLevel;
 

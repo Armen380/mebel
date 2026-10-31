@@ -21,10 +21,15 @@ namespace FF.Editor.Characters
         {
             var db = AssetDatabase.LoadAssetAtPath<GameDatabase>(DataImporter.DatabasePath);
             GameObject go = Build("Player", db.DefaultSkin);
+            var animator = go.GetComponent<CharacterAnimator>();
             var mover = go.AddComponent<PlayerMover>();
-            var so = new SerializedObject(mover);
-            so.FindProperty("animator").objectReferenceValue = go.GetComponent<CharacterAnimator>();
-            so.ApplyModifiedPropertiesWithoutUndo();
+            GameSceneBuilder.Wire(mover, "animator", animator);
+            var carrier = go.AddComponent<PlayerCarrier>();
+            var interactor = go.AddComponent<PlayerInteractor>();
+            GameSceneBuilder.Wire(interactor, "mover", mover);
+            GameSceneBuilder.Wire(interactor, "carrier", carrier);
+            GameSceneBuilder.Wire(interactor, "animator", animator);
+            GameSceneBuilder.Wire(interactor, "throwAction", GameSceneBuilder.ActionReference("Player/Throw"));
             DataImporter.EnsureFolder("Assets/_Game/Prefabs/Characters");
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(go, PlayerPrefabPath);
             Object.DestroyImmediate(go);
