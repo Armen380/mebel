@@ -5,8 +5,16 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
+### Next: M4 — 2026-11-01
+- [ ] Write the M4 plan from `Design/docs/04_IMPLEMENTATION_PLAN.md` and get the user's approval (no code before that)
+
+Notes:
+- Open question to user: change "Communication" rule to "reply in the language of the user's message (Armenian or Russian)"? The user writes Russian; replies are in Russian until decided.
+
+## Done
+
 ### M3 play-test changes (user requests) — 2026-10-31 (branch `m3-shop`, before the M3 merge)
-Status: **In progress** — done and checked; waiting for the user's play-test. These are deliberate design changes away from the prototype (the user decides; the
+Result: tutorial text wraps on phones, dollars before the number, factories in two lines (pairs across the fence); user play-test OK 2026-11-01. These are deliberate design changes away from the prototype (the user decides; the
 prototype no longer wins for layout and currency).
 - [x] 1. Tutorial text must fit a phone screen: the quest bar (and toast subtitle) wrap to the safe-area width minus 16 px margins (prototype `max-width: calc(100% - 32px)`)
 - [x] 2. Currency: dollars, sign before the number — `$430`, `$1.9K`, `+$430`; HUD coin shows `$`; cash zones and buy-pad glyphs `$`; the 5 localization strings with ֏ in hy/en/ru; CLAUDE.md non-negotiable updated
@@ -22,7 +30,7 @@ prototype no longer wins for layout and currency).
 - [x] 4. Tests green, Play Mode check (phone portrait text, $ everywhere, walk into the back yard, back factories behind the fence), commit, push
 
 ### M3 — Shop, customers, registers, money, XP, HUD, tutorial — 2026-10-31 (branch `m3-shop`)
-Status: **In progress** — implemented and checked; waiting for the user's play-test (step K).
+Result: shop, walk-in customers, registers, cash, money/XP/levels, HUD, 8-step tutorial, 4 upgrade pads; 503 tests green; user play-test OK 2026-11-01; merged into main.
 Goal (04_IMPLEMENTATION_PLAN): full 8-step tutorial completes; money and XP match prototype formulas.
 Prototype refs: shelves + registers (~941–960), customers `spawnCustomer/chooseReg/updCustomers/leave` (~1336–1440),
 `regServer` (~1245), cash zone in `updPlayer` (~1170), `addMoney/addXP/onLevel/toast` (~1445–1462), `QUEST/emit/renderQuest`
@@ -42,7 +50,7 @@ Prototype refs: shelves + registers (~941–960), customers `spawnCustomer/choos
 - [x] H. Upgrade pads (needed for tutorial step 8 — see decision 1): `UpgradePad` paying mechanic (0.95 m, still ≥ 0.3 s, amt = min(money, remain, max(1, ⌈price·dt/1.4⌉)), bill flies every 0.07 s, level++, "done" float, PadCompleted event) + pad visual (honey rounded square, green fill from the bottom, glyph, remaining price). Active in M3: saw_speed, saw_qty, chair_speed, chair_qty (their effects already work through the machines); other pads come with their milestones
 - [x] I. EditMode tests: LevelMath/GameProgress, bill value / sale price, CustomerQueues slots, spawn interval / walk-in cap / patience, register choice, pad payment + prices, tutorial parsing + matching, CompactChangeKey — 502/502 green
 - [x] J. Play Mode check (scripted teleports): whole tutorial 1→8 completes; 5 chair sales = 2150 ֏ (5 × 430), XP 15 → Lv 2 with 2/17; saw_speed pad 1900 → Lv 1, next price 3300, sawmill storage 26/33; angry customers leave after 45 s; toast, bubbles, floats, cash pill seen; Console clean
-- [ ] K. Commit `M3: shop, customers, registers, money, XP, HUD, tutorial`, push, user play-test, PR → main
+- [x] K. Commit `M3: shop, customers, registers, money, XP, HUD, tutorial` (e2d3353 + df46b3b), push, user play-test OK, PR → main
 
 Decisions (approved by the user):
 1. Tutorial step 8 needs an upgrade pad, pads are M4 [move the pad paying mechanic + visual into M3, only for the 4 sawmill/chair pads; M4 keeps building growth, confetti, Lv tags, occlusion fade, upgrades panel]
@@ -58,8 +66,6 @@ Not in M3 (their milestones): car customers + car park (M7), unlock cards (with 
 
 Notes:
 - Open question to user: change "Communication" rule to "reply in the language of the user's message (Armenian or Russian)"? The user writes Russian; replies are in Russian until decided.
-
-## Done
 
 ### M2 — Items, stacks, zones, trees, sawmill, chair factory — 2026-10-31 (branch `m2-production`)
 Result: chop → logs → sawmill → planks → chairs loop with prototype timings/capacities, zones, counters, FULL tag, Throw; 485 tests green; user play-test OK; merged into main.
