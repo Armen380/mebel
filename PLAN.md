@@ -5,6 +5,16 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
+### Fix: Android build output got committed — 2026-11-01 (branch `chore/untrack-build-artifacts`)
+Cause: the user's Android test build wrote `first.apk`, `first_BackUpThisFolder_ButDontShipItWithYourGame/` (IL2CPP backup,
+752 files) and `.utmp/` (CMake temp) into the project root; Claude's `git add -A` in df46b3b committed the last two
+(≈15 M lines) plus Unity IAP (`com.unity.purchasing` 5.4.4, added by the build setup) and they reached main via PR #4.
+No secrets inside (checked: no keystores/keys/tokens); CMake files contain local paths (/Users/armen/...).
+- [x] Remove the artifacts from the index (files stay on disk), ignore `*_BackUpThisFolder_ButDontShipItWithYourGame/`, `*_BurstDebugInformation_DoNotShip/`, `.utmp/`, `*.aab`, `*.symbols.zip`, `Builds/`
+- [x] Ask the user: purge the artifacts from git history (force-push main) or not; keep or remove Unity IAP → user: no history rewrite (cleanup commit only); keep Unity IAP (`com.unity.purchasing` 5.4.4, `Assets/Resources/BillingMode.json`)
+- [ ] PR → main, sync local main
+- Rule from now on: stage files explicitly / review `git status` fully before committing; never `git add -A` blindly.
+
 ### Next: M4 — 2026-11-01
 - [ ] Write the M4 plan from `Design/docs/04_IMPLEMENTATION_PLAN.md` and get the user's approval (no code before that)
 

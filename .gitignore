@@ -47,3 +47,11 @@ crashlytics-build.properties
 # OS
 .DS_Store
 Thumbs.db
+
+# Player build output (build into Builds/, never into the project root)
+/[Bb]uilds/
+*_BackUpThisFolder_ButDontShipItWithYourGame/
+*_BurstDebugInformation_DoNotShip/
+.utmp/
+*.aab
+*.symbols.zip
