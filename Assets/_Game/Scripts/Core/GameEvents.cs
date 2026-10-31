@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace FF.Core
 {
@@ -8,7 +9,8 @@ namespace FF.Core
     /// </summary>
     public static class GameEvents
     {
-        public static event Action<long> MoneyChanged;
+        /// <summary>New balance; <c>bump</c> = an audible/visible gain (prototype addMoney without quiet).</summary>
+        public static event Action<long, bool> MoneyChanged;
         public static event Action<int> LevelUp;
         public static event Action<string, int> PadCompleted;
         public static event Action<string> Unlocked;
@@ -23,8 +25,14 @@ namespace FF.Core
         public static event Action<string> ZonePicked;
         /// <summary>The player threw away everything carried — throw SFX hook.</summary>
         public static event Action Thrown;
+        /// <summary>The player collected a bill at a register (prototype <c>emit('cash')</c>).</summary>
+        public static event Action CashCollected;
+        /// <summary>The tutorial moved to step index (prototype <c>S.quest</c>); equals the step count when finished.</summary>
+        public static event Action<int> QuestChanged;
+        /// <summary>Floating world text such as "+430 ֏" (prototype <c>floatText</c>).</summary>
+        public static event Action<Vector3, string> FloatText;
 
-        public static void RaiseMoneyChanged(long money) => MoneyChanged?.Invoke(money);
+        public static void RaiseMoneyChanged(long money, bool bump) => MoneyChanged?.Invoke(money, bump);
         public static void RaiseLevelUp(int level) => LevelUp?.Invoke(level);
         public static void RaisePadCompleted(string padId, int level) => PadCompleted?.Invoke(padId, level);
         public static void RaiseUnlocked(string unlockId) => Unlocked?.Invoke(unlockId);
@@ -33,6 +41,9 @@ namespace FF.Core
         public static void RaiseZoneDropped(string zoneId) => ZoneDropped?.Invoke(zoneId);
         public static void RaiseZonePicked(string zoneId) => ZonePicked?.Invoke(zoneId);
         public static void RaiseThrown() => Thrown?.Invoke();
+        public static void RaiseCashCollected() => CashCollected?.Invoke();
+        public static void RaiseQuestChanged(int step) => QuestChanged?.Invoke(step);
+        public static void RaiseFloatText(Vector3 position, string text) => FloatText?.Invoke(position, text);
 
         /// <summary>Drops all subscribers (domain-reload-free Play Mode and tests).</summary>
         public static void Reset()
@@ -46,6 +57,9 @@ namespace FF.Core
             ZoneDropped = null;
             ZonePicked = null;
             Thrown = null;
+            CashCollected = null;
+            QuestChanged = null;
+            FloatText = null;
         }
     }
 }

@@ -31,6 +31,24 @@ namespace FF.Core
 
         public static string Money(long n) => Compact(n) + " " + Dram;
 
+        /// <summary>
+        /// A cheap value that changes whenever <see cref="Compact(long)"/> may change: equal keys guarantee equal
+        /// text. Lets per-frame UI (money counter, pad price) rebuild the string only when it can differ.
+        /// Each range is cut into buckets at its rounding boundaries; boundary values get their own key.
+        /// </summary>
+        public static long CompactChangeKey(long n)
+        {
+            if (n < 1000) return n;
+            int range;
+            long step;
+            if (n < 10_000) { range = 1; step = 50; }
+            else if (n < 1_000_000) { range = 2; step = 500; }
+            else if (n < 10_000_000) { range = 3; step = 5_000; }
+            else { range = 4; step = 50_000; }
+            long bucket = n / step * 2 + (n % step == 0 ? 1 : 0);
+            return ((long)range << 48) | bucket;
+        }
+
         static string TrimTrailingZeros(string s)
         {
             int dot = s.IndexOf('.');

@@ -11,7 +11,7 @@ namespace FF.Gameplay.Player
 {
     /// <summary>
     /// The non-movement part of the prototype's <c>updPlayer</c>: chop the nearest node, then the zone loop
-    /// (one item per 0.075 s, first matching zone only), plus the Throw action. Runs after <see cref="PlayerMover"/>.
+    /// (one item per 0.075 s, a bill per 0.035 s on cash zones, first matching zone only), plus the Throw action. Runs after <see cref="PlayerMover"/>.
     /// </summary>
     [DefaultExecutionOrder(10)]
     public sealed class PlayerInteractor : MonoBehaviour
@@ -115,6 +115,14 @@ namespace FF.Gameplay.Player
                 {
                     _flights.FlyToStack(z.Stack.Pop(), hands, _economy.transferFlightSeconds, _economy.flightArc);
                     GameEvents.RaiseZonePicked(z.Id);
+                }
+                else if (z.Kind == ZoneKind.Cash && z.Stack.Settled > 0)
+                {
+                    _flights.FlyAndCollect(z.Stack.Pop(), transform, _economy.cashTargetHeight,
+                        _economy.cashFlightSeconds, _economy.cashFlightArc);
+                    GameEvents.RaiseCashCollected();
+                    _cooldown = _economy.cashTransferInterval;
+                    return;
                 }
                 else continue;
 

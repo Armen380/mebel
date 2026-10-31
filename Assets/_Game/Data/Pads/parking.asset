@@ -20,3 +20,4 @@ MonoBehaviour:
   maxLevel: 2
   effect: +1 truck bay (1..3)
   visibleWhen: always
+  doneKey: done.parking

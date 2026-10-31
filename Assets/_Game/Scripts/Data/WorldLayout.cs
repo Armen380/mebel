@@ -143,6 +143,8 @@ namespace FF.Data
             public float factoryMouthZ = -7.5f;
             [Tooltip("Counter tag height above a pile anchor (prototype stackChip setY(1.9)).")]
             public float counterTagHeight = 1.9f;
+            [Tooltip("Side of an upgrade pad (m). Prototype PlaneGeometry(1.8, 1.8).")]
+            public float padSize = 1.8f;
         }
 
         [Serializable]
@@ -178,6 +180,25 @@ namespace FF.Data
             public float[] registersX = { 22.2f, 26.4f, 30.6f, 34.8f, 39f, 43.2f };
             public float stallCenterZ = 3.5f;
             public Vector2 expansionPad = new Vector2(14.4f, 8.3f);
+            [Tooltip("Shelf pile relative to the shelf zone (prototype pile [0, .14, −1.7], pileLayout(2, 2, .74, .6)).")]
+            public PileSettings shelfPile = new PileSettings(2, 2, 0.74f, 0.6f, new Vector3(0f, 0.14f, -1.7f));
+            public float shelfCounterHeight = 2.4f;
+            [Tooltip("Shelf queue: slot i at (x ± side (alternating, 0 for the front), zoneZ + first + i·step).")]
+            public float shelfQueueFirst = 1.45f;
+            public float shelfQueueStep = 0.85f;
+            public float shelfQueueSide = 0.35f;
+            [Tooltip("Register queue: slot i at (x + dx, stallZ + z0 + i·step); customers come in via (x + dx, stallZ + z0 + approach).")]
+            public float registerQueueDx = 1.25f;
+            public float registerQueueZ0 = -0.5f;
+            public float registerQueueStep = 1.05f;
+            public float registerApproach = 3.6f;
+            [Tooltip("Cash zone = register + offset; its bill pile is placed relative to the zone.")]
+            public Vector2 cashZoneOffset = new Vector2(-1.45f, -0.1f);
+            public PileSettings cashPile = new PileSettings(2, 2, 0.5f, 0.3f, new Vector3(1.45f, 1.09f, 1.1f));
+            public float cashCounterHeight = 2f;
+            [Tooltip("Customers enter through doorIn + random x in ±jitter/2 and this z offset.")]
+            public float doorJitter = 2f;
+            public float doorInsideOffset = -0.4f;
         }
 
         [Serializable]

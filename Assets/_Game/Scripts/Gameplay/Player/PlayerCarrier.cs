@@ -83,5 +83,7 @@ namespace FF.Gameplay.Player
         public WorldTagStyle TagStyle => WorldTagStyle.Full;
         public int TagCount => Stack.Count;
         public int TagCapacity => Stack.Capacity;
+        public long TagValue => 0;
+        public string TagIcon => null;
     }
 }

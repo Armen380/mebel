@@ -16,24 +16,56 @@ MonoBehaviour:
   - textKey: q1
     completeOn: player finishes chopping any tree
     arrowTarget: nearest alive tree
+    trigger: 0
+    triggerId: 
+    target: 0
+    targetId: 
   - textKey: q2
     completeOn: drop logs on sawIn
     arrowTarget: sawIn zone
+    trigger: 1
+    triggerId: saw_in
+    target: 1
+    targetId: saw_in
   - textKey: q3
     completeOn: pick planks from sawOut
     arrowTarget: sawOut zone
+    trigger: 2
+    triggerId: saw_out
+    target: 1
+    targetId: saw_out
   - textKey: q4
     completeOn: drop planks on in_chair
     arrowTarget: in_chair zone
+    trigger: 1
+    triggerId: chair_in
+    target: 1
+    targetId: chair_in
   - textKey: q5
     completeOn: pick chairs from out_chair
     arrowTarget: out_chair zone
+    trigger: 2
+    triggerId: chair_out
+    target: 1
+    targetId: chair_out
   - textKey: q6
     completeOn: drop chairs on shelf_chair
     arrowTarget: shelf_chair zone
+    trigger: 1
+    triggerId: shelf_chair
+    target: 1
+    targetId: shelf_chair
   - textKey: q7
     completeOn: collect cash from any register
     arrowTarget: cash0 zone
+    trigger: 3
+    triggerId: 
+    target: 1
+    targetId: cash0
   - textKey: q8
     completeOn: complete any upgrade pad
     arrowTarget: saw_speed pad
+    trigger: 4
+    triggerId: 
+    target: 2
+    targetId: saw_speed

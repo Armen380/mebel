@@ -67,6 +67,37 @@ MonoBehaviour:
   shopWallBaseX: 25
   shopWallPerLevel: 4.2
   serveSeconds: 0.9
+  customerSpawnBase: 5
+  customerSpawnPerAds: 0.5
+  customerSpawnPerShop: 0.3
+  customerSpawnMin: 1.1
+  customerFirstSpawn: 1.5
+  maxWalkInsBase: 4
+  maxWalkInsPerShop: 2
+  customerWalkSpeed: 2.9
+  customerPatience: 45
+  consultantPatienceMultiplier: 1.6
+  customerTakeDelay: 0.3
+  customerTakeSeconds: 0.35
+  customerTakeFlightSeconds: 0.3
+  customerPartialWait: 5
+  playerServeRate: 1.4
+  cashierServeRate: 1
+  robotServeRate: 1.7
+  billFlightSeconds: 0.35
+  billSpawnHeight: 1.4
+  cashBubbleDelay: 1
+  shelfBubbleDelay: 0.5
+  cashFlightSeconds: 0.22
+  cashFlightArc: 0.6
+  cashTargetHeight: 1.3
+  padStillSeconds: 0.3
+  padPaySeconds: 1.4
+  padBillInterval: 0.07
+  padBillFlightSeconds: 0.25
+  padBillArc: 0.6
+  floatTextRise: 1.4
+  floatTextSeconds: 1
   truckOrderSize: 8
   truckAwaySeconds: 10
   treeRegrowSeconds: 9

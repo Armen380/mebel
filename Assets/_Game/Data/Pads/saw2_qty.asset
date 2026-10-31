@@ -20,3 +20,4 @@ MonoBehaviour:
   maxLevel: 3
   effect: as saw_qty for sawmill 2
   visibleWhen: owned.saw2
+  doneKey: done.floor

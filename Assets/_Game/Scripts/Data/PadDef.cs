@@ -15,5 +15,7 @@ namespace FF.Data
         public int maxLevel;
         [TextArea] public string effect;
         public string visibleWhen;
+        [Tooltip("Localization key of the floating text when a level is bought (prototype addPad done).")]
+        public string doneKey = "done.generic";
     }
 }

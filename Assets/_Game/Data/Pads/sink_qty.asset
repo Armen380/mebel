@@ -20,3 +20,4 @@ MonoBehaviour:
   maxLevel: 3
   effect: parallel batches = 1+lv; +1 floor; storage x(1+0.6*qty+0.1*speed)
   visibleWhen: owned.sink
+  doneKey: done.floor

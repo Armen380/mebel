@@ -90,6 +90,7 @@ MonoBehaviour:
     factoryMouthY: 1.05
     factoryMouthZ: -7.5
     counterTagHeight: 1.9
+    padSize: 1.8
   forest:
     cols: 5
     rows: 7
@@ -137,6 +138,28 @@ MonoBehaviour:
     - 43.2
     stallCenterZ: 3.5
     expansionPad: {x: 14.4, y: 8.3}
+    shelfPile:
+      cols: 2
+      rows: 2
+      spacing: {x: 0.74, y: 0.6}
+      offset: {x: 0, y: 0.14, z: -1.7}
+    shelfCounterHeight: 2.4
+    shelfQueueFirst: 1.45
+    shelfQueueStep: 0.85
+    shelfQueueSide: 0.35
+    registerQueueDx: 1.25
+    registerQueueZ0: -0.5
+    registerQueueStep: 1.05
+    registerApproach: 3.6
+    cashZoneOffset: {x: -1.45, y: -0.1}
+    cashPile:
+      cols: 2
+      rows: 2
+      spacing: {x: 0.5, y: 0.3}
+      offset: {x: 1.45, y: 1.09, z: 1.1}
+    cashCounterHeight: 2
+    doorJitter: 2
+    doorInsideOffset: -0.4
   materialsShop:
     x:
       min: 46.4

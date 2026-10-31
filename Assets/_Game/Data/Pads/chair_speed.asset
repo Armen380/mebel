@@ -20,3 +20,4 @@ MonoBehaviour:
   maxLevel: 8
   effect: factory cycle time /= (1+0.35*lv)
   visibleWhen: owned.chair
+  doneKey: done.speed

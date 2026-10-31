@@ -20,3 +20,4 @@ MonoBehaviour:
   maxLevel: 5
   effect: shop right wall x = 25+4.2*lv (animated), shelf cap 8+3*lv, +1 register slot, +2 max customers, -0.3s spawn, +1 car-park slot; unlocks staff at lv 2/4/5
   visibleWhen: always
+  doneKey: done.shop

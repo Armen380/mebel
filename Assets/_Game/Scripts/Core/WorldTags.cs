@@ -9,6 +9,10 @@ namespace FF.Core
         Counter,
         /// <summary>Red "FULL" pill over a character.</summary>
         Full,
+        /// <summary>Green money pill "1.2K ֏" over a register's bills (TagValue).</summary>
+        Cash,
+        /// <summary>White speech bubble with an icon (TagIcon) over a customer.</summary>
+        Bubble,
     }
 
     /// <summary>Anything that shows a screen-space tag above a world position. Read once per frame by the UI.</summary>
@@ -19,6 +23,10 @@ namespace FF.Core
         WorldTagStyle TagStyle { get; }
         int TagCount { get; }
         int TagCapacity { get; }
+        /// <summary>Money shown by <see cref="WorldTagStyle.Cash"/>.</summary>
+        long TagValue { get; }
+        /// <summary>Icon id shown by <see cref="WorldTagStyle.Bubble"/>: a product id, "cash" or "angry".</summary>
+        string TagIcon { get; }
     }
 
     /// <summary>List of tag sources; gameplay objects register themselves, the UI layer draws them.</summary>

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using FF.Core;
 using FF.Data;
+using FF.Gameplay.Progress;
 using UnityEngine;
 
 namespace FF.Gameplay.Items
@@ -17,6 +18,7 @@ namespace FF.Gameplay.Items
             IntoStack,
             Despawn,
             Shrink,
+            Collect,
         }
 
         struct Flight
@@ -25,6 +27,7 @@ namespace FF.Gameplay.Items
             public Vector3 Start;
             public Vector3 Target;
             public ItemStack Stack;
+            public Transform Follow;
             public float Time;
             public float Duration;
             public float Arc;
@@ -41,6 +44,7 @@ namespace FF.Gameplay.Items
         readonly List<Shrinking> _shrinking = new List<Shrinking>(32);
         ItemPool _pool;
         EconomyConfig _economy;
+        GameProgress _progress;
 
         public int ActiveFlights => _flights.Count;
 
@@ -48,6 +52,7 @@ namespace FF.Gameplay.Items
         {
             _pool = Services.Get<ItemPool>();
             _economy = Services.Get<GameDatabase>().economy;
+            _progress = Services.Get<GameProgress>();
         }
 
         /// <summary>Prototype <c>sendTo</c>: the item flies to the stack's live next slot and is placed there.</summary>
@@ -64,6 +69,18 @@ namespace FF.Gameplay.Items
         /// <summary>The item flies to a point on the ground, shrinks away and returns to the pool (throw).</summary>
         public void FlyAndShrink(Item item, Vector3 target, float duration, float arc) =>
             Add(item, target, null, duration, arc, Landing.Shrink);
+
+        /// <summary>
+        /// A bill flies to a moving target (the player, live position + height) and its value is added to the
+        /// balance on landing (prototype cash zone: <c>fly(b, ()=>P.pos…, …, addMoney(v))</c>).
+        /// </summary>
+        public void FlyAndCollect(Item bill, Transform follow, float height, float duration, float arc)
+        {
+            Add(bill, new Vector3(0f, height, 0f), null, duration, arc, Landing.Collect);
+            Flight f = _flights[_flights.Count - 1];
+            f.Follow = follow;
+            _flights[_flights.Count - 1] = f;
+        }
 
         void Add(Item item, Vector3 target, ItemStack stack, float duration, float arc, Landing landing)
         {
@@ -90,7 +107,9 @@ namespace FF.Gameplay.Items
                 Flight f = _flights[i];
                 f.Time += dt;
                 float k = Mathf.Min(1f, f.Time / f.Duration);
-                Vector3 target = f.Landing == Landing.IntoStack ? f.Stack.NextSlotWorld(f.Item.Type) : f.Target;
+                Vector3 target = f.Landing == Landing.IntoStack ? f.Stack.NextSlotWorld(f.Item.Type)
+                    : f.Follow != null ? f.Follow.position + f.Target
+                    : f.Target;
                 f.Item.transform.position = ItemArc.Evaluate(f.Start, target, k, f.Arc);
 
                 if (k < 1f)
@@ -104,6 +123,11 @@ namespace FF.Gameplay.Items
                     case Landing.IntoStack: f.Stack.CompleteIncoming(f.Item); break;
                     case Landing.Despawn: _pool.Release(f.Item); break;
                     case Landing.Shrink: _shrinking.Add(new Shrinking { Item = f.Item }); break;
+                    case Landing.Collect:
+                        long value = f.Item.Value;
+                        _pool.Release(f.Item);
+                        _progress.AddMoney(value);
+                        break;
                 }
             }
 

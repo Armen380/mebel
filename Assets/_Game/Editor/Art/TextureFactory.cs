@@ -50,6 +50,122 @@ namespace FF.Editor.Art
             });
         }
 
+        /// <summary>Rounded 9-sliced panel (radius 16 px at 64 px) for toast, quest bar and buttons.</summary>
+        public static Sprite Rounded() => Sprite($"{UiFolder}/Rounded.png", 64, new Vector4(20, 20, 20, 20),
+            (x, y, s) => new Color(1, 1, 1, Mathf.Clamp01(-RoundedRectSdf(x + 0.5f, y + 0.5f, s, s, 0, 16) + 0.5f)));
+
+        /// <summary>Money coin (prototype <c>.coin</c>): honey radial gradient with a faint inner ring.</summary>
+        public static Sprite Coin() => Sprite($"{UiFolder}/Coin.png", 128, Vector4.zero, (x, y, s) =>
+        {
+            float r = s / 2f;
+            var p = new Vector2(x + 0.5f, y + 0.5f);
+            float d = Vector2.Distance(p, new Vector2(r, r));
+            // radial-gradient(circle at 35% 30%, #ffe7a3, honey 55%, honey-d)
+            var focus = new Vector2(0.35f * s, (1 - 0.3f) * s);
+            float t = Vector2.Distance(p, focus) / (s * 0.85f);
+            Color light = new Color32(0xff, 0xe7, 0xa3, 0xff), honey = new Color32(0xf3, 0xb3, 0x3d, 0xff), dark = new Color32(0xc4, 0x86, 0x1a, 0xff);
+            Color c = t < 0.55f ? Color.Lerp(light, honey, t / 0.55f) : Color.Lerp(honey, dark, Mathf.Clamp01((t - 0.55f) / 0.45f));
+            float ring = r - d < 3f * s / 32f ? 0.15f : 0f; // inset 0 0 0 3px rgba(43,29,20,.15) at 32 px
+            c = Color.Lerp(c, new Color32(0x2b, 0x1d, 0x14, 0xff), ring);
+            c.a = Mathf.Clamp01(r - d);
+            return c;
+        });
+
+        /// <summary>
+        /// Line icon from the prototype's inline SVGs (24×24 viewBox, round caps): bubbles show the wanted product,
+        /// the cash icon or the angry face. Drawn white; the UI tints it.
+        /// </summary>
+        public static Sprite LineIcon(string name, float strokeWidth, params Vector2[][] paths)
+        {
+            float half = strokeWidth / 2f;
+            return Sprite($"{UiFolder}/Icon_{name}.png", 96, Vector4.zero, (x, y, s) =>
+            {
+                float scale = 24f / s;
+                var p = new Vector2((x + 0.5f) * scale, (s - y - 0.5f) * scale);
+                float d = float.MaxValue;
+                foreach (Vector2[] path in paths)
+                    for (int i = 0; i + 1 < path.Length; i++)
+                        d = Mathf.Min(d, SegmentDistance(p, path[i], path[i + 1]));
+                return new Color(1, 1, 1, Mathf.Clamp01((half - d) / scale + 0.5f));
+            });
+        }
+
+        public static Vector2[] Poly(params float[] xy)
+        {
+            var pts = new Vector2[xy.Length / 2];
+            for (int i = 0; i < pts.Length; i++) pts[i] = new Vector2(xy[2 * i], xy[2 * i + 1]);
+            return pts;
+        }
+
+        public static Vector2[] Closed(params float[] xy)
+        {
+            Vector2[] open = Poly(xy);
+            var pts = new Vector2[open.Length + 1];
+            open.CopyTo(pts, 0);
+            pts[open.Length] = open[0];
+            return pts;
+        }
+
+        public static Vector2[] Circle(float cx, float cy, float r, int segments = 48)
+        {
+            var pts = new Vector2[segments + 1];
+            for (int i = 0; i <= segments; i++)
+            {
+                float a = i * Mathf.PI * 2f / segments;
+                pts[i] = new Vector2(cx + Mathf.Cos(a) * r, cy + Mathf.Sin(a) * r);
+            }
+            return pts;
+        }
+
+        public static Vector2[] RoundRect(float x, float y, float w, float h, float r, int arcSegments = 6)
+        {
+            var pts = new System.Collections.Generic.List<Vector2>();
+            void Arc(float cx, float cy, float from)
+            {
+                for (int i = 0; i <= arcSegments; i++)
+                {
+                    float a = from + i * Mathf.PI / 2f / arcSegments;
+                    pts.Add(new Vector2(cx + Mathf.Cos(a) * r, cy + Mathf.Sin(a) * r));
+                }
+            }
+            Arc(x + w - r, y + r, -Mathf.PI / 2f);
+            Arc(x + w - r, y + h - r, 0f);
+            Arc(x + r, y + h - r, Mathf.PI / 2f);
+            Arc(x + r, y + r, Mathf.PI);
+            pts.Add(pts[0]);
+            return pts.ToArray();
+        }
+
+        public static Vector2[] Cubic(Vector2 a, Vector2 c1, Vector2 c2, Vector2 b, int segments = 16)
+        {
+            var pts = new Vector2[segments + 1];
+            for (int i = 0; i <= segments; i++)
+            {
+                float t = i / (float)segments, u = 1 - t;
+                pts[i] = u * u * u * a + 3 * u * u * t * c1 + 3 * u * t * t * c2 + t * t * t * b;
+            }
+            return pts;
+        }
+
+        /// <summary>
+        /// Upgrade pad layers (prototype <c>drawPad</c>, 256 px canvas, rounded square 10..246 with radius 44):
+        /// "Base" honey fill, "Fill" green fill (shown from the bottom by the paid share), "Stroke" white outline 8 px.
+        /// </summary>
+        public static Texture2D PadLayer(string layer)
+        {
+            Color honey = new Color(196 / 255f, 134 / 255f, 26 / 255f, 0.95f), green = new Color(61 / 255f, 138 / 255f, 49 / 255f, 0.9f);
+            return Texture($"{TextureFolder}/Pad_{layer}.png", 256, (x, y, s) =>
+            {
+                float sdf = RoundedRectSdf(x + 0.5f - 10, y + 0.5f - 10, 236, 236, 0, 44);
+                switch (layer)
+                {
+                    case "Base": { Color c = honey; c.a *= Mathf.Clamp01(0.5f - sdf); return c; }
+                    case "Fill": { Color c = green; c.a *= Mathf.Clamp01(0.5f - sdf); return c; }
+                    default: return new Color(1, 1, 1, 0.9f * Mathf.Clamp01(0.5f - (Mathf.Abs(sdf) - 4f)));
+                }
+            });
+        }
+
         /// <summary>
         /// Zone ground marker (prototype <c>drawGround</c>): tinted rounded square 228 px with radius 46 on a
         /// 256 px canvas and a dashed white outline (10 px, dash 26 / gap 16). The ↓ / ↑ glyph is drawn in (Noto Sans

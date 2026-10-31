@@ -20,3 +20,4 @@ MonoBehaviour:
   maxLevel: 1
   effect: build factory + its shop shelf
   visibleWhen: '!owned.wardrobe && level>=12'
+  doneKey: done.factory

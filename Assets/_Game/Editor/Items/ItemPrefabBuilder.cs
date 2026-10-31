@@ -26,7 +26,10 @@ namespace FF.Editor.Items
         };
 
         [MenuItem("FF/Build Item Prefabs", priority = 22)]
-        public static ItemCatalog Build()
+        static void BuildMenu() => Build(true);
+
+        /// <param name="rebuild">False keeps existing prefabs (stable file ids, no git churn) and only adds missing ones.</param>
+        public static ItemCatalog Build(bool rebuild)
         {
             DataImporter.EnsureFolder(Folder);
             var catalog = DataImporter.GetOrCreate<ItemCatalog>(CatalogPath);
@@ -35,11 +38,16 @@ namespace FF.Editor.Items
             foreach ((ItemType type, float height, int prewarm) in Table)
             {
                 ItemCatalog.Entry old = catalog.entries.Find(e => e != null && e.type == type);
-                var root = new GameObject(type.ToString());
-                root.AddComponent<Item>().SetType(type);
-                BuildShape(b, root.transform, type);
-                GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, $"{Folder}/{type}.prefab");
-                Object.DestroyImmediate(root);
+                string path = $"{Folder}/{type}.prefab";
+                GameObject prefab = rebuild ? null : AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                if (prefab == null)
+                {
+                    var root = new GameObject(type.ToString());
+                    root.AddComponent<Item>().SetType(type);
+                    BuildShape(b, root.transform, type);
+                    prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
+                    Object.DestroyImmediate(root);
+                }
                 entries.Add(new ItemCatalog.Entry
                 {
                     type = type,
@@ -56,7 +64,7 @@ namespace FF.Editor.Items
             db.items = catalog;
             EditorUtility.SetDirty(db);
             AssetDatabase.SaveAssets();
-            Debug.Log($"[FF] {entries.Count} item prefabs built.");
+            Debug.Log($"[FF] Item catalog ready ({entries.Count} types{(rebuild ? ", prefabs rebuilt" : "")}).");
             return catalog;
         }
 
