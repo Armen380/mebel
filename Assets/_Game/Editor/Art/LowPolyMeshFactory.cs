@@ -26,6 +26,24 @@ namespace FF.Editor.Art
             return b;
         });
 
+        /// <summary>1×1 horizontal quad facing up with UVs: texture top (v = 1) points to Unity +Z (prototype north).</summary>
+        public static Mesh TexturedQuad()
+        {
+            const string name = "TexturedQuad";
+            string path = $"{Folder}/{name}.asset";
+            var mesh = AssetDatabase.LoadAssetAtPath<Mesh>(path);
+            if (mesh != null) return mesh;
+            DataImporter.EnsureFolder(Folder);
+            mesh = new Mesh { name = name };
+            mesh.SetVertices(new[] { new Vector3(-0.5f, 0, -0.5f), new Vector3(-0.5f, 0, 0.5f), new Vector3(0.5f, 0, 0.5f), new Vector3(0.5f, 0, -0.5f) });
+            mesh.SetUVs(0, new[] { new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 0) });
+            mesh.SetNormals(new[] { Vector3.up, Vector3.up, Vector3.up, Vector3.up });
+            mesh.SetTriangles(new[] { 0, 1, 2, 0, 2, 3 }, 0);
+            mesh.RecalculateBounds();
+            AssetDatabase.CreateAsset(mesh, path);
+            return mesh;
+        }
+
         /// <summary>Icosahedron of radius 1 (three.js IcosahedronGeometry, detail 0).</summary>
         public static Mesh Icosahedron() => GetOrCreate("Icosahedron", () =>
         {

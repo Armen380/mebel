@@ -5,14 +5,51 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
-### Next: M2 — 2026-10-31
-- [ ] Write the M2 plan from `Design/docs/04_IMPLEMENTATION_PLAN.md` and get the user's approval (no code before that)
+### Next: M3 — 2026-10-31
+- [ ] Write the M3 plan from `Design/docs/04_IMPLEMENTATION_PLAN.md` and get the user's approval (no code before that)
 
 Notes:
 - Open question to user: change "Communication" rule to "reply in the language of the user's message (Armenian or Russian)"? The user writes Russian; replies are in Russian until decided.
-- Working copy has 4 modified font `*SDF.asset` files (dynamic glyphs added at runtime) — commit them with the next milestone.
 
 ## Done
+
+### M2 — Items, stacks, zones, trees, sawmill, chair factory — 2026-10-31 (branch `m2-production`)
+Result: chop → logs → sawmill → planks → chairs loop with prototype timings/capacities, zones, counters, FULL tag, Throw; 485 tests green; user play-test OK; merged into main.
+Goal (04_IMPLEMENTATION_PLAN): chop → logs → sawmill → planks → chair workshop → chairs loop works with
+correct timings and capacities; Throw button. Prototype refs: `H/PROTO/makeItem` (~529), `Stack/sendTo/fly/updTweens` (~557),
+`addZone` (~648), sawmill + factory zones (~905–933), `makeTree/updNode/nearestNode/tryChop` (~1038), `updMachine` (~1084),
+`updPlayer` zone loop + `throwAll` (~1156–1182), counter chips `stackChip` + "FULL" chip (~1501, 1514).
+
+- [x] 0. Branch `m2-production` from main; commit the 4 pending font SDF assets first (1fd0eba)
+- [x] A. Data
+  - `ItemCatalog` SO: per ItemType stack height H (prototype table; not in JSON → note), prefab, pool prewarm count
+  - `PileLayoutSettings` (cols, rows, spacingX, spacingZ, anchor offset) in WorldLayout for sawIn/sawOut, plank-in, mine-in, product-out piles; capacities stay in EconomyConfig
+  - `EconomyConfig`: add chop range 1.6, chop hit interval 0.3, flight durations (player 0.24, chop 0.32, machine in 0.3+0.02i / out 0.35+0.05i, throw 0.3+0.03i), arc heights, throw distance 1.5 / spread 1.2; importer keeps them
+- [x] B. Item visuals: Editor `ItemPrefabBuilder` (menu `FF/Build Item Prefabs`) → `Prefabs/Items/*.prefab` for all 12 types from `PROTO` (log, plank, clay, iron, bill, chair, sofa, wardrobe, table, kitchen, sink, material), shared palette materials
+- [x] C. Stacks (pure C#, FF.Gameplay/Items): `ItemStack` (items + incoming, fixed/non-fixed type rules, capacity func, `Pop`), `IStackLayout` → `CarryLayout`, `PileLayout`; `ItemArc` math (lerp + sin arc)
+- [x] D. Runtime items: `Item` (type, pooled), `ItemPool` (per type, prewarmed, no Instantiate in play), `ItemFlights` — one runner with a struct list (no coroutines, no per-item allocations): fly-to-stack (live target slot), fly-and-despawn (machine mouth), throw-then-shrink
+- [x] E. Zones: `Zone` MonoBehaviour (kind drop/pickup, accepts, stack, capacity, active), `ZoneRegistry` (short list, distance checks); pure `ZoneTransferRules` (first matching zone per tick, drop/pickup conditions, cooldown 0.075 s); ground marker = dashed rounded square (Editor-generated texture, tint per kind) + glyph ↓/↑ (baked into the texture) + localized label (`in.log`, `in.plank`, product sign)
+- [x] F. Resource nodes: pure `ResourceNodeState` (alive, regrow 9 s, fall, grow elastic, shake) + `Chopper` (`tryChop`: progress·rate, hit every 0.3 s, yield min(2, room), hardness, type check, chop time from axe level); `ResourceNode` animates the tree `Top` (topple 0.4 s, regrow pop, shake); `NodeRegistry.Nearest`; forest trees get the component in LayoutBuilder (rocks come in M8)
+- [x] G. Machines: pure `MachineCore` (`updMachine`: k = min(1+qty, ⌊in/inN⌋, ⌊(outCap−out.n)/outN⌋), cycle = base/(1+0.35·speed), capacities ×(1+0.6q+0.1s)); `Machine` adapter (zones, mouth, flights) + `MachineVisual` (saw blade spin, press bob); sawmill 1 (log 1 → plank 2, 1.6 s), sawmill 2 (inactive until owned), every product factory (active when owned → only chair at start)
+- [x] H. Player: `PlayerCarrier` (carry stack on the rig anchor, cap 5+2·lv), `PlayerInteractor` (chop nearest node within 1.6 m and face it, zone loop, `StillTime` kept), animator Carrying/Chopping flags; `ThrowAll` (Q key + Throw action + HUD button)
+- [x] I. UI: `ThrowButton` (bottom-right round walnut button, trash icon, `ui.throw`, visible only while carrying, safe area); `WorldTagLayer` — one screen-space canvas with pooled pills: pile counters "n/cap" over active zones, red "FULL" (`c.full`) over the player; UI reads Core interfaces only (`ICarrier`, `IWorldTagSource`)
+- [x] J. Scene: `FF/Build Game Scene` adds Systems/Items (pool + flights), zones + machines from data, wires player and HUD
+- [x] K. EditMode tests: ItemStack (incl. throw TakeAll), layouts (vs prototype formulas), ItemArc, ZoneTransferRules, Chopper, ResourceNodeState, MachineCore, StorageCapacity — 485/485 green
+- [x] L. Play Mode check (scripted teleports): 3 trees → 5 logs (2+2+1, hands cap 5) → sawmill 5 logs → 10 planks → 5 planks to chairs → 2 chairs + 1 plank left; counters, FULL tag, Throw button, throw → items back in the pool; Console clean. No per-frame allocations by code review (no profiler run)
+- [x] M. Commit `M2: items, stacks, zones, trees, sawmill, chair factory` (99f6b6c), push, user play-test OK (2026-10-31), PR → main
+
+Decisions (approved by the user):
+- SFX (chop/throw/pick) [later, M9; M2 raises GameEvents hooks only]
+- Tween engine [own small runner, no DOTween]
+- Pile counters + "FULL" tag in M2 [yes]
+- Prototype quirk: chop progress is not reset when the player walks away from a tree [keep 1:1]
+
+Notes:
+- Not in Design/data JSON, taken from the prototype into data assets: item stack heights `H` (ItemCatalog), pile layouts + mouths (WorldLayout.production, sawmill2.machineMouth), flight/throw/chop timings and node hardness (EconomyConfig).
+- Noto Sans has no ↓/↑ glyphs → the arrow is drawn into the zone marker textures (Art/Textures/ZoneMarker_*.png, generated by TextureFactory; delete a PNG to regenerate).
+- Scene parts per machine: World/Production/Machine_<id> (zones Zone_<id>_in/_out with Marker + Pile). Zone order = prototype order (ZoneRegistry list).
+- Pad levels (`saw_speed`, `chair_qty`, …) are read through IUpgradeLevels by id; all 0 until M4/M5.
+- Play Mode automation: teleporting the player via `script eval` is faster than simulating keys (helpers in the session scratchpad, not in the repo).
 
 ### GitHub repo + Design/ setup — 2026-10-31
 Result: Design/ in place, repo on github.com/Armen380/mebel, gh set up so Claude pushes/opens PRs.

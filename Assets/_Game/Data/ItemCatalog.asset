@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96bd55938319549cf867f6e0006a0210, type: 3}
+  m_Name: ItemCatalog
+  m_EditorClassIdentifier: FF.Data::FF.Data.ItemCatalog
+  entries:
+  - type: 1
+    stackHeight: 0.3
+    prefab: {fileID: 776097019861113101, guid: 416e78d60117e4a7f83459767d288b1f, type: 3}
+    prewarm: 40
+  - type: 2
+    stackHeight: 0.11
+    prefab: {fileID: 8634045376588393769, guid: 7118b810f19274e0797d4b33f057e877, type: 3}
+    prewarm: 70
+  - type: 3
+    stackHeight: 0.28
+    prefab: {fileID: 1423504389594548288, guid: 5dcdd6ea252324a3a91b34131f497cec, type: 3}
+    prewarm: 4
+  - type: 4
+    stackHeight: 0.24
+    prefab: {fileID: 8306707395283187356, guid: 06c1338942b08499a8b6a0a26c536a34, type: 3}
+    prewarm: 4
+  - type: 12
+    stackHeight: 0.3
+    prefab: {fileID: 5668206927824668922, guid: 3e725a1bd3df64411aadc0a6088f007e, type: 3}
+    prewarm: 4
+  - type: 5
+    stackHeight: 0.055
+    prefab: {fileID: 7298782361022536122, guid: 16d584833900642df89b641d741c6bf8, type: 3}
+    prewarm: 4
+  - type: 6
+    stackHeight: 0.5
+    prefab: {fileID: 6161131416593117641, guid: 0c264163857564e37a168eeb1042c7e2, type: 3}
+    prewarm: 24
+  - type: 7
+    stackHeight: 0.44
+    prefab: {fileID: 5808667662719550793, guid: a56b3cac369514166a66606ade603379, type: 3}
+    prewarm: 4
+  - type: 8
+    stackHeight: 0.84
+    prefab: {fileID: 3188760867216640418, guid: 446389e5ac28847ea9c9099082aa1916, type: 3}
+    prewarm: 4
+  - type: 9
+    stackHeight: 0.5
+    prefab: {fileID: 5184390517579659879, guid: 5f862da3969a1472594748daff1e9fce, type: 3}
+    prewarm: 4
+  - type: 10
+    stackHeight: 0.58
+    prefab: {fileID: 67210790335815433, guid: 7fbb6eea4a2654127affd48ba28dccde, type: 3}
+    prewarm: 4
+  - type: 11
+    stackHeight: 0.56
+    prefab: {fileID: 4824063836534617295, guid: 7236483a029254be2b7eff3161289a89, type: 3}
+    prewarm: 4

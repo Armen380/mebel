@@ -1,13 +1,23 @@
 using FF.Core;
 using FF.Data;
+using System.Collections.Generic;
+using FF.Editor.Art;
 using FF.Editor.Characters;
+using FF.Editor.Items;
 using FF.Editor.World;
+using FF.Gameplay.Bootstrap;
 using FF.Gameplay.CameraRig;
 using FF.Gameplay.Input;
+using FF.Gameplay.Items;
+using FF.Gameplay.Nodes;
 using FF.Gameplay.Player;
+using FF.Gameplay.Zones;
 using FF.UI.DevTools;
+using FF.UI.HUD;
 using FF.UI.Input;
 using FF.UI.Layout;
+using FF.UI.Localization;
+using FF.UI.WorldTags;
 using TMPro;
 using Unity.Cinemachine;
 using Unity.Cinemachine.TargetTracking;
@@ -22,13 +32,18 @@ using UnityEngine.UI;
 namespace FF.Editor
 {
     /// <summary>
-    /// Milestone 1 scene assembly for Game.unity: environment (sky, fog, ambient, sun), world blockout,
-    /// player, input, Cinemachine camera rig and the HUD joystick. Safe to run again: it rebuilds what it owns.
+    /// Scene assembly for Game.unity: environment (sky, fog, ambient, sun), item prefabs, world blockout,
+    /// production (machines + zones), player, systems, input, Cinemachine camera rig and the HUD.
+    /// Safe to run again: it rebuilds what it owns.
     /// </summary>
     public static class GameSceneBuilder
     {
         public const string InputAssetPath = "Assets/_Game/Input/FF_Input.inputactions";
         static readonly Color32 Sky = new Color32(0xbf, 0xe3, 0xf0, 0xff);
+        static readonly Color32 Walnut = new Color32(0x2b, 0x1d, 0x14, 0xff);
+        static readonly Color32 Cream = new Color32(0xfb, 0xf1, 0xde, 0xff);
+        /// <summary>CSS px of the prototype (390 px wide phone) → HUD canvas units (1080 reference width).</summary>
+        const float Px = 1080f / 390f;
 
         [MenuItem("FF/Build Game Scene", priority = 10)]
         public static void Build()
@@ -37,8 +52,11 @@ namespace FF.Editor
             var db = AssetDatabase.LoadAssetAtPath<GameDatabase>(DataImporter.DatabasePath);
 
             SetupEnvironment(db.world);
+            ItemPrefabBuilder.Build();
             LayoutBuilder.Build();
+            List<Zone> zones = ProductionBuilder.Build(db);
             Transform player = SpawnPlayer(db.world);
+            SetupSystems(zones);
             MoveInputAggregator input = SetupInput();
             VirtualJoystick joystick = SetupHud();
             Wire(input, "joystickSource", joystick);
@@ -48,7 +66,7 @@ namespace FF.Editor
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
             EditorSceneManager.SaveOpenScenes();
             AssetDatabase.SaveAssets();
-            Debug.Log("[FF] Game scene built (M1: world, player, input, camera, HUD).");
+            Debug.Log("[FF] Game scene built (world, production, player, systems, input, camera, HUD).");
         }
 
         // ---------- environment ----------
@@ -84,6 +102,41 @@ namespace FF.Editor
             RenderSettings.sun = sun;
         }
 
+        // ---------- systems ----------
+
+        static void SetupSystems(List<Zone> zones)
+        {
+            Transform systems = Root("Systems");
+            foreach (string name in new[] { "Items", "Zones", "Nodes" })
+            {
+                Transform old = systems.Find(name);
+                if (old != null) Object.DestroyImmediate(old.gameObject);
+            }
+
+            var items = new GameObject("Items");
+            items.transform.SetParent(systems, false);
+            var pool = items.AddComponent<ItemPool>();
+            var flights = items.AddComponent<ItemFlights>();
+
+            var zoneGo = new GameObject("Zones");
+            zoneGo.transform.SetParent(systems, false);
+            var zoneRegistry = zoneGo.AddComponent<ZoneRegistry>();
+            zoneRegistry.SetZones(zones);
+
+            var nodeGo = new GameObject("Nodes");
+            nodeGo.transform.SetParent(systems, false);
+            var nodeRegistry = nodeGo.AddComponent<NodeRegistry>();
+            nodeRegistry.SetNodes(new List<ResourceNode>(Root("World").GetComponentsInChildren<ResourceNode>(true)));
+
+            var installer = systems.GetComponentInChildren<GameInstaller>(true);
+            Wire(installer, "itemPool", pool);
+            Wire(installer, "itemFlights", flights);
+            Wire(installer, "zones", zoneRegistry);
+            Wire(installer, "nodes", nodeRegistry);
+            EditorUtility.SetDirty(zoneRegistry);
+            EditorUtility.SetDirty(nodeRegistry);
+        }
+
         // ---------- player & input ----------
 
         static Transform SpawnPlayer(WorldLayout w)
@@ -116,7 +169,7 @@ namespace FF.Editor
         }
 
         /// <summary>The persistent InputActionReference sub-asset that the importer generates for an action.</summary>
-        static InputActionReference ActionReference(string path)
+        internal static InputActionReference ActionReference(string path)
         {
             foreach (Object o in AssetDatabase.LoadAllAssetsAtPath(InputAssetPath))
                 if (o is InputActionReference r && r.action != null && $"{r.action.actionMap.name}/{r.action.name}" == path)
@@ -131,6 +184,8 @@ namespace FF.Editor
             Transform ui = Root("UI");
             Transform hud = ui.Find("HUD");
             for (int i = hud.childCount - 1; i >= 0; i--) Object.DestroyImmediate(hud.GetChild(i).gameObject);
+
+            BuildWorldTags(hud);
 
             RectTransform safe = Rect("SafeArea", hud);
             Stretch(safe);
@@ -168,8 +223,98 @@ namespace FF.Editor
             Wire(joystick, "stickBase", stickBase);
             Wire(joystick, "knob", knob);
 
+            BuildThrowButton(safe);
             BuildLocaleButton(safe);
             return joystick;
+        }
+
+        /// <summary>Full-screen layer under everything else: world tags follow world positions, ignore touches.</summary>
+        static void BuildWorldTags(Transform hud)
+        {
+            RectTransform layer = Rect("WorldTags", hud);
+            Stretch(layer);
+
+            RectTransform pill = Rect("PillTemplate", layer);
+            pill.anchorMin = pill.anchorMax = Vector2.zero; // positions are set from the bottom-left corner
+            pill.pivot = new Vector2(0.5f, 0f);
+            Image bg = pill.gameObject.AddComponent<Image>();
+            bg.sprite = TextureFactory.Pill();
+            bg.type = Image.Type.Sliced;
+            bg.raycastTarget = false;
+            var group = pill.gameObject.AddComponent<HorizontalLayoutGroup>();
+            group.padding = new RectOffset(Mathf.RoundToInt(10 * Px), Mathf.RoundToInt(10 * Px), Mathf.RoundToInt(3 * Px), Mathf.RoundToInt(3 * Px));
+            group.childControlWidth = group.childControlHeight = true;
+            group.childForceExpandWidth = group.childForceExpandHeight = false;
+            var fitter = pill.gameObject.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            RectTransform labelRect = Rect("Label", pill);
+            var label = labelRect.gameObject.AddComponent<TextMeshProUGUI>();
+            label.text = "0/0";
+            label.fontSize = 13 * Px;
+            label.textWrappingMode = TextWrappingModes.NoWrap;
+            label.alignment = TextAlignmentOptions.Center;
+            label.raycastTarget = false;
+
+            var tags = layer.gameObject.AddComponent<WorldTagLayer>();
+            Wire(tags, "pillTemplate", pill);
+        }
+
+        /// <summary>Prototype <c>.throw</c>: 72 px walnut circle bottom-right with a trash icon and "Throw".</summary>
+        static void BuildThrowButton(Transform safe)
+        {
+            RectTransform root = Rect("ThrowButton", safe);
+            root.anchorMin = root.anchorMax = root.pivot = new Vector2(1, 0);
+            root.anchoredPosition = new Vector2(-16 * Px, 22 * Px);
+            root.sizeDelta = new Vector2(72 * Px, 72 * Px);
+
+            RectTransform content = Rect("Content", root);
+            Stretch(content);
+            Sprite circle = TextureFactory.Circle();
+
+            RectTransform shadow = Rect("Shadow", content);
+            Stretch(shadow);
+            shadow.anchoredPosition = new Vector2(0, -4 * Px);
+            Image shadowImage = shadow.gameObject.AddComponent<Image>();
+            shadowImage.sprite = circle;
+            shadowImage.color = new Color(0, 0, 0, 0.3f);
+            shadowImage.raycastTarget = false;
+
+            RectTransform face = Rect("Face", content);
+            Stretch(face);
+            Image faceImage = face.gameObject.AddComponent<Image>();
+            faceImage.sprite = circle;
+            faceImage.color = Walnut;
+            var button = face.gameObject.AddComponent<Button>();
+            button.targetGraphic = faceImage;
+
+            RectTransform icon = Rect("Icon", face);
+            icon.anchorMin = icon.anchorMax = new Vector2(0.5f, 0.5f);
+            icon.sizeDelta = new Vector2(26 * Px, 26 * Px);
+            icon.anchoredPosition = new Vector2(0, 6.5f * Px);
+            Image iconImage = icon.gameObject.AddComponent<Image>();
+            iconImage.sprite = TextureFactory.TrashIcon();
+            iconImage.color = Cream;
+            iconImage.raycastTarget = false;
+
+            RectTransform labelRect = Rect("Label", face);
+            labelRect.anchorMin = labelRect.anchorMax = new Vector2(0.5f, 0.5f);
+            labelRect.sizeDelta = new Vector2(68 * Px, 14 * Px);
+            labelRect.anchoredPosition = new Vector2(0, -15 * Px);
+            var label = labelRect.gameObject.AddComponent<TextMeshProUGUI>();
+            label.text = "Նետել";
+            label.fontSize = 11 * Px;
+            label.enableAutoSizing = true;
+            label.fontSizeMin = 6 * Px;
+            label.fontSizeMax = 11 * Px;
+            label.alignment = TextAlignmentOptions.Center;
+            label.color = Cream;
+            label.raycastTarget = false;
+            labelRect.gameObject.AddComponent<LocalizedTmpText>().SetKey("ui.throw");
+
+            var throwButton = root.gameObject.AddComponent<ThrowButton>();
+            Wire(throwButton, "button", button);
+            Wire(throwButton, "content", content.gameObject);
         }
 
         static void BuildLocaleButton(Transform parent)
@@ -258,7 +403,7 @@ namespace FF.Editor
             r.offsetMax = Vector2.zero;
         }
 
-        static void Wire(Object target, string field, Object value)
+        internal static void Wire(Object target, string field, Object value)
         {
             var so = new SerializedObject(target);
             SerializedProperty p = so.FindProperty(field) ?? throw new System.ArgumentException($"{target.GetType().Name}.{field} not found");

@@ -20,6 +20,13 @@ namespace FF.Gameplay.World
 
         public bool MinesOpen => OwnsPlumbing;
 
+        public const string Sawmill1Id = "saw";
+        public const string Sawmill2Id = "saw2";
+
+        /// <summary>Is a machine (sawmill id or product id) owned and working?</summary>
+        public bool Owns(string machineId) =>
+            machineId == Sawmill1Id || (machineId == Sawmill2Id ? OwnsSawmill2 : OwnedProducts.Contains(machineId));
+
         public static WorldStateSnapshot NewGame(IReadOnlyList<ProductDef> products)
         {
             var s = new WorldStateSnapshot();
