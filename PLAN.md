@@ -9,11 +9,11 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 - [x] Move `FurnitureFactory_Unity_Handoff/` → `Design/` (outside Assets), merge its CLAUDE.md into root CLAUDE.md
 - [x] `git init -b main`, `.gitignore` (Unity), Git LFS (`brew install git-lfs`) + `.gitattributes`
 - [x] First commit: template project + Design/ + rules
-- [ ] User creates an empty GitHub repo and sends the URL → `git remote add origin <URL>`
-- [ ] User runs the first `git push -u origin main` (credentials are the user's)
+- [x] User creates an empty GitHub repo and sends the URL → `git remote add origin https://github.com/Armen380/mebel.git`
+- [x] User installed `gh` and ran `gh auth login` (account Armen380); `gh auth setup-git`; pushed `main`, `m0-setup`, `m1-player-world` (22 LFS objects)
 
 Notes:
-- `gh` not installed, no SSH keys → user pushes; PRs are made on github.com.
+- `gh` is installed and logged in (keyring, HTTPS): Claude pushes and opens PRs with `gh`. Login/credentials stay the user's.
 - Branches: `m0-setup`, `m1-player-world`, merged into `main` after the user's play-test.
 - Open question to user: change "Communication" rule to "reply in the language of the user's message (Armenian or Russian)"?
 
