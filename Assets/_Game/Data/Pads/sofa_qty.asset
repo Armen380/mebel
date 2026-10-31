@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: sofa_qty
   m_EditorClassIdentifier: FF.Data::FF.Data.PadDef
   id: sofa_qty
-  protoPos: {x: 10, y: -8.8}
+  protoPos: {x: 2, y: -22.3}
   glyph: +
   baseCost: 4500
   costMultiplier: 2.4

@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using FF.Core;
 using FF.Data;
 using FF.Editor.Art;
 using FF.UI.HUD;
+using FF.UI.Layout;
 using FF.UI.Localization;
 using FF.UI.WorldTags;
 using TMPro;
@@ -43,8 +45,8 @@ namespace FF.Editor
             coinImage.sprite = TextureFactory.Coin();
             coinImage.raycastTarget = false;
             Size(coin.gameObject, 32, 32);
-            TMP_Text dram = Text("Dram", coin, "֏", 17, UiPalette.Walnut, "Black");
-            Stretch((RectTransform)dram.transform);
+            TMP_Text sign = Text("Sign", coin, NumberFormat.Currency, 17, UiPalette.Walnut, "Black");
+            Stretch((RectTransform)sign.transform);
             TMP_Text amount = Text("Amount", money, "0", 20, UiPalette.Cream, "Black");
             var moneyView = money.gameObject.AddComponent<MoneyView>();
             Wire(moneyView, "amount", amount);
@@ -95,6 +97,9 @@ namespace FF.Editor
             step.GetComponent<Image>().pixelsPerUnitMultiplier = 16f / (9 * Px);
             TMP_Text stepText = Text("Text", step, "1/8", 12, Color.white, "Black");
             TMP_Text text = Text("Text", bar, "", 14, UiPalette.Cream, "Bold");
+            text.alignment = TextAlignmentOptions.Left;
+            // .quest max-width: calc(100% - 32px), minus its own padding (8 + 14) and gap (10)
+            Wrap(text, safe, (32 + 8 + 14 + 10) * Px, step);
 
             RectTransform hint = Rect("Hint", safe);
             hint.anchorMin = hint.anchorMax = hint.pivot = new Vector2(0.5f, 0);
@@ -146,6 +151,8 @@ namespace FF.Editor
 
             TMP_Text title = Text("Title", panel, "Level 2", 26, Honey, "Black");
             TMP_Text subtitle = Text("Subtitle", panel, "", 14, UiPalette.Cream, "Bold");
+            // .toast max-width: calc(100% - 32px), minus its padding 22 + 22
+            Wrap(subtitle, safe, (32 + 44) * Px, null);
 
             var toast = root.gameObject.AddComponent<LevelToast>();
             Wire(toast, "panel", panel);
@@ -228,6 +235,12 @@ namespace FF.Editor
             Row(r.gameObject, padding, spacing);
             Fit(r.gameObject);
             return r;
+        }
+
+        static void Wrap(TMP_Text text, Transform bounds, float reserved, RectTransform sibling)
+        {
+            text.gameObject.AddComponent<LayoutElement>();
+            text.gameObject.AddComponent<WrapToWidth>().Setup((RectTransform)bounds, reserved, sibling);
         }
 
         static void Row(GameObject go, RectOffset padding, float spacing)

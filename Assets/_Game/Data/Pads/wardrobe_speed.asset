@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: wardrobe_speed
   m_EditorClassIdentifier: FF.Data::FF.Data.PadDef
   id: wardrobe_speed
-  protoPos: {x: 18, y: -11.1}
+  protoPos: {x: 10, y: -11.1}
   glyph: "\xBB"
   baseCost: 7200
   costMultiplier: 1.75

@@ -85,6 +85,15 @@ namespace FF.Editor
 
         // ---------- world ----------
 
+        static void PlayerBoundsSettingsFromYard(WorldLayout w)
+        {
+            const float sideInset = 0.3f, backInset = 0.4f;
+            ProtoRange yardX = w.sawmill2.yardX;
+            w.playerBounds.sawYardX = new ProtoRange(yardX.min + sideInset, yardX.max - sideInset);
+            w.playerBounds.sawYardMinZ = w.sawmill2.yardZ.min + backInset;
+            w.playerBounds.backAreaSplitX = (yardX.max + w.playerBounds.minesYardX.min) / 2f;
+        }
+
         static WorldLayout ImportWorld(JObject j)
         {
             var w = GetOrCreate<WorldLayout>(DataRoot + "/WorldLayout.asset");
@@ -109,6 +118,9 @@ namespace FF.Editor
             JObject pf = (JObject)j["productFactories"];
             w.factories.rowZ = (float)pf["row_z"];
             w.factories.footprint = V2(pf["footprint"]);
+            w.factories.backRowZ = (float)pf["back_row_z"];
+            w.factories.backZoneZ = (float)pf["back_zone_z"];
+            w.factories.backMouthZ = (float)pf["back_mouth_z"];
 
             JObject forest = (JObject)j["forest"];
             ParseGrid((string)forest["grid"], out w.forest.cols, out w.forest.rows);
@@ -121,6 +133,10 @@ namespace FF.Editor
             w.mines.z = Range(mines["z"]);
             ImportRockGrid((JObject)mines["clay"], w.mines.clay);
             ImportRockGrid((JObject)mines["iron"], w.mines.iron);
+
+            // back-yard region rule from the yard fence (prototype: 0.3 inside the fence, 0.4 from the back fence);
+            // the split between the factory yard and the mines yard sits halfway between them
+            PlayerBoundsSettingsFromYard(w);
 
             JObject shop = (JObject)j["mainShop"];
             w.mainShop.floorZ = Range(shop["floor"]["z"]);
@@ -228,6 +244,7 @@ namespace FF.Editor
                 p.unlockLevel = (int)j["unlockLevel"];
                 p.factoryCost = (long)j["factoryCost"];
                 p.factoryX = (float)j["factoryX"];
+                p.factoryRow = (string)j["factoryRow"] == "back" ? FactoryRow.Back : FactoryRow.Front;
                 p.sellsIn = (string)j["sellsIn"] == "materials_shop" ? ShopKind.Materials : ShopKind.Main;
                 p.wallColor = Hex((string)j["wallColor"]);
                 p.roofColor = Hex((string)j["roofColor"]);

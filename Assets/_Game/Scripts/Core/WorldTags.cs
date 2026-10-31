@@ -9,7 +9,7 @@ namespace FF.Core
         Counter,
         /// <summary>Red "FULL" pill over a character.</summary>
         Full,
-        /// <summary>Green money pill "1.2K ֏" over a register's bills (TagValue).</summary>
+        /// <summary>Green money pill "$1.2K" over a register's bills (TagValue).</summary>
         Cash,
         /// <summary>White speech bubble with an icon (TagIcon) over a customer.</summary>
         Bubble,

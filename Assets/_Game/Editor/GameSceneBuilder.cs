@@ -253,7 +253,7 @@ namespace FF.Editor
             return joystick;
         }
 
-        /// <summary>Full-screen layer for floating world texts ("+430 ֏", "Faster!"); ignores touches.</summary>
+        /// <summary>Full-screen layer for floating world texts ("+$430", "Faster!"); ignores touches.</summary>
         static void BuildFloatingTexts(Transform hud)
         {
             RectTransform layer = Rect("FloatingTexts", hud);

@@ -51,6 +51,10 @@ namespace FF.Tests
             Assert.AreEqual(1 + 1 + 4 + 5 + 4 + 7 + 8, got.Count);
             Assert.Contains(P(45.85f, 46.15f, .4f, 9.85f), got); // right wall at 25 + 4.2*5 = 46
             Assert.Contains(P(-12.7f, -7.3f, -25.5f, -20.7f), got);
+            // two-row layout: wardrobe in front, table and kitchen in the back row
+            Assert.Contains(P(3.3f, 8.7f, -12, -7.2f), got);
+            Assert.Contains(P(3.3f, 8.7f, -25.5f, -20.7f), got);
+            Assert.Contains(P(11.3f, 16.7f, -25.5f, -20.7f), got);
         }
 
         static void AssertRects(List<Aabb2D> expected, List<Aabb2D> got)

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: kitchen_qty
   m_EditorClassIdentifier: FF.Data::FF.Data.PadDef
   id: kitchen_qty
-  protoPos: {x: 34, y: -8.8}
+  protoPos: {x: 18, y: -22.3}
   glyph: +
   baseCost: 120000
   costMultiplier: 2.4

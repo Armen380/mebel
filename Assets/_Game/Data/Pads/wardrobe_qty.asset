@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: wardrobe_qty
   m_EditorClassIdentifier: FF.Data::FF.Data.PadDef
   id: wardrobe_qty
-  protoPos: {x: 18, y: -8.8}
+  protoPos: {x: 10, y: -8.8}
   glyph: +
   baseCost: 18000
   costMultiplier: 2.4

@@ -10,7 +10,8 @@ namespace FF.Core
     /// </summary>
     public static class NumberFormat
     {
-        public const string Dram = "֏";
+        /// <summary>Currency sign, written before the number ($430, $1.9K). The prototype used the dram ֏ after it.</summary>
+        public const string Currency = "$";
 
         public static string Compact(double value) => Compact((long)Math.Floor(value));
 
@@ -29,7 +30,7 @@ namespace FF.Core
             return TrimTrailingZeros(ToFixed(n, 1_000_000, n < 10_000_000 ? 2 : 1)) + "M";
         }
 
-        public static string Money(long n) => Compact(n) + " " + Dram;
+        public static string Money(long n) => Currency + Compact(n);
 
         /// <summary>
         /// A cheap value that changes whenever <see cref="Compact(long)"/> may change: equal keys guarantee equal

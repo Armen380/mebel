@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: sofa_buy
   m_EditorClassIdentifier: FF.Data::FF.Data.PadDef
   id: sofa_buy
-  protoPos: {x: 6, y: -9.6}
-  glyph: "\u058F"
+  protoPos: {x: -2, y: -23.1}
+  glyph: $
   baseCost: 15000
   costMultiplier: 1
   maxLevel: 1

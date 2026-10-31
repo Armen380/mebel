@@ -29,7 +29,7 @@ namespace FF.Core
         public static event Action CashCollected;
         /// <summary>The tutorial moved to step index (prototype <c>S.quest</c>); equals the step count when finished.</summary>
         public static event Action<int> QuestChanged;
-        /// <summary>Floating world text such as "+430 ֏" (prototype <c>floatText</c>).</summary>
+        /// <summary>Floating world text such as "+$430" (prototype <c>floatText</c>).</summary>
         public static event Action<Vector3, string> FloatText;
 
         public static void RaiseMoneyChanged(long money, bool bump) => MoneyChanged?.Invoke(money, bump);

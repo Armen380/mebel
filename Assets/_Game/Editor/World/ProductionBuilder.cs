@@ -41,8 +41,10 @@ namespace FF.Editor.World
             WorldLayout.FactoryRowSettings f = w.factories;
             foreach (ProductDef p in db.products)
             {
-                var mouth = new Vector3(p.factoryX, w.production.factoryMouthY, w.production.factoryMouthZ);
-                ctx.Machine(p.id, p, new Vector2(p.factoryX + f.inZoneDx, f.zoneZ), new Vector2(p.factoryX + f.outZoneDx, f.zoneZ), mouth,
+                bool back = p.factoryRow == FactoryRow.Back;
+                var mouth = new Vector3(p.factoryX, w.production.factoryMouthY, back ? f.backMouthZ : w.production.factoryMouthZ);
+                float zoneZ = f.ZoneZ(p.factoryRow);
+                ctx.Machine(p.id, p, new Vector2(p.factoryX + f.inZoneDx, zoneZ), new Vector2(p.factoryX + f.outZoneDx, zoneZ), mouth,
                     p.input, p.item, "in." + p.input.ToString().ToLowerInvariant(), p.signKey, null,
                     Part(blockout, $"FactoryRow/{p.id}/Building/Press"));
             }

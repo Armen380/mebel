@@ -31,7 +31,7 @@ namespace FF.Editor.World
             _preview = DataImporter.ReadObject("localization_hy.json");
         }
 
-        /// <param name="glyph">Text glyph drawn on the marker (e.g. ֏); null when the marker texture has its own.</param>
+        /// <param name="glyph">Text glyph drawn on the marker (e.g. $); null when the marker texture has its own.</param>
         public Zone Zone(string id, Transform parent, ZoneKind kind, ItemType type, Vector2 protoPos, Vector3 protoPileOffset,
             string labelKey, string glyph, Material markerMaterial)
         {

@@ -110,11 +110,16 @@ namespace FF.Editor.World
         {
             Transform f = b.Group("Fences", p);
             float fz = w.fenceLineZ;
-            for (float x = -31.5f; x <= 34f; x += 1.6f)
-                if (x < w.sawmill2.accessRoadX.min || x > -1.4f) Post(b, f, x, fz);
-            foreach ((float len, float cx) in new[] { (13f, -25f), (35.5f, 16.25f) }) Rails(b, f, len, cx, fz);
+            // the fence is open over the whole factory back yard (prototype: over the sawmill yard)
+            const float fenceWest = -31.5f, fenceEast = 34f;
+            float gapWest = w.sawmill2.accessRoadX.min, gapEast = w.sawmill2.yardX.max;
+            for (float x = fenceWest; x <= fenceEast; x += 1.6f)
+                if (x < gapWest || x > gapEast + 0.1f) Post(b, f, x, fz);
+            float westRail = w.sawmill2.yardX.min - fenceWest;
+            Rails(b, f, westRail, fenceWest + westRail / 2f, fz);
+            Rails(b, f, fenceEast - gapEast, (gapEast + fenceEast) / 2f, fz);
 
-            // sawmill back yard (always open; sawmill 2 is bought later)
+            // factory back yard (always open; Sawmill 2 and the back-row factories are bought later)
             Transform yard = b.Group("SawYardFence", f);
             ProtoRange yx = w.sawmill2.yardX, yz = w.sawmill2.yardZ;
             for (float x = yx.min; x <= yx.max + 0.01f; x += 1.7f) Post(b, yard, x, yz.min);
@@ -287,9 +292,10 @@ namespace FF.Editor.World
             {
                 bool owned = state.OwnedProducts.Contains(p.id);
                 Transform slot = b.Group(p.id, row);
-                Building(b, slot, "Building", p.factoryX, w.factories.rowZ, ToHex(p.wallColor), ToHex(p.roofColor), p.signKey, saw: false)
+                float z = w.factories.RowZ(p.factoryRow);
+                Building(b, slot, "Building", p.factoryX, z, ToHex(p.wallColor), ToHex(p.roofColor), p.signKey, saw: false)
                     .gameObject.SetActive(owned);
-                Lot(b, slot, "Lot", p.factoryX, w.factories.rowZ, w).gameObject.SetActive(!owned);
+                Lot(b, slot, "Lot", p.factoryX, z, w).gameObject.SetActive(!owned);
             }
         }
 

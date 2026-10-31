@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: kitchen_speed
   m_EditorClassIdentifier: FF.Data::FF.Data.PadDef
   id: kitchen_speed
-  protoPos: {x: 34, y: -11.1}
+  protoPos: {x: 18, y: -24.6}
   glyph: "\xBB"
   baseCost: 48000
   costMultiplier: 1.75

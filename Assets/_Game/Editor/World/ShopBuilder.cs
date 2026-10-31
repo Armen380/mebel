@@ -196,7 +196,7 @@ namespace FF.Editor.World
                 if (stall == null) Debug.LogWarning($"[FF] Register stall {index} not found; build the world blockout first.");
 
                 Zone zone = _zones.Zone("cash" + index, go.transform, ZoneKind.Cash, ItemType.Bill, new Vector2(x, z) + s.cashZoneOffset,
-                    s.cashPile.offset, "z.reg", NumberFormat.Dram, _cashMaterial);
+                    s.cashPile.offset, "z.reg", NumberFormat.Currency, _cashMaterial);
                 zones.Add(zone);
                 var register = go.AddComponent<Register>();
                 register.Setup(index, zone, stall != null ? stall.gameObject : null);
@@ -217,7 +217,7 @@ namespace FF.Editor.World
                 ZoneFactory.Quad(visual.transform, "Stroke", _padStroke, 0.037f, size);
                 // prototype canvas: glyph 78 px at y 82, price ≤ 74 px at y 180 (fit 216 px), 256 px over the pad
                 _zones.FlatText(visual.transform, "Glyph", def.glyph, null, Color.white, new Vector2(size * 0.8f, size * 0.42f), size * (128f - 82f) / 256f, size * 6f);
-                TMP_Text price = _zones.FlatText(visual.transform, "Price", "0 ֏", null, Blockout.Hex(Walnut),
+                TMP_Text price = _zones.FlatText(visual.transform, "Price", "$0", null, Blockout.Hex(Walnut),
                     new Vector2(size * 216f / 256f, size * 0.4f), size * (128f - 180f) / 256f, size * 6f);
 
                 var pad = go.AddComponent<UpgradePad>();

@@ -5,6 +5,22 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
+### M3 play-test changes (user requests) — 2026-10-31 (branch `m3-shop`, before the M3 merge)
+Status: **In progress** — done and checked; waiting for the user's play-test. These are deliberate design changes away from the prototype (the user decides; the
+prototype no longer wins for layout and currency).
+- [x] 1. Tutorial text must fit a phone screen: the quest bar (and toast subtitle) wrap to the safe-area width minus 16 px margins (prototype `max-width: calc(100% - 32px)`)
+- [x] 2. Currency: dollars, sign before the number — `$430`, `$1.9K`, `+$430`; HUD coin shows `$`; cash zones and buy-pad glyphs `$`; the 5 localization strings with ֏ in hy/en/ru; CLAUDE.md non-negotiable updated
+- [x] 3. Factories in two lines, "pairs across the fence" like the sawmills (user picked this layout):
+  - front row (z −10, facing the road): Sawmill 1 (−10), Chair (−2), Wardrobe (6); front slot x 14 stays empty
+  - back row behind the fence (z −23.5, zones at z −18.8 between building and fence): Sawmill 2 (−10), Sofa (−2), Table (6), Kitchen (14)
+  - Sink (40) and Material (48) stay next to the mines yard
+  - back yard widened from x −18.5…−1.5 to −18.5…20.5; the fence is open over the whole yard width (as for the sawmill yard today); region rule yard split moves from x 15 to 27
+  - pads: every factory at x + 4 (front speed −11.1 / qty −8.8, back speed −24.6 / qty −22.3), buy pad on the building spot (front −9.6, back −23.1); saw2 pads move from x −4.4 to −6 (Sofa now stands there)
+  - data: products.json `factoryX` + new `factoryRow`, pads.json positions, world_layout.json back row + yard; blockers per row; tests that compare against the prototype layout get the new reference numbers
+  - Result: 503/503 tests green; Play Mode: phone portrait 1080×2340 wraps step 7 (ru) onto 2 lines, `$12K` / `$1.9K` everywhere, back yard reachable, back lots in a row behind the open fence. Unity rewrote two URP settings assets during the session (volume profile, shader prefiltering) — reverted, not part of this change.
+  - Game view is left at a custom 1920×1080 size after the portrait check (no API to restore "Free Aspect").
+- [x] 4. Tests green, Play Mode check (phone portrait text, $ everywhere, walk into the back yard, back factories behind the fence), commit, push
+
 ### M3 — Shop, customers, registers, money, XP, HUD, tutorial — 2026-10-31 (branch `m3-shop`)
 Status: **In progress** — implemented and checked; waiting for the user's play-test (step K).
 Goal (04_IMPLEMENTATION_PLAN): full 8-step tutorial completes; money and XP match prototype formulas.

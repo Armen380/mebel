@@ -24,7 +24,8 @@ MonoBehaviour:
   unlockLevel: 22
   factoryCost: 150000
   unlocksWith: {fileID: 0}
-  factoryX: 22
+  factoryX: 6
+  factoryRow: 1
   shelfX: 13
   sellsIn: 0
   wallColor: {r: 0.8901961, g: 0.827451, b: 0.6901961, a: 1}

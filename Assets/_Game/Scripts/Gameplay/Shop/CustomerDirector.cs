@@ -11,7 +11,7 @@ namespace FF.Gameplay.Shop
     /// <summary>
     /// Walk-in customers (prototype <c>spawnCustomer / chooseReg / updCustomers / leave</c>): spawning, shelf and
     /// register queues, taking an item, being served by whoever stands at the register, paying with a bill,
-    /// XP, the "+430 ֏" float and leaving (angry when patience runs out). Customers are pooled.
+    /// XP, the "+$430" float and leaving (angry when patience runs out). Customers are pooled.
     /// </summary>
     public sealed class CustomerDirector : MonoBehaviour
     {

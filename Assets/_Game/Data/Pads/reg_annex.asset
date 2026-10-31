@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: FF.Data::FF.Data.PadDef
   id: reg_annex
   protoPos: {x: 58.2, y: 3.5}
-  glyph: "+\u058F"
+  glyph: +$
   baseCost: 400000
   costMultiplier: 1
   maxLevel: 1

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: saw2_qty
   m_EditorClassIdentifier: FF.Data::FF.Data.PadDef
   id: saw2_qty
-  protoPos: {x: -4.4, y: -22.3}
+  protoPos: {x: -6, y: -22.3}
   glyph: +
   baseCost: 6000
   costMultiplier: 2.4

@@ -25,6 +25,7 @@ MonoBehaviour:
   factoryCost: 0
   unlocksWith: {fileID: 0}
   factoryX: -2
+  factoryRow: 0
   shelfX: 4.6
   sellsIn: 0
   wallColor: {r: 0.8509804, g: 0.7490196, b: 0.54901963, a: 1}

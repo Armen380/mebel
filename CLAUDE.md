@@ -44,7 +44,8 @@ in Unity coordinates only. 1 unit = 1 m.
 - All gameplay text goes through Unity Localization with three locales: `hy` (default), `en`, `ru`.
   Keys and strings are in `Design/data/localization_*.json`. Fonts cover Armenian and Cyrillic
   (Noto Sans Armenian + Noto Sans, TextMeshPro font assets with fallback).
-- Currency symbol is the Armenian dram `֏`. Number format: 1.2K, 3.4M (`fmt()` in the prototype → `NumberFormat`).
+- Currency: US dollar, sign before the number — `$430`, `$1.2K`, `+$430` (user decision 2026-10-31; the prototype used
+  the dram `֏` after the number). Number format: 1.2K, 3.4M (`fmt()` in the prototype → `NumberFormat`).
 - Save with a versioned JSON in `Application.persistentDataPath`, autosave every 3 s and on pause/quit. Schema in 02_SYSTEMS_SPEC.md §Save.
 - No physics for gameplay. Movement, carrying, stacks and AI are kinematic and deterministic, like the prototype. Simple AABB blockers for buildings/walls/fences.
 - Pool everything that spawns repeatedly (items, bills, customers, cars, particles, floating texts).
