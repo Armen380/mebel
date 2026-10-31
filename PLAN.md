@@ -10,8 +10,8 @@ Cause: the user's Android test build wrote `first.apk`, `first_BackUpThisFolder_
 752 files) and `.utmp/` (CMake temp) into the project root; Claude's `git add -A` in df46b3b committed the last two
 (≈15 M lines) plus Unity IAP (`com.unity.purchasing` 5.4.4, added by the build setup) and they reached main via PR #4.
 No secrets inside (checked: no keystores/keys/tokens); CMake files contain local paths (/Users/armen/...).
-- [ ] Remove the artifacts from the index (files stay on disk), ignore `*_BackUpThisFolder_ButDontShipItWithYourGame/`, `*_BurstDebugInformation_DoNotShip/`, `.utmp/`, `*.aab`, `*.symbols.zip`, `Builds/`
-- [ ] Ask the user: purge the artifacts from git history (force-push main) or not; keep or remove Unity IAP
+- [x] Remove the artifacts from the index (files stay on disk), ignore `*_BackUpThisFolder_ButDontShipItWithYourGame/`, `*_BurstDebugInformation_DoNotShip/`, `.utmp/`, `*.aab`, `*.symbols.zip`, `Builds/`
+- [x] Ask the user: purge the artifacts from git history (force-push main) or not; keep or remove Unity IAP → user: no history rewrite (cleanup commit only); keep Unity IAP (`com.unity.purchasing` 5.4.4, `Assets/Resources/BillingMode.json`)
 - [ ] PR → main, sync local main
 - Rule from now on: stage files explicitly / review `git status` fully before committing; never `git add -A` blindly.
 
