@@ -1,5 +1,6 @@
 using FF.Core;
 using FF.Data;
+using FF.Gameplay.World;
 using UnityEngine;
 
 namespace FF.Gameplay.Bootstrap
@@ -18,7 +19,10 @@ namespace FF.Gameplay.Bootstrap
             AppSettings.Apply();
             GameEvents.Reset();
             Services.Clear();
+
             Services.Register(database);
+            Services.Register<IUpgradeLevels>(new NewGameUpgradeLevels());
+            Services.Register(new WorldCollision(database, WorldStateSnapshot.NewGame(database.products)));
         }
 
         void OnDestroy()

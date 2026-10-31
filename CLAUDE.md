@@ -82,8 +82,13 @@ in Unity coordinates only. 1 unit = 1 m.
   - `unity command` — list available command groups (scene, gameobject, prefab, material, build, ...).
 - When an Editor is connected, change scenes/prefabs/assets through `unity command` or Editor scripts,
   not by hand-editing `.unity` / `.prefab` / `.asset` files.
-- Git: repo in the project root, Git LFS for fonts/images/models/audio. `gh` is not installed and there
-  are no SSH keys: the user pushes to GitHub themselves (credentials are entered by the user only).
+- Editor tooling (menu **FF**), run in this order on a fresh clone: Import Design Data → Setup Fonts →
+  Setup Render Settings → Setup Scenes → Build Game Scene (rebuilds world blockout, player prefab, input, camera, HUD).
+- Tests: `unity command test run --mode EditMode`. Play Mode automation tips are in PLAN.md (M1 notes).
+- Git: repo in the project root, Git LFS for fonts/images/models/audio. Remote `origin` =
+  https://github.com/Armen380/mebel (public). `gh` is installed and logged in by the user (keyring):
+  Claude pushes branches and opens/merges PRs with `gh`. Never run `gh auth login`/enter credentials;
+  if auth breaks, ask the user to log in again.
 
 ## Communication
 

@@ -1,7 +1,5 @@
 using FF.Data;
 using FF.Gameplay.Bootstrap;
-using FF.UI.DevTools;
-using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -79,22 +77,6 @@ namespace FF.Editor
 
             var es = new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
             es.transform.SetParent(ui, false);
-
-            var textGo = new GameObject("M0Check", typeof(RectTransform), typeof(TextMeshProUGUI), typeof(M0Check));
-            textGo.transform.SetParent(canvasGo.transform, false);
-            var rt = (RectTransform)textGo.transform;
-            rt.anchorMin = new Vector2(0, 0.4f);
-            rt.anchorMax = new Vector2(1, 0.6f);
-            rt.offsetMin = new Vector2(40, 0);
-            rt.offsetMax = new Vector2(-40, 0);
-            var tmp = textGo.GetComponent<TextMeshProUGUI>();
-            tmp.alignment = TextAlignmentOptions.Center;
-            tmp.fontSize = 64;
-            tmp.color = new Color32(0x2b, 0x1d, 0x14, 0xff);
-            tmp.text = "Կահույքի Գործարան / Мебельная фабрика";
-            var check = new SerializedObject(textGo.GetComponent<M0Check>());
-            check.FindProperty("label").objectReferenceValue = tmp;
-            check.ApplyModifiedPropertiesWithoutUndo();
         }
 
         static Transform Find(string root) => GameObject.Find(root).transform;
