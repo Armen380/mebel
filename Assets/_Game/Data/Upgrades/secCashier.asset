@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: FF.Data::FF.Data.UpgradeDef
   id: secCashier
   groupKey: g.section
+  nameKey: upg.secCashier
+  descriptionKey: upgd.secCashier
+  valueFormat: 3
   maxLevel: 2
   baseCost: 200000
   costMultiplier: 2.2

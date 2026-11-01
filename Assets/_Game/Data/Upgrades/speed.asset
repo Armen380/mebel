@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: FF.Data::FF.Data.UpgradeDef
   id: speed
   groupKey: g.player
+  nameKey: upg.speed
+  descriptionKey: upgd.speed
+  valueFormat: 1
   maxLevel: 6
   baseCost: 1250
   costMultiplier: 1.8

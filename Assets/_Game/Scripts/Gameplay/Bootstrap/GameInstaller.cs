@@ -1,5 +1,6 @@
 using FF.Core;
 using FF.Data;
+using FF.Gameplay.Effects;
 using FF.Gameplay.Items;
 using FF.Gameplay.Nodes;
 using FF.Gameplay.Pads;
@@ -23,6 +24,7 @@ namespace FF.Gameplay.Bootstrap
         [SerializeField] ZoneRegistry zones;
         [SerializeField] NodeRegistry nodes;
         [SerializeField] PadSystem pads;
+        [SerializeField] EffectsSystem effects;
 
         void Awake()
         {
@@ -36,14 +38,18 @@ namespace FF.Gameplay.Bootstrap
             Services.Register(progress);
             Services.Register<IUpgradeLevels>(progress);
             Services.Register<IProgressView>(progress);
+            Services.Register<IUpgradeShop>(new UpgradeShop(database, progress, state));
             Services.Register(state);
-            Services.Register(new WorldCollision(database, state));
+            var collision = new WorldCollision(database, state);
+            Services.Register(collision);
+            Services.Register(new Ownership(state, collision));
             Services.Register(new WorldTagRegistry());
             Services.Register(itemPool);
             Services.Register(itemFlights);
             Services.Register(zones);
             Services.Register(nodes);
             Services.Register(pads);
+            Services.Register(effects);
         }
 
         void OnDestroy()

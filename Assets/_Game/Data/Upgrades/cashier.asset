@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: FF.Data::FF.Data.UpgradeDef
   id: cashier
   groupKey: g.staff
+  nameKey: upg.cashier
+  descriptionKey: upgd.cashier
+  valueFormat: 3
   maxLevel: 8
   baseCost: 3000
   costMultiplier: 2.2

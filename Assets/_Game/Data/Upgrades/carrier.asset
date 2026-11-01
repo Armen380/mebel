@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: FF.Data::FF.Data.UpgradeDef
   id: carrier
   groupKey: g.workers
+  nameKey: upg.carrier
+  descriptionKey: upgd.carrier
+  valueFormat: 3
   maxLevel: 4
   baseCost: 5500
   costMultiplier: 2.2

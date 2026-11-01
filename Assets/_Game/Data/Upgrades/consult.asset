@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: FF.Data::FF.Data.UpgradeDef
   id: consult
   groupKey: g.staff
+  nameKey: upg.consult
+  descriptionKey: upgd.consult
+  valueFormat: 5
   maxLevel: 2
   baseCost: 40000
   costMultiplier: 2.5

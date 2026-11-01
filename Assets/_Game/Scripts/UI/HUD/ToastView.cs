@@ -9,10 +9,10 @@ using UnityEngine.Localization.Settings;
 namespace FF.UI.HUD
 {
     /// <summary>
-    /// Level-up toast (prototype <c>onLevel → toast</c>): "Level N" and either the factories that open at this level
-    /// or "keep going"; pops in, stays 2.4 s.
+    /// Centre toast (prototype <c>toast(title, sub)</c>): pops in and stays 2.4 s. Level-ups show "Level N" and either
+    /// the factories that open at this level or "keep going" (<c>onLevel</c>); other events send localization keys.
     /// </summary>
-    public sealed class LevelToast : MonoBehaviour
+    public sealed class ToastView : MonoBehaviour
     {
         const string Table = "Game";
         const float ShowSeconds = 2.4f;
@@ -35,11 +35,26 @@ namespace FF.UI.HUD
             panel.gameObject.SetActive(false);
         }
 
-        void OnEnable() => GameEvents.LevelUp += Show;
+        void OnEnable()
+        {
+            GameEvents.LevelUp += ShowLevel;
+            GameEvents.Toast += ShowKeys;
+        }
 
-        void OnDisable() => GameEvents.LevelUp -= Show;
+        void OnDisable()
+        {
+            GameEvents.LevelUp -= ShowLevel;
+            GameEvents.Toast -= ShowKeys;
+        }
 
-        void Show(int level)
+        void ShowKeys(string titleKey, string subtitleKey)
+        {
+            title.SetText(LocalizationSettings.StringDatabase.GetLocalizedString(Table, titleKey));
+            subtitle.SetText(string.IsNullOrEmpty(subtitleKey) ? "" : LocalizationSettings.StringDatabase.GetLocalizedString(Table, subtitleKey));
+            Pop();
+        }
+
+        void ShowLevel(int level)
         {
             _args.Clear();
             _args["n"] = level;
@@ -59,7 +74,11 @@ namespace FF.UI.HUD
                 subtitle.SetText(LocalizationSettings.StringDatabase.GetLocalizedString(Table, "t.newFactory", new object[] { _args }));
             }
             else subtitle.SetText(LocalizationSettings.StringDatabase.GetLocalizedString(Table, "t.keepGoing"));
+            Pop();
+        }
 
+        void Pop()
+        {
             _time = 0f;
             panel.gameObject.SetActive(true);
         }

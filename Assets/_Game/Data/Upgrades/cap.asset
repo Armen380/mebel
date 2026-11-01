@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: FF.Data::FF.Data.UpgradeDef
   id: cap
   groupKey: g.player
+  nameKey: upg.cap
+  descriptionKey: upgd.cap
+  valueFormat: 0
   maxLevel: 8
   baseCost: 1000
   costMultiplier: 1.7

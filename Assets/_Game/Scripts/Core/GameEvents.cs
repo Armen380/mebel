@@ -31,6 +31,10 @@ namespace FF.Core
         public static event Action<int> QuestChanged;
         /// <summary>Floating world text such as "+$430" (prototype <c>floatText</c>).</summary>
         public static event Action<Vector3, string> FloatText;
+        /// <summary>Centre toast with a localization key for the title and the subtitle (prototype <c>toast</c>).</summary>
+        public static event Action<string, string> Toast;
+        /// <summary>An Upgrades-panel item was bought: id and its new level.</summary>
+        public static event Action<string, int> UpgradeBought;
 
         public static void RaiseMoneyChanged(long money, bool bump) => MoneyChanged?.Invoke(money, bump);
         public static void RaiseLevelUp(int level) => LevelUp?.Invoke(level);
@@ -44,6 +48,8 @@ namespace FF.Core
         public static void RaiseCashCollected() => CashCollected?.Invoke();
         public static void RaiseQuestChanged(int step) => QuestChanged?.Invoke(step);
         public static void RaiseFloatText(Vector3 position, string text) => FloatText?.Invoke(position, text);
+        public static void RaiseToast(string titleKey, string subtitleKey) => Toast?.Invoke(titleKey, subtitleKey);
+        public static void RaiseUpgradeBought(string id, int level) => UpgradeBought?.Invoke(id, level);
 
         /// <summary>Drops all subscribers (domain-reload-free Play Mode and tests).</summary>
         public static void Reset()
@@ -60,6 +66,8 @@ namespace FF.Core
             CashCollected = null;
             QuestChanged = null;
             FloatText = null;
+            Toast = null;
+            UpgradeBought = null;
         }
     }
 }

@@ -13,6 +13,8 @@ namespace FF.Core
         Cash,
         /// <summary>White speech bubble with an icon (TagIcon) over a customer.</summary>
         Bubble,
+        /// <summary>Honey pill "Lv 3 · ×2" over a building: TagCount = combined level, TagCapacity = output multiplier.</summary>
+        Level,
     }
 
     /// <summary>Anything that shows a screen-space tag above a world position. Read once per frame by the UI.</summary>

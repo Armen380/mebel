@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: FF.Data::FF.Data.UpgradeDef
   id: manager
   groupKey: g.staff
+  nameKey: upg.manager
+  descriptionKey: upgd.manager
+  valueFormat: 3
   maxLevel: 2
   baseCost: 20000
   costMultiplier: 2.5

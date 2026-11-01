@@ -7,6 +7,8 @@ using FF.Editor.Items;
 using FF.Editor.World;
 using FF.Gameplay.Bootstrap;
 using FF.Gameplay.CameraRig;
+using FF.Gameplay.Effects;
+using FF.Gameplay.Production;
 using FF.Gameplay.Input;
 using FF.Gameplay.Items;
 using FF.Gameplay.Nodes;
@@ -60,8 +62,10 @@ namespace FF.Editor
             List<Zone> zones = ProductionBuilder.Build(db);
             ShopBuilder.Result shop = ShopBuilder.Build(db);
             zones.AddRange(shop.Zones);
+            BuildingKit kit = BuildingKitBuilder.Build(db); // after the blockout: ghosts for every palette colour
             Transform player = SpawnPlayer(db.world);
-            SetupSystems(zones, shop, player);
+            foreach (BuildingFader fader in Root("World").GetComponentsInChildren<BuildingFader>(true)) fader.Setup(player);
+            SetupSystems(zones, shop, player, kit);
             MoveInputAggregator input = SetupInput();
             VirtualJoystick joystick = SetupHud(db);
             Wire(input, "joystickSource", joystick);
@@ -109,7 +113,7 @@ namespace FF.Editor
 
         // ---------- systems ----------
 
-        static void SetupSystems(List<Zone> zones, ShopBuilder.Result shop, Transform player)
+        static void SetupSystems(List<Zone> zones, ShopBuilder.Result shop, Transform player, BuildingKit kit)
         {
             Transform systems = Root("Systems");
             foreach (string name in new[] { "Items", "Zones", "Nodes", "Customers", "Pads", "Tutorial" })
@@ -142,6 +146,8 @@ namespace FF.Editor
             padGo.transform.SetParent(systems, false);
             var padSystem = padGo.AddComponent<PadSystem>();
             padSystem.Setup(shop.Pads, player.GetComponent<PlayerMover>());
+            padGo.AddComponent<PadRewards>();
+            EffectsSystem effects = EffectsBuilder.Build(systems, kit);
 
             var tutorialGo = new GameObject("Tutorial");
             tutorialGo.transform.SetParent(systems, false);
@@ -155,6 +161,7 @@ namespace FF.Editor
             Wire(installer, "zones", zoneRegistry);
             Wire(installer, "nodes", nodeRegistry);
             Wire(installer, "pads", padSystem);
+            Wire(installer, "effects", effects);
             foreach (Object o in new Object[] { zoneRegistry, nodeRegistry, director, padSystem, tutorial }) EditorUtility.SetDirty(o);
         }
 
@@ -249,7 +256,9 @@ namespace FF.Editor
             HudBuilder.BuildQuestBar(safe);
             HudBuilder.BuildToast(safe);
             BuildThrowButton(safe);
+            RectTransform upgradesButton = HudBuilder.BuildUpgradesButton(safe, out GameObject badge);
             BuildLocaleButton(safe);
+            HudBuilder.BuildUpgradesPanel(hud, db, upgradesButton.GetComponent<Button>(), badge, joystick);
             return joystick;
         }
 
@@ -376,7 +385,8 @@ namespace FF.Editor
         {
             RectTransform button = Rect("DevLocaleButton", parent);
             button.anchorMin = button.anchorMax = button.pivot = new Vector2(1, 1);
-            button.anchoredPosition = new Vector2(-32, -32);
+            // dev button: under the Upgrades button until the real menu (M9)
+            button.anchoredPosition = new Vector2(-16 * Px, -(12 + 44 + 10) * Px);
             button.sizeDelta = new Vector2(150, 96);
             Image bg = button.gameObject.AddComponent<Image>();
             bg.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd");

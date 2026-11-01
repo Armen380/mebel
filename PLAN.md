@@ -5,6 +5,14 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
+### Next: M5 — 2026-11-01
+- [ ] Write the M5 plan from `Design/docs/04_IMPLEMENTATION_PLAN.md` and get the user's approval (no code before that)
+
+Notes:
+- Open question to user: change "Communication" rule to "reply in the language of the user's message (Armenian or Russian)"? The user writes Russian; replies are in Russian until decided.
+
+## Done
+
 ### Fix: Android build output got committed — 2026-11-01 (branch `chore/untrack-build-artifacts`)
 Cause: the user's Android test build wrote `first.apk`, `first_BackUpThisFolder_ButDontShipItWithYourGame/` (IL2CPP backup,
 752 files) and `.utmp/` (CMake temp) into the project root; Claude's `git add -A` in df46b3b committed the last two
@@ -15,13 +23,40 @@ No secrets inside (checked: no keystores/keys/tokens); CMake files contain local
 - [ ] PR → main, sync local main
 - Rule from now on: stage files explicitly / review `git status` fully before committing; never `git add -A` blindly.
 
-### Next: M4 — 2026-11-01
-- [ ] Write the M4 plan from `Design/docs/04_IMPLEMENTATION_PLAN.md` and get the user's approval (no code before that)
+### M4 — Upgrade pads, building growth, upgrades panel — 2026-11-01 (branch `m4-upgrades`)
+Result: buildings grow with their pads (floors, chimneys, fan, tank, flag, Lv tag, fade, effects), Sawmill 2 buy pad, Upgrades panel (Player + Business); 530 tests green; user play-test OK 2026-11-01; merged into main.
+Goal (04_IMPLEMENTATION_PLAN): pads work; buildings grow; panel prices match upgrades.json.
+Prototype refs: `makeBuilding / setBuildingLevel / TRIMS` (~659–705), `refreshBuilding / capMul / fadeBuildings / setGhost /
+ghostOf` (~1115–1140), `puff / burst / updParticles` (~1108–1114), building pop/bounce/fans/flag/smoke in `updMachine` (~1084),
+Lv chip in `setupLabels` (~1503), `UPG / upPrice / upLocked / lockText` (~238–256, 452–456), `renderShop / openSheet /
+buy click` (~1572–1597), `hudMoney` badge (~1446), sheet CSS (~118–139), saw2_buy (~918).
+
+- [x] 0. Branch `m4-upgrades` from main; commit the pending font SDF assets first
+- [x] A. Data: `BuildingKit` SO (meshes + palette colours used by growth: trims, lit/unlit windows, chimney, fan, tank, flag); every growth colour pre-created in MaterialPalette + a transparent "ghost" twin per colour (opacity 0.22, made in the Editor so the shader variant ships); `UpgradeDef` gets name/desc keys + value format (items / % / sec / people / bots / price / customers)
+- [x] B. Building growth: `BuildingVisual` rebuilds the Deco group from (speed s, qty q) exactly like `setBuildingLevel` (tier trims, lit windows, q floors of 1.25 m, roof on top, chimneys at s ≥ 1 / 5, roof fan s ≥ 3, tank s ≥ 7, gold flag s = 8 & q = 3); pop-in (new building), bounce on upgrade (scale y +16 % / xz −6 %, decaying sine), fans spin (fast while busy), flag sways
+- [x] C. Effects: chimney smoke (rate ↑ with speed and when busy, max 160) and 28-cube confetti burst — Unity ParticleSystem, one shared system each, pooled; on a speed/qty pad: bounce + confetti + floating `f.cap` ("×2 output · 38 slots")
+- [x] D. Lv tag over every working building: honey pill "Lv 3 · ×2" / "MAX · ×4" (new world-tag style), hidden while the building is faded
+- [x] E. Occlusion fade (`fadeBuildings`): player behind a building (|dx| < 4.2, 2.3…15 m behind) → its renderers switch to the ghost materials, no shadows; back on when the player leaves
+- [x] F. Pads: every sawmill / factory speed + qty pad (effects already live through the machines, now with growth) + `saw2_buy` (Sawmill 2: building pops in, lot disappears, blockers rebuilt, toast `t.saw2`); generic "owned building" switch (building ↔ lot) reused by M5 factory buy pads
+- [x] G. Upgrades panel (bottom sheet, prototype `.sheet`): "Upgrades" honey button top-right with the red badge when something is affordable; header title + balance + close; pad note; group headers; rows: name, description, level pips, "5 items → 7 items", green price button / grey when too expensive / lock text (`Shop Lv N`, plumbing) / MAX; buying spends money (`upPrice`), joystick off while open, scrolls on phones, safe area
+- [x] H. Upgrade effects live now: carry capacity, walk speed, axe speed (player); ads (spawn rate + walk-in cap), quality (sale price), consultant (bill +15 %, patience ×1.6 — locked until shop Lv 5, M5)
+- [x] I. EditMode tests (530/530 green): growth layout per (s, q) (floors, chimneys, fan, tank, flag, tier), upgrade prices vs upgrades.json `costPerLevel_beforeECON` × ECON, lock rules, value texts, badge rule, ownership switch + blockers, Lv tag text, fade region
+- [x] J. Play Mode check: saw_speed 8 + saw_qty 3 → 3 floors, gold trim, lit windows, 2 chimneys with smoke, fan, tank, flag, storage 86/108; fade with the player behind it; Sawmill 2 bought for $25K (pads $3.1K / $7.5K, blocker added); chair_qty → confetti, Lv 2 · ×2, 38/19, next $12K; panel in phone portrait (ru) with wrapping, grey too-expensive and green buttons; Console clean
+- [x] K. Commit `M4: building growth, pads, upgrades panel` (8068190), push, user play-test OK, PR → main
+
+Notes:
+- Noto Sans has no "→": the panel draws an arrow icon between the values; values sit on their own line under the pips (one line does not fit a phone row).
+- Ghost (faded) materials live in Art/Materials/Ghost, one per lit palette colour; BuildingKitBuilder adds missing ones on every scene build.
+- Sawmill 2 now sits in Blockout/Sawmill2Slot/{Building, Lot} with an OwnedBuilding switch (same as every FactoryRow/<id>).
+- UpgradesPanel lives on the HUD root (always active); its sheet is a child that it shows / hides.
+
+Decisions (approved by the user):
+1. Which pads in M4 [speed/qty of every sawmill and factory + saw2_buy now; factory buy pads, shop expansion and register pads in M5, truck/parking in M7, reg_annex/sink in M8 — as those milestones list them; "every pad works" is then met at the end of M8]
+2. Worker / staff / section rows of the panel (workers come in M6, section staff in M8) [show only the Player and Business groups now (cap, speed, axe, ads, quality); each other group appears with its milestone, so nobody pays for workers that do not exist yet]
+3. Dev language button sits top-right where the "Upgrades" button goes [move it under the Upgrades button until the real menu (M9)]
 
 Notes:
 - Open question to user: change "Communication" rule to "reply in the language of the user's message (Armenian or Russian)"? The user writes Russian; replies are in Russian until decided.
-
-## Done
 
 ### M3 play-test changes (user requests) — 2026-10-31 (branch `m3-shop`, before the M3 merge)
 Result: tutorial text wraps on phones, dollars before the number, factories in two lines (pairs across the fence); user play-test OK 2026-11-01. These are deliberate design changes away from the prototype (the user decides; the

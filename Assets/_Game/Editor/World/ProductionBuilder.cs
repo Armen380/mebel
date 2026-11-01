@@ -33,10 +33,13 @@ namespace FF.Editor.World
             var ctx = new Context(db, root);
             Transform blockout = worldRoot.transform.Find(LayoutBuilder.RootName);
 
-            ctx.Machine(WorldStateSnapshot.Sawmill1Id, null, w.sawmill1.sawIn, w.sawmill1.sawOut, w.sawmill1.machineMouth,
+            Color sawWall = Blockout.Hex(LayoutBuilder.SawWall), sawRoof = Blockout.Hex(LayoutBuilder.SawRoof);
+            Machine saw1 = ctx.AddMachine(WorldStateSnapshot.Sawmill1Id, null, w.sawmill1.sawIn, w.sawmill1.sawOut, w.sawmill1.machineMouth,
                 ItemType.Log, ItemType.Plank, "in.log", "in.plank", Part(blockout, "Sawmill1/SawBlade"), null);
-            ctx.Machine(WorldStateSnapshot.Sawmill2Id, null, w.sawmill2.saw2In, w.sawmill2.saw2Out, w.sawmill2.machineMouth,
-                ItemType.Log, ItemType.Plank, "in.log", "in.plank", Part(blockout, "Sawmill2/SawBlade"), null);
+            AttachBuilding(Part(blockout, "Sawmill1"), saw1, sawWall, sawRoof);
+            Machine saw2 = ctx.AddMachine(WorldStateSnapshot.Sawmill2Id, null, w.sawmill2.saw2In, w.sawmill2.saw2Out, w.sawmill2.machineMouth,
+                ItemType.Log, ItemType.Plank, "in.log", "in.plank", Part(blockout, "Sawmill2Slot/Building/SawBlade"), null);
+            AttachBuilding(Part(blockout, "Sawmill2Slot/Building"), saw2, sawWall, sawRoof);
 
             WorldLayout.FactoryRowSettings f = w.factories;
             foreach (ProductDef p in db.products)
@@ -44,13 +47,22 @@ namespace FF.Editor.World
                 bool back = p.factoryRow == FactoryRow.Back;
                 var mouth = new Vector3(p.factoryX, w.production.factoryMouthY, back ? f.backMouthZ : w.production.factoryMouthZ);
                 float zoneZ = f.ZoneZ(p.factoryRow);
-                ctx.Machine(p.id, p, new Vector2(p.factoryX + f.inZoneDx, zoneZ), new Vector2(p.factoryX + f.outZoneDx, zoneZ), mouth,
+                Machine m = ctx.AddMachine(p.id, p, new Vector2(p.factoryX + f.inZoneDx, zoneZ), new Vector2(p.factoryX + f.outZoneDx, zoneZ), mouth,
                     p.input, p.item, "in." + p.input.ToString().ToLowerInvariant(), p.signKey, null,
                     Part(blockout, $"FactoryRow/{p.id}/Building/Press"));
+                AttachBuilding(Part(blockout, $"FactoryRow/{p.id}/Building"), m, p.wallColor, p.roofColor);
             }
 
             Debug.Log($"[FF] Production built: {ctx.Zones.Count / 2} machines, {ctx.Zones.Count} zones.");
             return ctx.Zones;
+        }
+
+        /// <summary>Growth, fading and the Lv tag for a machine's building (its Deco child is rebuilt at runtime).</summary>
+        static void AttachBuilding(Transform building, Machine machine, Color wall, Color roof)
+        {
+            if (building == null) return;
+            var fader = building.gameObject.AddComponent<BuildingFader>();
+            building.gameObject.AddComponent<BuildingVisual>().Setup(machine, building.Find("Deco"), wall, roof, fader);
         }
 
         static Transform Part(Transform blockout, string path)
@@ -79,7 +91,7 @@ namespace FF.Editor.World
                 _pickupMaterial = ZoneFactory.TransparentMaterial("ZoneMarker_Pickup", TextureFactory.ZoneMarker("Pickup", PickupTint, 1), 10);
             }
 
-            public void Machine(string id, ProductDef product, Vector2 inPos, Vector2 outPos, Vector3 protoMouth,
+            public Machine AddMachine(string id, ProductDef product, Vector2 inPos, Vector2 outPos, Vector3 protoMouth,
                 ItemType inType, ItemType outType, string inLabel, string outLabel, Transform blade, Transform press)
             {
                 WorldLayout.ProductionSettings s = _db.world.production;
@@ -103,7 +115,9 @@ namespace FF.Editor.World
                     visual = go.AddComponent<MachineVisual>();
                     visual.Setup(blade, press);
                 }
-                go.AddComponent<Machine>().Setup(id, product, input, output, mouth, visual);
+                var machine = go.AddComponent<Machine>();
+                machine.Setup(id, product, input, output, mouth, visual);
+                return machine;
             }
         }
     }

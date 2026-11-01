@@ -16,6 +16,8 @@ namespace FF.UI.WorldTags
     public sealed class WorldTagLayer : MonoBehaviour
     {
         const float OffscreenMargin = 0.15f;
+        /// <summary>Speed 8 + qty 3: the building is fully grown.</summary>
+        const int MaxCombinedLevel = 11;
 
         [SerializeField] RectTransform pillTemplate;
         [SerializeField] Color counterColor = new Color32(0x2b, 0x1d, 0x14, 0xd6);
@@ -24,7 +26,10 @@ namespace FF.UI.WorldTags
         [SerializeField] Color fullText = Color.white;
         [SerializeField] Color cashColor = new Color32(0x3d, 0x8a, 0x31, 0xff);
         [SerializeField] Color bubbleColor = Color.white;
+        [SerializeField] Color levelColor = new Color32(0xf3, 0xb3, 0x3d, 0xff);
+        [SerializeField] Color levelText = new Color32(0x2b, 0x1d, 0x14, 0xff);
         [SerializeField] LocalizedString fullLabel = new LocalizedString("Game", "c.full");
+        [SerializeField] LocalizedString maxLabel = new LocalizedString("Game", "ui.max");
         [Tooltip("Bubble icons by id: product ids, \"cash\", \"angry\".")]
         [SerializeField] List<BubbleIcon> icons = new List<BubbleIcon>();
 
@@ -54,6 +59,7 @@ namespace FF.UI.WorldTags
         Camera _camera;
         WorldTagRegistry _registry;
         string _fullText = "FULL";
+        string _maxText = "MAX";
 
         void Awake()
         {
@@ -61,9 +67,24 @@ namespace FF.UI.WorldTags
             pillTemplate.gameObject.SetActive(false);
         }
 
-        void OnEnable() => fullLabel.StringChanged += OnFullChanged;
+        void OnEnable()
+        {
+            fullLabel.StringChanged += OnFullChanged;
+            maxLabel.StringChanged += OnMaxChanged;
+        }
 
-        void OnDisable() => fullLabel.StringChanged -= OnFullChanged;
+        void OnDisable()
+        {
+            fullLabel.StringChanged -= OnFullChanged;
+            maxLabel.StringChanged -= OnMaxChanged;
+        }
+
+        void OnMaxChanged(string value)
+        {
+            _maxText = value;
+            foreach (Pill p in _pills)
+                if (p.Style == WorldTagStyle.Level) p.TextDirty = true;
+        }
 
         void Start()
         {
@@ -118,8 +139,10 @@ namespace FF.UI.WorldTags
             {
                 pill.Style = style;
                 bool full = style == WorldTagStyle.Full, bubble = style == WorldTagStyle.Bubble;
-                pill.Background.color = full ? fullColor : style == WorldTagStyle.Cash ? cashColor : bubble ? bubbleColor : counterColor;
-                pill.Label.color = style == WorldTagStyle.Counter ? counterText : fullText;
+                bool level = style == WorldTagStyle.Level;
+                pill.Background.color = full ? fullColor : style == WorldTagStyle.Cash ? cashColor : bubble ? bubbleColor
+                    : level ? levelColor : counterColor;
+                pill.Label.color = style == WorldTagStyle.Counter ? counterText : level ? levelText : fullText;
                 pill.Label.characterSpacing = full ? 6f : 0f;
                 pill.Label.gameObject.SetActive(!bubble);
                 pill.Icon.gameObject.SetActive(bubble);
@@ -139,6 +162,18 @@ namespace FF.UI.WorldTags
                 {
                     pill.ValueKey = key;
                     pill.Label.SetText(NumberFormat.Money(value));
+                }
+            }
+            else if (style == WorldTagStyle.Level)
+            {
+                int combined = s.TagCount, multiplier = s.TagCapacity;
+                if (pill.TextDirty || combined != pill.Count || multiplier != pill.Capacity)
+                {
+                    pill.Count = combined;
+                    pill.Capacity = multiplier;
+                    // prototype: (l >= 11 ? MAX : "Lv " + (l + 1)) + " · ×" + (1 + q)
+                    if (combined >= MaxCombinedLevel) pill.Label.SetText(_maxText + " · ×{0}", (float)multiplier);
+                    else pill.Label.SetText("Lv {0} · ×{1}", (float)(combined + 1), (float)multiplier);
                 }
             }
             else if (style == WorldTagStyle.Bubble)

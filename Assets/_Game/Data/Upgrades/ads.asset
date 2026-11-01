@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: FF.Data::FF.Data.UpgradeDef
   id: ads
   groupKey: g.biz
+  nameKey: upg.ads
+  descriptionKey: upgd.ads
+  valueFormat: 6
   maxLevel: 6
   baseCost: 2250
   costMultiplier: 1.8

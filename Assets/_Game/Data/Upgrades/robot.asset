@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: FF.Data::FF.Data.UpgradeDef
   id: robot
   groupKey: g.workers
+  nameKey: upg.robot
+  descriptionKey: upgd.robot
+  valueFormat: 4
   maxLevel: 4
   baseCost: 40000
   costMultiplier: 2.4

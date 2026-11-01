@@ -16,6 +16,7 @@ MonoBehaviour:
   world: {fileID: 11400000, guid: 67a276962a0114bfda8fd0a29b7e6500, type: 2}
   tutorial: {fileID: 11400000, guid: ae7e737e608fa43b4be01875e3812e5f, type: 2}
   items: {fileID: 11400000, guid: 6d9e6b830ce484002b0b72229d167c73, type: 2}
+  buildingKit: {fileID: 11400000, guid: df25d16fcb97e4fbbb02f038618bf4aa, type: 2}
   products:
   - {fileID: 11400000, guid: 0b4dbb213623f4d8497450d2e7c4f1a7, type: 2}
   - {fileID: 11400000, guid: 9fac12986cb194a7f95eb9de1f45a15b, type: 2}

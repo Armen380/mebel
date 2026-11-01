@@ -3,7 +3,9 @@ using FF.Core;
 using FF.Data;
 using FF.Editor.Art;
 using FF.UI.HUD;
+using FF.UI.Input;
 using FF.UI.Layout;
+using FF.UI.Upgrades;
 using FF.UI.Localization;
 using FF.UI.WorldTags;
 using TMPro;
@@ -22,6 +24,8 @@ namespace FF.Editor
     {
         public static readonly Color32 Honey = UiPalette.Honey;
         static readonly Color Shadow = new Color(0, 0, 0, 0.28f);
+        static readonly Color Walnut2 = new Color32(0x3a, 0x28, 0x1b, 0xff);
+        static readonly Color Muted = new Color32(0xcb, 0xb6, 0x97, 0xff);
 
         public static TMP_FontAsset Font(string weight) => AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontSetup.ArmenianAssetPath(weight));
 
@@ -154,11 +158,278 @@ namespace FF.Editor
             // .toast max-width: calc(100% - 32px), minus its padding 22 + 22
             Wrap(subtitle, safe, (32 + 44) * Px, null);
 
-            var toast = root.gameObject.AddComponent<LevelToast>();
+            var toast = root.gameObject.AddComponent<ToastView>();
             Wire(toast, "panel", panel);
             Wire(toast, "group", group);
             Wire(toast, "title", title);
             Wire(toast, "subtitle", subtitle);
+        }
+
+        /// <summary>Prototype <c>.btn-up</c>: honey 44 px button top-right with the upgrade icon, label and red badge.</summary>
+        public static RectTransform BuildUpgradesButton(Transform safe, out GameObject badge)
+        {
+            RectTransform root = Rect("UpgradesButton", safe);
+            root.anchorMin = root.anchorMax = root.pivot = new Vector2(1, 1);
+            root.anchoredPosition = new Vector2(-16 * Px, -12 * Px);
+            Image bg = root.gameObject.AddComponent<Image>();
+            bg.sprite = TextureFactory.Rounded();
+            bg.type = Image.Type.Sliced;
+            bg.pixelsPerUnitMultiplier = 16f / (14 * Px);
+            bg.color = UiPalette.Honey;
+            var shadow = root.gameObject.AddComponent<UnityEngine.UI.Shadow>();
+            shadow.effectColor = UiPalette.HoneyDark;
+            shadow.effectDistance = new Vector2(0, -4 * Px);
+            var button = root.gameObject.AddComponent<Button>();
+            button.targetGraphic = bg;
+            Row(root.gameObject, new RectOffset(10, 14, 0, 0), 6);
+            root.GetComponent<HorizontalLayoutGroup>().childAlignment = TextAnchor.MiddleCenter;
+            Fit(root.gameObject);
+            var height = root.gameObject.AddComponent<LayoutElement>();
+            height.minHeight = height.preferredHeight = 44 * Px;
+
+            RectTransform icon = Rect("Icon", root);
+            Image iconImage = icon.gameObject.AddComponent<Image>();
+            iconImage.sprite = UpgradeIcon();
+            iconImage.color = UiPalette.Walnut;
+            iconImage.raycastTarget = false;
+            Size(icon.gameObject, 22, 22);
+            TMP_Text label = Text("Label", root, "Բարելավել", 14, UiPalette.Walnut, "Black");
+            label.gameObject.AddComponent<LocalizedTmpText>().SetKey("ui.upgrade");
+
+            // .badge: 14 px red dot with a 2 px cream ring, top/right −5 px
+            RectTransform ring = Rect("Badge", root);
+            ring.gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
+            ring.anchorMin = ring.anchorMax = new Vector2(1, 1);
+            ring.anchoredPosition = new Vector2(-2 * Px, -2 * Px);
+            ring.sizeDelta = new Vector2(14 * Px, 14 * Px);
+            Image ringImage = ring.gameObject.AddComponent<Image>();
+            ringImage.sprite = TextureFactory.Circle();
+            ringImage.color = UiPalette.Cream;
+            ringImage.raycastTarget = false;
+            RectTransform dot = Rect("Dot", ring);
+            dot.anchorMin = dot.anchorMax = new Vector2(0.5f, 0.5f);
+            dot.sizeDelta = new Vector2(10 * Px, 10 * Px);
+            Image dotImage = dot.gameObject.AddComponent<Image>();
+            dotImage.sprite = TextureFactory.Circle();
+            dotImage.color = UiPalette.Danger;
+            dotImage.raycastTarget = false;
+            badge = ring.gameObject;
+            return root;
+        }
+
+        /// <summary>
+        /// Prototype <c>.sheet</c>: dimmed backdrop and a walnut bottom sheet (max 560 px wide, 84 % high) with the
+        /// title, balance, close button and a scrolling list (pad note, group headers, upgrade rows).
+        /// </summary>
+        public static void BuildUpgradesPanel(Transform hud, GameDatabase db, Button openButton, GameObject badge, VirtualJoystick joystick)
+        {
+            RectTransform sheet = Rect("UpgradesSheet", hud);
+            Stretch(sheet);
+            Image dim = sheet.gameObject.AddComponent<Image>();
+            dim.color = new Color(20 / 255f, 12 / 255f, 8 / 255f, 0.5f);
+            var backdrop = sheet.gameObject.AddComponent<Button>();
+            backdrop.transition = Selectable.Transition.None;
+
+            const float corner = 26;
+            RectTransform panel = Rect("Panel", sheet);
+            panel.anchorMin = new Vector2(0.5f, 0);
+            panel.anchorMax = new Vector2(0.5f, 0.84f);
+            panel.pivot = new Vector2(0.5f, 0);
+            panel.sizeDelta = new Vector2(560 * Px, corner * Px); // bottom corners hang below the screen
+            panel.anchoredPosition = new Vector2(0, -corner * Px);
+            Image panelBg = panel.gameObject.AddComponent<Image>();
+            panelBg.sprite = TextureFactory.Rounded();
+            panelBg.type = Image.Type.Sliced;
+            panelBg.pixelsPerUnitMultiplier = 16f / (corner * Px);
+            panelBg.color = UiPalette.Walnut;
+            var column = panel.gameObject.AddComponent<VerticalLayoutGroup>();
+            column.childControlWidth = column.childControlHeight = true;
+            column.childForceExpandWidth = true;
+            column.childForceExpandHeight = false;
+
+            // head: title + balance, close button
+            RectTransform head = Rect("Head", panel);
+            Row(head.gameObject, new RectOffset(20, 16, 18, 10), 12);
+            RectTransform titles = Rect("Titles", head);
+            var titleColumn = titles.gameObject.AddComponent<VerticalLayoutGroup>();
+            titleColumn.childControlWidth = titleColumn.childControlHeight = true;
+            titleColumn.childForceExpandWidth = titleColumn.childForceExpandHeight = false;
+            titles.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
+            TMP_Text title = Text("Title", titles, "Բարելավումներ", 22, UiPalette.Cream, "Black");
+            title.alignment = TextAlignmentOptions.Left;
+            title.gameObject.AddComponent<LocalizedTmpText>().SetKey("ui.upTitle");
+            TMP_Text balance = Text("Balance", titles, "", 14, UiPalette.Honey, "ExtraBold");
+            balance.alignment = TextAlignmentOptions.Left;
+
+            RectTransform close = Rect("Close", head);
+            Image closeBg = close.gameObject.AddComponent<Image>();
+            closeBg.sprite = TextureFactory.Rounded();
+            closeBg.type = Image.Type.Sliced;
+            closeBg.pixelsPerUnitMultiplier = 16f / (14 * Px);
+            closeBg.color = UiPalette.Walnut;
+            var closeShadow = close.gameObject.AddComponent<UnityEngine.UI.Shadow>();
+            closeShadow.effectColor = Shadow;
+            closeShadow.effectDistance = new Vector2(0, -4 * Px);
+            var closeButton = close.gameObject.AddComponent<Button>();
+            closeButton.targetGraphic = closeBg;
+            Size(close.gameObject, 44, 44);
+            RectTransform x = Rect("Icon", close);
+            x.anchorMin = x.anchorMax = new Vector2(0.5f, 0.5f);
+            x.sizeDelta = new Vector2(22 * Px, 22 * Px);
+            Image xImage = x.gameObject.AddComponent<Image>();
+            xImage.sprite = TextureFactory.LineIcon("close", 2.6f, TextureFactory.Poly(6, 6, 18, 18), TextureFactory.Poly(18, 6, 6, 18));
+            xImage.color = UiPalette.Cream;
+            xImage.raycastTarget = false;
+
+            // body: scrolling list
+            RectTransform body = Rect("Body", panel);
+            body.gameObject.AddComponent<LayoutElement>().flexibleHeight = 1;
+            body.gameObject.AddComponent<RectMask2D>();
+            var scroll = body.gameObject.AddComponent<ScrollRect>();
+            scroll.horizontal = false;
+            scroll.movementType = ScrollRect.MovementType.Clamped;
+            scroll.scrollSensitivity = 30;
+            RectTransform content = Rect("Content", body);
+            content.anchorMin = new Vector2(0, 1);
+            content.anchorMax = new Vector2(1, 1);
+            content.pivot = new Vector2(0.5f, 1);
+            content.offsetMin = content.offsetMax = Vector2.zero;
+            var list = content.gameObject.AddComponent<VerticalLayoutGroup>();
+            list.padding = Scaled(new RectOffset(20, 20, 0, 20 + (int)corner));
+            list.spacing = 6 * Px;
+            list.childControlWidth = list.childControlHeight = true;
+            list.childForceExpandWidth = true;
+            list.childForceExpandHeight = false;
+            var listFit = content.gameObject.AddComponent<ContentSizeFitter>();
+            listFit.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            scroll.content = content;
+            scroll.viewport = body;
+
+            // .note
+            RectTransform noteBox = Card("Note", content, Walnut2, 12);
+            Row(noteBox.gameObject, new RectOffset(12, 12, 10, 10), 0);
+            TMP_Text note = Text("Text", noteBox, "", 12.5f, Muted, "Bold");
+            note.alignment = TextAlignmentOptions.Left;
+            note.textWrappingMode = TextWrappingModes.Normal;
+            note.lineSpacing = 8;
+
+            // .grp
+            TMP_Text group = Text("GroupTemplate", content, "GROUP", 12, Muted, "ExtraBold");
+            group.alignment = TextAlignmentOptions.Left;
+            group.fontStyle = FontStyles.UpperCase;
+            group.characterSpacing = 12;
+            group.margin = new Vector4(0, 12 * Px, 0, 0);
+
+            UpgradeRow row = Row(content);
+
+            // on the always-active HUD root: the sheet itself is hidden while closed, the badge must keep updating
+            foreach (UpgradesPanel old in hud.GetComponents<UpgradesPanel>()) Object.DestroyImmediate(old);
+            var panelScript = hud.gameObject.AddComponent<UpgradesPanel>();
+            panelScript.Setup(openButton, badge, sheet.gameObject, panel, closeButton, backdrop, balance, note, content, row, group, joystick);
+        }
+
+        /// <summary>Prototype <c>.up</c> row: name, description, pips + value, buy button.</summary>
+        static UpgradeRow Row(Transform parent)
+        {
+            RectTransform row = Card("RowTemplate", parent, Walnut2, 16);
+            var h = row.gameObject.AddComponent<HorizontalLayoutGroup>();
+            h.padding = Scaled(new RectOffset(14, 12, 12, 12));
+            h.spacing = 12 * Px;
+            h.childAlignment = TextAnchor.MiddleLeft;
+            h.childControlWidth = h.childControlHeight = true;
+            h.childForceExpandWidth = h.childForceExpandHeight = false;
+
+            RectTransform left = Rect("Info", row);
+            var v = left.gameObject.AddComponent<VerticalLayoutGroup>();
+            v.spacing = 2 * Px;
+            v.childControlWidth = v.childControlHeight = true;
+            v.childForceExpandWidth = true;
+            v.childForceExpandHeight = false;
+            left.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
+            TMP_Text name = Text("Name", left, "", 16, UiPalette.Cream, "ExtraBold");
+            name.alignment = TextAlignmentOptions.Left;
+            TMP_Text desc = Text("Description", left, "", 12.5f, Muted, "Bold");
+            desc.alignment = TextAlignmentOptions.Left;
+            desc.textWrappingMode = TextWrappingModes.Normal;
+
+            // .v: pips, then "now → next" on its own line (one line does not fit a phone row)
+            RectTransform valueBlock = Rect("Value", left);
+            var valueColumn = valueBlock.gameObject.AddComponent<VerticalLayoutGroup>();
+            valueColumn.padding = Scaled(new RectOffset(0, 0, 6, 0));
+            valueColumn.spacing = 4 * Px;
+            valueColumn.childControlWidth = valueColumn.childControlHeight = true;
+            valueColumn.childForceExpandWidth = valueColumn.childForceExpandHeight = false;
+            RectTransform pips = Rect("Pips", valueBlock);
+            Row(pips.gameObject, new RectOffset(0, 0, 0, 0), 3);
+            for (int i = 0; i < 8; i++)
+            {
+                RectTransform pip = Rect("Pip", pips);
+                Image pipImage = pip.gameObject.AddComponent<Image>();
+                pipImage.sprite = TextureFactory.Rounded();
+                pipImage.type = Image.Type.Sliced;
+                pipImage.pixelsPerUnitMultiplier = 16f / (2 * Px);
+                pipImage.color = UiPalette.Walnut3;
+                pipImage.raycastTarget = false;
+                Size(pip.gameObject, 10, 6);
+            }
+            RectTransform valueRow = Rect("Texts", valueBlock);
+            Row(valueRow.gameObject, new RectOffset(0, 0, 0, 0), 8);
+            TMP_Text value = Text("Now", valueRow, "", 12, UiPalette.Cream, "Bold");
+            value.alignment = TextAlignmentOptions.Left;
+            RectTransform arrow = Rect("Arrow", valueRow);
+            Image arrowImage = arrow.gameObject.AddComponent<Image>();
+            arrowImage.sprite = TextureFactory.LineIcon("arrow", 2.6f, TextureFactory.Poly(4, 12, 19, 12), TextureFactory.Poly(13, 6, 19, 12, 13, 18));
+            arrowImage.color = UiPalette.Cream;
+            arrowImage.raycastTarget = false;
+            Size(arrow.gameObject, 12, 12);
+            TMP_Text next = Text("Next", valueRow, "", 12, UiPalette.Cream, "Bold");
+            next.alignment = TextAlignmentOptions.Left;
+
+            // .buy: min 96 × 44, radius 12, green with a darker 4 px lip
+            RectTransform buy = Rect("Buy", row);
+            Image buyBg = buy.gameObject.AddComponent<Image>();
+            buyBg.sprite = TextureFactory.Rounded();
+            buyBg.type = Image.Type.Sliced;
+            buyBg.pixelsPerUnitMultiplier = 16f / (12 * Px);
+            buyBg.color = UiPalette.Leaf;
+            var lip = buy.gameObject.AddComponent<UnityEngine.UI.Shadow>();
+            lip.effectColor = UiPalette.LeafDark;
+            lip.effectDistance = new Vector2(0, -4 * Px);
+            var button = buy.gameObject.AddComponent<Button>();
+            button.targetGraphic = buyBg;
+            button.transition = Selectable.Transition.None;
+            Row(buy.gameObject, new RectOffset(12, 12, 0, 0), 0);
+            buy.GetComponent<HorizontalLayoutGroup>().childAlignment = TextAnchor.MiddleCenter;
+            var buySize = buy.gameObject.AddComponent<LayoutElement>();
+            buySize.minWidth = 96 * Px;
+            buySize.minHeight = buySize.preferredHeight = 44 * Px;
+            TMP_Text label = Text("Label", buy, "$0", 15, Color.white, "Black");
+
+            var upgradeRow = row.gameObject.AddComponent<UpgradeRow>();
+            upgradeRow.Setup(name, desc, value, arrow.gameObject, next, pips, button, buyBg, label, lip, 15 * Px, 12.5f * Px);
+            return upgradeRow;
+        }
+
+        static RectTransform Card(string name, Transform parent, Color color, float radius)
+        {
+            RectTransform r = Rect(name, parent);
+            Image bg = r.gameObject.AddComponent<Image>();
+            bg.sprite = TextureFactory.Rounded();
+            bg.type = Image.Type.Sliced;
+            bg.pixelsPerUnitMultiplier = 16f / (radius * Px);
+            bg.color = color;
+            bg.raycastTarget = false;
+            return r;
+        }
+
+        /// <summary>Prototype upgrade button icon: person + plus (stroke 2.4).</summary>
+        static Sprite UpgradeIcon()
+        {
+            var head = TextureFactory.Circle(9, 8, 3.2f);
+            // M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5
+            var shoulders1 = TextureFactory.Cubic(new Vector2(3.5f, 19), new Vector2(4.1f, 15.8f), new Vector2(6.3f, 14), new Vector2(9, 14));
+            var shoulders2 = TextureFactory.Cubic(new Vector2(9, 14), new Vector2(11.7f, 14), new Vector2(13.9f, 15.8f), new Vector2(14.5f, 19));
+            return TextureFactory.LineIcon("upgrade", 2.4f, head, shoulders1, shoulders2, TextureFactory.Poly(17, 8, 17, 14), TextureFactory.Poly(14, 11, 20, 11));
         }
 
         /// <summary>Bubble icons from the prototype SVGs: one per product, the cash note and the angry face.</summary>

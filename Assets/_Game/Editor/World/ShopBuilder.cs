@@ -64,11 +64,13 @@ namespace FF.Editor.World
             }
 
             Transform padsRoot = FreshRoot(world, PadsRootName);
+            PadDef saw2Buy = db.Pad(PadRewards.Sawmill2BuyPad);
+            if (saw2Buy != null) result.Pads.Add(ctx.Pad(padsRoot, saw2Buy, WorldStateSnapshot.Sawmill2Id, true));
             foreach (string machine in MachineIds(db))
             foreach (string suffix in new[] { "_speed", "_qty" })
             {
                 PadDef def = db.Pad(machine + suffix);
-                if (def != null) result.Pads.Add(ctx.Pad(padsRoot, def, machine));
+                if (def != null) result.Pads.Add(ctx.Pad(padsRoot, def, machine, false));
             }
 
             Debug.Log($"[FF] Shop built: {result.Shelves.Count} shelves, {result.Registers.Count} registers, {result.Pads.Count} pads.");
@@ -203,7 +205,8 @@ namespace FF.Editor.World
                 return register;
             }
 
-            public UpgradePad Pad(Transform root, PadDef def, string owner)
+            /// <param name="whileNotOwned">Buy pad: visible until the owner is bought.</param>
+            public UpgradePad Pad(Transform root, PadDef def, string owner, bool whileNotOwned)
             {
                 float size = _db.world.production.padSize;
                 var go = new GameObject("Pad_" + def.id);
@@ -221,7 +224,7 @@ namespace FF.Editor.World
                     new Vector2(size * 216f / 256f, size * 0.4f), size * (128f - 180f) / 256f, size * 6f);
 
                 var pad = go.AddComponent<UpgradePad>();
-                pad.Setup(def, owner, visual, fill, price);
+                pad.Setup(def, owner, whileNotOwned, visual, fill, price);
                 return pad;
             }
         }

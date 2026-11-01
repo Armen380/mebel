@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: FF.Data::FF.Data.UpgradeDef
   id: stocker
   groupKey: g.staff
+  nameKey: upg.stocker
+  descriptionKey: upgd.stocker
+  valueFormat: 3
   maxLevel: 3
   baseCost: 9000
   costMultiplier: 2.2
