@@ -275,6 +275,9 @@ namespace FF.Editor
                 var u = GetOrCreate<UpgradeDef>($"{DataRoot}/Upgrades/{id}.asset");
                 u.id = id;
                 u.groupKey = (string)j["group"];
+                u.nameKey = "upg." + id;
+                u.descriptionKey = "upgd." + id;
+                u.valueFormat = UpgradeFormat(id);
                 u.maxLevel = (int)j["max"];
                 u.baseCost = (long)j["baseCost"];
                 u.costMultiplier = (double)j["costMultiplier"];
@@ -284,6 +287,22 @@ namespace FF.Editor
                 list.Add(u);
             }
             return list;
+        }
+
+        /// <summary>Prototype <c>UPG[i].val</c> per upgrade; upgrades.json does not carry it.</summary>
+        static UpgradeValueFormat UpgradeFormat(string id)
+        {
+            switch (id)
+            {
+                case "cap": return UpgradeValueFormat.Items;
+                case "speed": return UpgradeValueFormat.SpeedPercent;
+                case "axe": return UpgradeValueFormat.Seconds;
+                case "robot": return UpgradeValueFormat.Bots;
+                case "consult": return UpgradeValueFormat.PriceBonus;
+                case "ads": return UpgradeValueFormat.Customers;
+                case "quality": return UpgradeValueFormat.QualityPercent;
+                default: return UpgradeValueFormat.People;
+            }
         }
 
         static List<PadDef> ImportPads(JArray items, WorldLayout world)

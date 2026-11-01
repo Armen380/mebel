@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: FF.Data::FF.Data.UpgradeDef
   id: quality
   groupKey: g.biz
+  nameKey: upg.quality
+  descriptionKey: upgd.quality
+  valueFormat: 7
   maxLevel: 8
   baseCost: 3000
   costMultiplier: 1.85

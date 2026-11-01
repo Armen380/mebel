@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bfbcf79736b84f4493e7b0d03f3d94d, type: 3}
+  m_Name: BuildingKit
+  m_EditorClassIdentifier: FF.Data::FF.Data.BuildingKit
+  palette: {fileID: 11400000, guid: 2495219c9fba34eb4942e238d2abf259, type: 2}
+  cube: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  fanCylinder: {fileID: 4300000, guid: 5a03bf06122bc49c6ab7821587ab0f0a, type: 2}
+  tankCylinder: {fileID: 4300000, guid: f509a8cabf1b0473eb5385a591abeba4, type: 2}
+  tankLidCylinder: {fileID: 4300000, guid: b452e7e4b9980445fb4cee6d7fe687fb, type: 2}
+  icosahedron: {fileID: 4300000, guid: 56456594f3f82470cb740b42b04616a7, type: 2}
+  trims:
+  - serializedVersion: 2
+    rgba: 4280632173
+  - serializedVersion: 2
+    rgba: 4281023394
+  - serializedVersion: 2
+    rgba: 4287262525
+  - serializedVersion: 2
+    rgba: 4280329689
+  litWindow:
+    serializedVersion: 2
+    rgba: 4288340991
+  darkWindow:
+    serializedVersion: 2
+    rgba: 4293977023
+  chimney:
+    serializedVersion: 2
+    rgba: 4282010506
+  chimneyCap:
+    serializedVersion: 2
+    rgba: 4280166971
+  fanHousing:
+    serializedVersion: 2
+    rgba: 4288451722
+  fanBlade:
+    serializedVersion: 2
+    rgba: 4285161557
+  tank:
+    serializedVersion: 2
+    rgba: 4292399561
+  tankLid:
+    serializedVersion: 2
+    rgba: 4288451722
+  flagPole:
+    serializedVersion: 2
+    rgba: 4280632173
+  flag:
+    serializedVersion: 2
+    rgba: 4282233843

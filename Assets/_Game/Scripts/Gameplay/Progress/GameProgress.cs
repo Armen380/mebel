@@ -82,7 +82,9 @@ namespace FF.Gameplay.Progress
             return _upgrades.TryGetValue(id, out int level) ? level : 0;
         }
 
-        /// <summary>Upgrades-panel levels (M4); tests and tools.</summary>
+        /// <summary>Upgrades-panel level (cap, speed, axe, ads, …).</summary>
+        public int GetUpgradeLevel(string upgradeId) => _upgrades.TryGetValue(upgradeId, out int level) ? level : 0;
+
         public void SetUpgradeLevel(string upgradeId, int level) => _upgrades[upgradeId] = level;
     }
 

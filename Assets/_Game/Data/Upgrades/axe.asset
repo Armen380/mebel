@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: FF.Data::FF.Data.UpgradeDef
   id: axe
   groupKey: g.player
+  nameKey: upg.axe
+  descriptionKey: upgd.axe
+  valueFormat: 2
   maxLevel: 6
   baseCost: 1100
   costMultiplier: 1.8

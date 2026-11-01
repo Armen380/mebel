@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: FF.Data::FF.Data.UpgradeDef
   id: secCarrier
   groupKey: g.section
+  nameKey: upg.secCarrier
+  descriptionKey: upgd.secCarrier
+  valueFormat: 3
   maxLevel: 3
   baseCost: 300000
   costMultiplier: 2.1

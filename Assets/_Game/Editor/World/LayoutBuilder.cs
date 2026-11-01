@@ -24,7 +24,7 @@ namespace FF.Editor.World
         const int ShopFloor = 0xcfa877, ShopStripe = 0xb58f5f, Fence = 0xa77447, Walnut = 0x2b1d14, Honey = 0xf3b33d;
         const int Cream = 0xfbf1de, Danger = 0xd9573b, Wood = 0x6d4325, Leaf = 0x3f8f3a, LeafLight = 0x52a845, Bush = 0x4f9c3e;
         const int Trunk = 0x8b5a2b, Pot = 0xb5653d, Wall = 0xefe3c8, Trim = 0x8a5a32, Steel = 0x3a4048, Lamp = 0xffe39a;
-        const int SawWall = 0xb5703c, SawRoof = 0x7a3b2e;
+        internal const int SawWall = 0xb5703c, SawRoof = 0x7a3b2e;
         static readonly int[] TrimTiers = { 0x6d4325, 0xa23b2b, 0x3d6f8a, 0xd9a520 };
 
         [MenuItem("FF/Build World Blockout", priority = 20)]
@@ -281,8 +281,12 @@ namespace FF.Editor.World
             Building(b, root, "Sawmill1", c1.x, c1.y, SawWall, SawRoof, "sign.saw", saw: true).gameObject.SetActive(true);
 
             Vector2 c2 = w.sawmill2.building;
-            Building(b, root, "Sawmill2", c2.x, c2.y, SawWall, SawRoof, "sign.saw2", saw: true).gameObject.SetActive(state.OwnsSawmill2);
-            Lot(b, root, "Sawmill2Lot", c2.x, c2.y, w).gameObject.SetActive(!state.OwnsSawmill2);
+            Transform slot = b.Group("Sawmill2Slot", root);
+            Transform building = Building(b, slot, "Building", c2.x, c2.y, SawWall, SawRoof, "sign.saw2", saw: true);
+            Transform lot = Lot(b, slot, "Lot", c2.x, c2.y, w);
+            building.gameObject.SetActive(state.OwnsSawmill2);
+            lot.gameObject.SetActive(!state.OwnsSawmill2);
+            slot.gameObject.AddComponent<OwnedBuilding>().Setup(WorldStateSnapshot.Sawmill2Id, building.gameObject, lot.gameObject);
         }
 
         static void BuildFactoryRow(Blockout b, Transform root, WorldLayout w, GameDatabase db, WorldStateSnapshot state)
@@ -293,9 +297,11 @@ namespace FF.Editor.World
                 bool owned = state.OwnedProducts.Contains(p.id);
                 Transform slot = b.Group(p.id, row);
                 float z = w.factories.RowZ(p.factoryRow);
-                Building(b, slot, "Building", p.factoryX, z, ToHex(p.wallColor), ToHex(p.roofColor), p.signKey, saw: false)
-                    .gameObject.SetActive(owned);
-                Lot(b, slot, "Lot", p.factoryX, z, w).gameObject.SetActive(!owned);
+                Transform building = Building(b, slot, "Building", p.factoryX, z, ToHex(p.wallColor), ToHex(p.roofColor), p.signKey, saw: false);
+                Transform lot = Lot(b, slot, "Lot", p.factoryX, z, w);
+                building.gameObject.SetActive(owned);
+                lot.gameObject.SetActive(!owned);
+                slot.gameObject.AddComponent<OwnedBuilding>().Setup(p.id, building.gameObject, lot.gameObject);
             }
         }
 

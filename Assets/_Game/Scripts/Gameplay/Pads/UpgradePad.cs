@@ -18,6 +18,8 @@ namespace FF.Gameplay.Pads
         [SerializeField] PadDef def;
         [Tooltip("Machine that must be owned for the pad to show (saw, saw2, a product id); empty = always.")]
         [SerializeField] string ownerMachine;
+        [Tooltip("Buy pads: show while the owner is NOT owned yet.")]
+        [SerializeField] bool showWhileNotOwned;
         [SerializeField] GameObject visual;
         [SerializeField] Transform fill;
         [SerializeField] TMP_Text priceLabel;
@@ -35,13 +37,15 @@ namespace FF.Gameplay.Pads
         public GameProgress.PadState State => _pad;
         public Vector3 Position => transform.position;
         public long Price => _economy.PadPrice(def, _pad.Level);
-        public bool IsVisible => (string.IsNullOrEmpty(ownerMachine) || _state.Owns(ownerMachine)) && _pad.Level < def.maxLevel;
+        public bool IsVisible =>
+            (string.IsNullOrEmpty(ownerMachine) || _state.Owns(ownerMachine) != showWhileNotOwned) && _pad.Level < def.maxLevel;
 
         /// <summary>Editor tools only.</summary>
-        public void Setup(PadDef padDef, string owner, GameObject visualRoot, Transform fillQuad, TMP_Text price)
+        public void Setup(PadDef padDef, string owner, bool whileNotOwned, GameObject visualRoot, Transform fillQuad, TMP_Text price)
         {
             def = padDef;
             ownerMachine = owner;
+            showWhileNotOwned = whileNotOwned;
             visual = visualRoot;
             fill = fillQuad;
             priceLabel = price;

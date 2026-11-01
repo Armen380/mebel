@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: FF.Data::FF.Data.UpgradeDef
   id: miner
   groupKey: g.section
+  nameKey: upg.miner
+  descriptionKey: upgd.miner
+  valueFormat: 3
   maxLevel: 4
   baseCost: 250000
   costMultiplier: 2

@@ -17,6 +17,8 @@ namespace FF.Data
             public Color32 color;
             public bool unlit;
             public Material material;
+            [Tooltip("Transparent twin (opacity 0.22, no depth write) used when a building fades out of the way.")]
+            public Material ghost;
         }
 
         public List<Entry> entries = new List<Entry>();
@@ -31,5 +33,21 @@ namespace FF.Data
             }
             return null;
         }
+
+        Dictionary<Material, Material> _ghostOf;
+
+        /// <summary>Faded twin of a palette material (prototype <c>ghostOf</c>); null for materials without one.</summary>
+        public Material GhostOf(Material material)
+        {
+            if (_ghostOf == null)
+            {
+                _ghostOf = new Dictionary<Material, Material>(entries.Count);
+                foreach (Entry e in entries)
+                    if (e.material != null && e.ghost != null) _ghostOf[e.material] = e.ghost;
+            }
+            return material != null && _ghostOf.TryGetValue(material, out Material g) ? g : null;
+        }
+
+        void OnValidate() => _ghostOf = null;
     }
 }
