@@ -5,6 +5,14 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
+### Next: M5 — 2026-11-01
+- [ ] Write the M5 plan from `Design/docs/04_IMPLEMENTATION_PLAN.md` and get the user's approval (no code before that)
+
+Notes:
+- Open question to user: change "Communication" rule to "reply in the language of the user's message (Armenian or Russian)"? The user writes Russian; replies are in Russian until decided.
+
+## Done
+
 ### Fix: Android build output got committed — 2026-11-01 (branch `chore/untrack-build-artifacts`)
 Cause: the user's Android test build wrote `first.apk`, `first_BackUpThisFolder_ButDontShipItWithYourGame/` (IL2CPP backup,
 752 files) and `.utmp/` (CMake temp) into the project root; Claude's `git add -A` in df46b3b committed the last two
@@ -16,7 +24,7 @@ No secrets inside (checked: no keystores/keys/tokens); CMake files contain local
 - Rule from now on: stage files explicitly / review `git status` fully before committing; never `git add -A` blindly.
 
 ### M4 — Upgrade pads, building growth, upgrades panel — 2026-11-01 (branch `m4-upgrades`)
-Status: **In progress** — implemented and checked; waiting for the user's play-test (step K).
+Result: buildings grow with their pads (floors, chimneys, fan, tank, flag, Lv tag, fade, effects), Sawmill 2 buy pad, Upgrades panel (Player + Business); 530 tests green; user play-test OK 2026-11-01; merged into main.
 Goal (04_IMPLEMENTATION_PLAN): pads work; buildings grow; panel prices match upgrades.json.
 Prototype refs: `makeBuilding / setBuildingLevel / TRIMS` (~659–705), `refreshBuilding / capMul / fadeBuildings / setGhost /
 ghostOf` (~1115–1140), `puff / burst / updParticles` (~1108–1114), building pop/bounce/fans/flag/smoke in `updMachine` (~1084),
@@ -34,7 +42,7 @@ buy click` (~1572–1597), `hudMoney` badge (~1446), sheet CSS (~118–139), saw
 - [x] H. Upgrade effects live now: carry capacity, walk speed, axe speed (player); ads (spawn rate + walk-in cap), quality (sale price), consultant (bill +15 %, patience ×1.6 — locked until shop Lv 5, M5)
 - [x] I. EditMode tests (530/530 green): growth layout per (s, q) (floors, chimneys, fan, tank, flag, tier), upgrade prices vs upgrades.json `costPerLevel_beforeECON` × ECON, lock rules, value texts, badge rule, ownership switch + blockers, Lv tag text, fade region
 - [x] J. Play Mode check: saw_speed 8 + saw_qty 3 → 3 floors, gold trim, lit windows, 2 chimneys with smoke, fan, tank, flag, storage 86/108; fade with the player behind it; Sawmill 2 bought for $25K (pads $3.1K / $7.5K, blocker added); chair_qty → confetti, Lv 2 · ×2, 38/19, next $12K; panel in phone portrait (ru) with wrapping, grey too-expensive and green buttons; Console clean
-- [ ] K. Commit `M4: building growth, pads, upgrades panel`, push, user play-test, PR → main
+- [x] K. Commit `M4: building growth, pads, upgrades panel` (8068190), push, user play-test OK, PR → main
 
 Notes:
 - Noto Sans has no "→": the panel draws an arrow icon between the values; values sit on their own line under the pips (one line does not fit a phone row).
@@ -49,8 +57,6 @@ Decisions (approved by the user):
 
 Notes:
 - Open question to user: change "Communication" rule to "reply in the language of the user's message (Armenian or Russian)"? The user writes Russian; replies are in Russian until decided.
-
-## Done
 
 ### M3 play-test changes (user requests) — 2026-10-31 (branch `m3-shop`, before the M3 merge)
 Result: tutorial text wraps on phones, dollars before the number, factories in two lines (pairs across the fence); user play-test OK 2026-11-01. These are deliberate design changes away from the prototype (the user decides; the
