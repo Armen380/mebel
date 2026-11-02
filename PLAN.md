@@ -26,6 +26,7 @@ Section workers (miner, section carrier / cashier) come with plumbing in M8; tru
 - [x] J. EditMode tests (557/557 green): carrier job choice (goods first, emptiest shelf, planks fallback, stocker shelves only), robot scores and threshold, register assignment order, lumberjack target / delivery choice, motor arrive rule, worker counts from levels, staff unlock cards
 - [x] K. Play Mode check: shop Lv 5, hired 2 lumberjacks, 2 carriers, cashier, manager, robot; player parked in the forest for 2 min → logs → planks → chairs → shelf → 36 sales (+$15 480), Lv 1 → 6, without the player; robot took "! Shelf · Chair" (empty shelf, customers waiting); restart → 7 workers back; Console clean apart from Unity IAP's services-token error
 - [ ] L. Commit `M6: workers and robots`, push, user play-test, PR → main
+- [x] Bug (user play-test 2026-11-02): a tap anywhere on the Upgrades sheet closes it — must close only on the ✕ button or outside the sheet. Cause: the sheet panel is a child of the backdrop Button, so uGUI bubbles the click up to it. Fix: backdrop and panel become siblings. Checked in Play Mode: tap inside → stays open, backdrop → closes, ✕ → closes
 
 Notes:
 - New FF.AI assembly (WorkerDirector, Worker, pure CarrierJobs / RobotScoring / StaffAssignment / WorkerRoutes); Gameplay only exposes hooks (Register.StaffRate, IPile on zones, AgentMotor).

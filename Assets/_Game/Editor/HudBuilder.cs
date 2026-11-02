@@ -226,9 +226,13 @@ namespace FF.Editor
         {
             RectTransform sheet = Rect("UpgradesSheet", hud);
             Stretch(sheet);
-            Image dim = sheet.gameObject.AddComponent<Image>();
+            // the backdrop is a sibling under the panel, not its parent: uGUI bubbles a click to the parents'
+            // handlers, so a parent backdrop button would close the sheet on any tap inside it
+            RectTransform dimRect = Rect("Backdrop", sheet);
+            Stretch(dimRect);
+            Image dim = dimRect.gameObject.AddComponent<Image>();
             dim.color = new Color(20 / 255f, 12 / 255f, 8 / 255f, 0.5f);
-            var backdrop = sheet.gameObject.AddComponent<Button>();
+            var backdrop = dimRect.gameObject.AddComponent<Button>();
             backdrop.transition = Selectable.Transition.None;
 
             const float corner = 26;
