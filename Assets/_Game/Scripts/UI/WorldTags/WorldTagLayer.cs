@@ -19,6 +19,8 @@ namespace FF.UI.WorldTags
         /// <summary>Speed 8 + qty 3: the building is fully grown.</summary>
         const int MaxCombinedLevel = 11;
         const float LockedRadiusScale = 16f / 33f;
+        /// <summary>.chip.bot is 11.5 px against 13 px for the other chips.</summary>
+        const float BotFontScale = 11.5f / 13f;
 
         [SerializeField] RectTransform pillTemplate;
         [SerializeField] Color counterColor = new Color32(0x2b, 0x1d, 0x14, 0xd6);
@@ -30,6 +32,8 @@ namespace FF.UI.WorldTags
         [SerializeField] Color levelColor = new Color32(0xf3, 0xb3, 0x3d, 0xff);
         [SerializeField] Color levelText = new Color32(0x2b, 0x1d, 0x14, 0xff);
         [SerializeField] Color lockedColor = new Color32(0x2b, 0x1d, 0x14, 0xb8);
+        [SerializeField] Color botColor = new Color32(0x1d, 0x6b, 0x7a, 0xff);
+        [SerializeField] Color botText = new Color32(0xe6, 0xfb, 0xff, 0xff);
         [Tooltip("Locked chips are rounded rectangles (radius 12), the others full pills.")]
         [SerializeField] Sprite lockedSprite;
         [SerializeField] LocalizedString fullLabel = new LocalizedString("Game", "c.full");
@@ -57,6 +61,7 @@ namespace FF.UI.WorldTags
             public string IconId;
             public string Text;
             public Sprite PillSprite;
+            public float FontSize;
             public bool TextDirty = true;
         }
 
@@ -145,15 +150,16 @@ namespace FF.UI.WorldTags
             {
                 pill.Style = style;
                 bool full = style == WorldTagStyle.Full, bubble = style == WorldTagStyle.Bubble;
-                bool level = style == WorldTagStyle.Level, locked = style == WorldTagStyle.Locked;
+                bool level = style == WorldTagStyle.Level, locked = style == WorldTagStyle.Locked, bot = style == WorldTagStyle.Bot;
                 pill.Background.color = full ? fullColor : style == WorldTagStyle.Cash ? cashColor : bubble ? bubbleColor
-                    : level ? levelColor : locked ? lockedColor : counterColor;
+                    : level ? levelColor : locked ? lockedColor : bot ? botColor : counterColor;
+                pill.Label.fontSize = bot ? pill.FontSize * BotFontScale : pill.FontSize;
                 pill.Background.sprite = locked && lockedSprite != null ? lockedSprite : pill.PillSprite;
                 // rounded sprite: radius 16 px → 12 CSS px (≈ 33 canvas units)
                 pill.Background.pixelsPerUnitMultiplier = locked ? LockedRadiusScale : 1f;
                 pill.Label.textWrappingMode = locked ? TMPro.TextWrappingModes.Normal : TMPro.TextWrappingModes.NoWrap;
                 pill.Text = null;
-                pill.Label.color = style == WorldTagStyle.Counter ? counterText : level ? levelText : fullText;
+                pill.Label.color = style == WorldTagStyle.Counter ? counterText : level ? levelText : bot ? botText : fullText;
                 pill.Label.characterSpacing = full ? 6f : 0f;
                 pill.Label.gameObject.SetActive(!bubble);
                 pill.Icon.gameObject.SetActive(bubble);
@@ -187,7 +193,7 @@ namespace FF.UI.WorldTags
                     else pill.Label.SetText("Lv {0} · ×{1}", (float)(combined + 1), (float)multiplier);
                 }
             }
-            else if (style == WorldTagStyle.Locked)
+            else if (style == WorldTagStyle.Locked || style == WorldTagStyle.Bot)
             {
                 string text = s.TagText;
                 if (!ReferenceEquals(text, pill.Text))
@@ -246,6 +252,7 @@ namespace FF.UI.WorldTags
                 Rect = rect,
                 Background = rect.GetComponent<Image>(),
                 PillSprite = rect.GetComponent<Image>().sprite,
+                FontSize = rect.GetComponentInChildren<TMP_Text>(true).fontSize,
                 Label = rect.GetComponentInChildren<TMP_Text>(true),
                 Icon = rect.Find("Icon").GetComponent<Image>(),
             };

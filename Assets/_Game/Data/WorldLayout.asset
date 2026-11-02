@@ -94,6 +94,39 @@ MonoBehaviour:
     factoryMouthZ: -7.5
     counterTagHeight: 1.9
     padSize: 1.8
+  workers:
+    lumberSpawn: {x: -16, y: -2}
+    carrierSpawn: {x: -6, y: -1.5}
+    shopStaffSpawn: {x: 20, y: 8}
+    robotSpawn: {x: 2, y: 5}
+    carrierRest:
+    - {x: -6, y: -1.2}
+    - {x: -4.5, y: -1.2}
+    - {x: -3, y: -1.2}
+    - {x: -1.5, y: -1.2}
+    stockerRest: {x: 6, y: -0.8}
+    stockerRestStep: 1.4
+    robotRest: {x: 3, y: 6.2}
+    robotRestStep: 1.3
+    cashierIdle: {x: 5, y: 8.6}
+    cashierIdleStep: 1.2
+    managerIdle: {x: 8, y: 7.4}
+    managerIdleStep: 2
+    consultantSpot: {x: 7, y: 6.4}
+    consultantSpotStep: 7
+    cashierStand: {x: -1.15, y: 0.1}
+    managerStand: {x: -0.3, y: -0.4, z: 0.7}
+    robotTagHeight: 2.3
+    robotTagPerItem: 0.04
+    backRowGapsX:
+    - -15.8
+    - -6
+    - 2
+    - 10
+    - 14
+    gapFrontZ: -6.2
+    gapBackZ: -14.4
+    backRowMaxX: 27
   forest:
     cols: 5
     rows: 7
@@ -234,6 +267,8 @@ MonoBehaviour:
     foundationSize: {x: 11, y: 8}
     billboard: {x: 81, y: -23.2}
     workArea: {x: 93.5, y: -15}
+    cardTarget: {x: 85, y: -6}
+    soonChip: {x: 81, y: 1.4, z: -17}
   playerBounds:
     x:
       min: -31.5

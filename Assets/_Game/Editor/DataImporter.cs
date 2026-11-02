@@ -74,6 +74,14 @@ namespace FF.Editor
             e.sawmillCycleSeconds = (float)j["sawmill"]["baseCycle"];
             e.serveSeconds = (float)j["shop"]["serveSeconds"];
 
+            JObject workers = (JObject)j["workers"];
+            e.workerSpeed = (float)workers["carrier"]["speed"];
+            e.robotSpeed = (float)workers["robot"]["speed"];
+            e.lumberCapacity = (int)workers["lumber"]["cap"];
+            e.robotCapacity = (int)workers["robot"]["cap"];
+            e.workerCapacity = (int)workers["carrier"]["cap"];
+            e.lumberChopRate = (float)workers["lumber"]["chopRate"];
+
             JObject regrow = (JObject)j["nodeRegrowSeconds"];
             e.treeRegrowSeconds = (float)regrow["tree"];
             e.clayRegrowSeconds = (float)regrow["clay"];

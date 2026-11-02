@@ -132,6 +132,38 @@ namespace FF.Data
         public float floatTextRise = 1.4f;
         public float floatTextSeconds = 1f;
 
+        [Header("Workers (economy.json workers + prototype spawnWorker / updCarrier)")]
+        public float workerSpeed = 3.4f;
+        public float robotSpeed = 5.2f;
+        public int lumberCapacity = 4;
+        public int robotCapacity = 8;
+        public int workerCapacity = 5;
+        public float lumberChopRate = 0.75f;
+        [Tooltip("One item per this many seconds between a worker and a pile.")]
+        public float workerTransferInterval = 0.12f;
+        [Tooltip("A carrier that cannot unload for this long drops the job.")]
+        public float workerStuckSeconds = 1.5f;
+        [Tooltip("Walking to the rest spot / idling is slower: speed × this.")]
+        public float workerIdleSpeedFactor = 0.6f;
+        public float consultantSpeedFactor = 0.7f;
+        [Tooltip("Lumberjacks chop when this close to their tree.")]
+        public float workerChopReach = 1.1f;
+        public float cashierServeRateWorker = 1f;
+        public float managerCollectInterval = 0.08f;
+        [Tooltip("Money a manager collects makes no sound / bump when the player is farther than this.")]
+        public float managerQuietDistance = 8f;
+
+        [Header("Robots (prototype robotJob)")]
+        public float robotWaitingWeight = 1.5f;
+        public float robotEmptyBonus = 1f;
+        public float robotFullOutputBonus = 1f;
+        public float robotFullOutputRatio = 0.8f;
+        public float robotBusyPenalty = 0.9f;
+        public float robotPlankWeight = 1.2f;
+        public float robotStarvingBonus = 1.6f;
+        public float robotDistanceDivisor = 60f;
+        public float robotMinScore = 0.15f;
+
         [Header("Delivery")]
         public int truckOrderSize = 8;
         public float truckAwaySeconds = 10f;

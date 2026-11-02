@@ -543,6 +543,11 @@ namespace FF.Editor
                 new UnlockCardView.Icon { id = "saw", sprite = TextureFactory.LineIcon("un_saw", 2f,
                     TextureFactory.Circle(12, 12, 7), TextureFactory.Circle(12, 12, 2), TextureFactory.Poly(12, 3, 12, 5),
                     TextureFactory.Poly(12, 19, 12, 21), TextureFactory.Poly(3, 12, 5, 12), TextureFactory.Poly(19, 12, 21, 12)) },
+                new UnlockCardView.Icon { id = "staff", sprite = TextureFactory.LineIcon("un_staff", 2f,
+                    TextureFactory.Circle(12, 8, 3.5f),
+                    // M5 20c.8-4 3.6-6 7-6s6.2 2 7 6
+                    TextureFactory.Cubic(new Vector2(5, 20), new Vector2(5.8f, 16), new Vector2(8.6f, 14), new Vector2(12, 14)),
+                    TextureFactory.Cubic(new Vector2(12, 14), new Vector2(15.4f, 14), new Vector2(18.2f, 16), new Vector2(19, 20))) },
                 new UnlockCardView.Icon { id = "house", sprite = TextureFactory.LineIcon("un_house", 2f,
                     TextureFactory.Closed(3, 11, 12, 4, 21, 11, 21, 20, 3, 20), TextureFactory.Poly(9, 20, 9, 14, 15, 14, 15, 20)) },
             };

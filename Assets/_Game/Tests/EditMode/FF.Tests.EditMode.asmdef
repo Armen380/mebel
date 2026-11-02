@@ -5,6 +5,7 @@
         "FF.Core",
         "FF.Data",
         "FF.Gameplay",
+        "FF.AI",
         "FF.Save",
         "FF.UI",
         "FF.Editor",

@@ -20,15 +20,18 @@ namespace FF.Editor
 
         public static string ArmenianAssetPath(string weight) => $"{FontsDir}/NotoSansArmenian-{weight} SDF.asset";
         public static string LatinAssetPath(string weight) => $"{FontsDir}/NotoSans-{weight} SDF.asset";
+        /// <summary>Arrows (→) and other symbols missing from Noto Sans; one weight serves all.</summary>
+        public const string SymbolsAssetPath = FontsDir + "/NotoSansSymbols-Bold SDF.asset";
 
         [MenuItem("FF/Setup Fonts", priority = 2)]
         public static void Setup()
         {
+            TMP_FontAsset symbols = Ensure($"{FontsDir}/NotoSansSymbols-Bold.ttf", SymbolsAssetPath);
             foreach (string weight in Weights)
             {
                 TMP_FontAsset latin = Ensure($"{FontsDir}/NotoSans-{weight}.ttf", LatinAssetPath(weight));
                 TMP_FontAsset armenian = Ensure($"{FontsDir}/NotoSansArmenian-{weight}.ttf", ArmenianAssetPath(weight));
-                armenian.fallbackFontAssetTable = new List<TMP_FontAsset> { latin };
+                armenian.fallbackFontAssetTable = new List<TMP_FontAsset> { latin, symbols };
                 EditorUtility.SetDirty(armenian);
             }
 
@@ -40,6 +43,8 @@ namespace FF.Editor
             globalFallbacks.ClearArray();
             globalFallbacks.InsertArrayElementAtIndex(0);
             globalFallbacks.GetArrayElementAtIndex(0).objectReferenceValue = fallback;
+            globalFallbacks.InsertArrayElementAtIndex(1);
+            globalFallbacks.GetArrayElementAtIndex(1).objectReferenceValue = symbols;
             settings.ApplyModifiedPropertiesWithoutUndo();
 
             AssetDatabase.SaveAssets();

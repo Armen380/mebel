@@ -13,7 +13,7 @@ namespace FF.UI.Upgrades
     /// <summary>
     /// Prototype Upgrades sheet (<c>renderShop / openSheet / closeSheet</c>) and the badge on the Upgrades button
     /// (<c>hudMoney</c>: shown when any upgrade can be bought). Rows are built once from the data; only the groups in
-    /// <see cref="visibleGroups"/> are shown (worker groups join with their milestones).
+    /// <see cref="visibleGroups"/> are shown (section staff joins with plumbing in M8).
     /// </summary>
     public sealed class UpgradesPanel : MonoBehaviour
     {
@@ -32,7 +32,8 @@ namespace FF.UI.Upgrades
         [SerializeField] UpgradeRow rowTemplate;
         [SerializeField] TMP_Text groupTemplate;
         [SerializeField] VirtualJoystick joystick;
-        [SerializeField] List<string> visibleGroups = new List<string> { "g.player", "g.biz" };
+        [Tooltip("Section staff (g.section) joins with plumbing in M8.")]
+        [SerializeField] List<string> visibleGroups = new List<string> { "g.player", "g.workers", "g.staff", "g.biz" };
 
         static readonly Color Green = new Color32(0x5c, 0xae, 0x4a, 0xff);
         static readonly Color Grey = new Color32(0x52, 0x3a, 0x27, 0xff);

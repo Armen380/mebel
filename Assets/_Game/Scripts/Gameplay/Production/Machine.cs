@@ -35,6 +35,8 @@ namespace FF.Gameplay.Production
         ItemFlights _flights;
 
         public string Id => machineId;
+        /// <summary>Product made here; null for sawmills.</summary>
+        public ProductDef Product => product;
         public bool IsActive => _state.Owns(machineId);
         public MachineCore Core => _core;
         public Zone InputZone => inputZone;

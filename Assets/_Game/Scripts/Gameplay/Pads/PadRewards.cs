@@ -56,9 +56,22 @@ namespace FF.Gameplay.Pads
             {
                 WorldStateSync.Apply(_state, _levels);
                 _collision.Rebuild(_state);
-                // prototype shopUnlockText adds "Can hire: …" for staff opening at this shop level; staff come in M6
-                if (padId == WorldStateSync.ShopPadId) GameEvents.RaiseToast(Text("t.shopLv", "n", level), Text("t.regSlot"));
+                if (padId == WorldStateSync.ShopPadId) GameEvents.RaiseToast(Text("t.shopLv", "n", level), ShopUnlockText(level));
             }
+        }
+
+        /// <summary>Prototype <c>shopUnlockText(l)</c>: "Can hire: Stocker · " for staff opening at this level, then "+1 register slot".</summary>
+        string ShopUnlockText(int shopLevel)
+        {
+            var names = new System.Text.StringBuilder();
+            foreach (UpgradeDef u in _db.upgrades)
+            {
+                if (u.requiresShopLevel != shopLevel) continue;
+                if (names.Length > 0) names.Append(", ");
+                names.Append(Text(u.nameKey));
+            }
+            string hire = names.Length > 0 ? Text("t.canHire", "list", names.ToString()) : "";
+            return hire + Text("t.regSlot");
         }
 
         string Text(string key) => LocalizationSettings.StringDatabase.GetLocalizedString(Table, key);

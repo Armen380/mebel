@@ -98,6 +98,29 @@ MonoBehaviour:
   padBillArc: 0.6
   floatTextRise: 1.4
   floatTextSeconds: 1
+  workerSpeed: 3.4
+  robotSpeed: 5.2
+  lumberCapacity: 4
+  robotCapacity: 8
+  workerCapacity: 5
+  lumberChopRate: 0.75
+  workerTransferInterval: 0.12
+  workerStuckSeconds: 1.5
+  workerIdleSpeedFactor: 0.6
+  consultantSpeedFactor: 0.7
+  workerChopReach: 1.1
+  cashierServeRateWorker: 1
+  managerCollectInterval: 0.08
+  managerQuietDistance: 8
+  robotWaitingWeight: 1.5
+  robotEmptyBonus: 1
+  robotFullOutputBonus: 1
+  robotFullOutputRatio: 0.8
+  robotBusyPenalty: 0.9
+  robotPlankWeight: 1.2
+  robotStarvingBonus: 1.6
+  robotDistanceDivisor: 60
+  robotMinScore: 0.15
   truckOrderSize: 8
   truckAwaySeconds: 10
   treeRegrowSeconds: 9

@@ -74,9 +74,9 @@ namespace FF.Gameplay.Unlocks
         /// <summary>Prototype <c>checkUnlocks(silent)</c>.</summary>
         public void Check(bool silent)
         {
-            UnlockRules.Collect(_db.products, _state.Owns, HasBuyPad, _progress.Level,
+            UnlockRules.Collect(_db.products, _db.upgrades, _state.Owns, HasBuyPad, _progress.Level,
                 _progress.GetLevel(WorldStateSync.RegisterPadId), _progress.GetLevel(WorldStateSync.ShopPadId),
-                _progress.QuestStep >= _db.tutorial.steps.Count, _candidates);
+                _state.OwnsPlumbing, _progress.QuestStep >= _db.tutorial.steps.Count, _candidates);
             foreach (UnlockCard card in _candidates)
                 if (_progress.MarkSeen(card.Id) && !silent)
                     _queue.Enqueue(card);
@@ -117,6 +117,11 @@ namespace FF.Gameplay.Unlocks
                     subtitle = Text("un.reg.s");
                     UpgradePad reg = _pads.Find(WorldStateSync.RegisterPadId);
                     if (reg != null) target = reg.Position;
+                    break;
+                case UnlockKind.Staff:
+                    icon = "staff";
+                    title = Text("un.staff.t", "name", Text(_db.Upgrade(card.ProductId).nameKey));
+                    subtitle = Text("un.staff.s");
                     break;
                 case UnlockKind.Sawmill2:
                     icon = "saw";
