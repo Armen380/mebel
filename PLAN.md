@@ -5,8 +5,15 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
+Nothing in progress. Next: M7 (delivery & car park) — post the plan and wait for the user's approval.
+
+Notes:
+- Open question to user: change "Communication" rule to "reply in the language of the user's message (Armenian or Russian)"? The user writes Russian; replies are in Russian until decided.
+
+## Done
+
 ### M6 — Workers & robots — 2026-11-02 (branch `m6-workers`)
-Status: **In progress** — implemented and checked; waiting for the user's play-test (step L).
+Result: lumberjacks, carriers, stockers, robots (scored jobs + task tag), cashiers, manager, consultant; back-row trips through the gaps; Upgrades sheet tap/scroll fixes; 557 tests green; user play-test OK 2026-11-02; merged into main.
 Goal (04_IMPLEMENTATION_PLAN): a fully staffed factory runs without the player; robots prioritise empty shelves with waiting customers.
 Prototype refs: `REST / WORKER_SKIN / spawnWorker` (~1184–1203), `assignStaff / updCashier` (~1205–1216), `updManager / updConsult /
 regServer` (~1239–1250), `updLumber` (~1251–1265), `plankTarget / goodsTarget / sawOuts / sawIns / pickJob / updCarrier` (~1266–1336),
@@ -25,7 +32,7 @@ Section workers (miner, section carrier / cashier) come with plumbing in M8; tru
 - [x] I. Upgrades panel: Workers (lumberjack, carrier, robot) and Shop staff (cashier, stocker, manager, consultant) groups appear; shop toast gets "Can hire: …" back; unlock cards for staff that open with the shop level ("New staff: Stocker")
 - [x] J. EditMode tests (557/557 green): carrier job choice (goods first, emptiest shelf, planks fallback, stocker shelves only), robot scores and threshold, register assignment order, lumberjack target / delivery choice, motor arrive rule, worker counts from levels, staff unlock cards
 - [x] K. Play Mode check: shop Lv 5, hired 2 lumberjacks, 2 carriers, cashier, manager, robot; player parked in the forest for 2 min → logs → planks → chairs → shelf → 36 sales (+$15 480), Lv 1 → 6, without the player; robot took "! Shelf · Chair" (empty shelf, customers waiting); restart → 7 workers back; Console clean apart from Unity IAP's services-token error
-- [ ] L. Commit `M6: workers and robots`, push, user play-test, PR → main
+- [x] L. Commit `M6: workers and robots`, push, user play-test, PR → main
 - [x] Bug (user play-test 2026-11-02): a tap anywhere on the Upgrades sheet closes it — must close only on the ✕ button or outside the sheet. Cause: the sheet panel is a child of the backdrop Button, so uGUI bubbles the click up to it. Fix: backdrop and panel become siblings. Checked in Play Mode: tap inside → stays open, backdrop → closes, ✕ → closes
 - [x] Bug (user play-test 2026-11-02): scrolling the Upgrades list works badly. Causes: (1) the list has no raycast surface (cards and texts ignore pointers), so a drag only scrolls when it starts on a price button; (2) every money change (several per second with workers) re-localizes and re-lays out every row. Fix: transparent hit surface on the scroll viewport, elastic scrolling with inertia and a usable wheel step; money changes only update the buttons and the balance, once per frame and only when they change. Checked in Play Mode: a ray at the middle of the list hits Body, a 600 px drag scrolls, inertia keeps rolling after release, buttons go grey at $10 and green again after a refill; 557/557 tests
 
@@ -38,11 +45,6 @@ Notes:
 Decisions (approved by the user):
 1. Worker paths [straight lines like the prototype, but trips to / from the back factory row go through the nearest gap between front buildings, so nobody walks through the walls]
 2. Section staff (miner, section carrier / cashier) [stay hidden until M8 with plumbing; the Workers and Shop staff groups open now]
-
-Notes:
-- Open question to user: change "Communication" rule to "reply in the language of the user's message (Armenian or Russian)"? The user writes Russian; replies are in Russian until decided.
-
-## Done
 
 ### M5 — Product line expansion, shop growth, unlock cards, save — 2026-11-02 (branch `m5-expansion`)
 Result: factory buy pads + lock chips, shop expansion, register pads (6 registers), unlock cards with guide arrow, versioned save/autosave, dev panel; 545 tests green; user play-test OK 2026-11-02; merged into main.
@@ -86,7 +88,7 @@ Cause: the user's Android test build wrote `first.apk`, `first_BackUpThisFolder_
 No secrets inside (checked: no keystores/keys/tokens); CMake files contain local paths (/Users/armen/...).
 - [x] Remove the artifacts from the index (files stay on disk), ignore `*_BackUpThisFolder_ButDontShipItWithYourGame/`, `*_BurstDebugInformation_DoNotShip/`, `.utmp/`, `*.aab`, `*.symbols.zip`, `Builds/`
 - [x] Ask the user: purge the artifacts from git history (force-push main) or not; keep or remove Unity IAP → user: no history rewrite (cleanup commit only); keep Unity IAP (`com.unity.purchasing` 5.4.4, `Assets/Resources/BillingMode.json`)
-- [ ] PR → main, sync local main
+- [x] PR → main, sync local main (PR #5)
 - Rule from now on: stage files explicitly / review `git status` fully before committing; never `git add -A` blindly.
 
 ### M4 — Upgrade pads, building growth, upgrades panel — 2026-11-01 (branch `m4-upgrades`)
