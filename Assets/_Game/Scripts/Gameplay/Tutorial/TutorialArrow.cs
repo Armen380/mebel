@@ -1,8 +1,12 @@
+using FF.Gameplay.Unlocks;
 using UnityEngine;
 
 namespace FF.Gameplay.Tutorial
 {
-    /// <summary>The bobbing, spinning honey cone over the current tutorial target (prototype <c>arrow</c>).</summary>
+    /// <summary>
+    /// The bobbing, spinning honey cone (prototype <c>arrow</c>) over the current tutorial target, or, with no tutorial
+    /// target, over the guide target of the last unlock card.
+    /// </summary>
     public sealed class TutorialArrow : MonoBehaviour
     {
         const float BobFrequency = 4f;
@@ -10,20 +14,22 @@ namespace FF.Gameplay.Tutorial
         const float SpinSpeed = 2f;
 
         [SerializeField] TutorialService tutorial;
+        [SerializeField] UnlockService unlocks;
         [SerializeField] GameObject cone;
 
         float _spin;
 
         /// <summary>Editor tools only.</summary>
-        public void Setup(TutorialService service, GameObject coneObject)
+        public void Setup(TutorialService service, UnlockService unlockService, GameObject coneObject)
         {
             tutorial = service;
+            unlocks = unlockService;
             cone = coneObject;
         }
 
         void LateUpdate()
         {
-            bool show = tutorial.TryGetTarget(out Vector3 target);
+            bool show = tutorial.TryGetTarget(out Vector3 target) || unlocks.TryGetGuide(out target);
             if (cone.activeSelf != show) cone.SetActive(show);
             if (!show) return;
             target.y += Mathf.Sin(Time.time * BobFrequency) * BobHeight;

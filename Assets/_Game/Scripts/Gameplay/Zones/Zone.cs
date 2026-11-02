@@ -81,6 +81,7 @@ namespace FF.Gameplay.Zones
         public int TagCount => Stack.Count;
         public int TagCapacity => Stack.Capacity;
         public string TagIcon => null;
+        public string TagText => null;
 
         /// <summary>Sum of the bills lying on the pile (prototype register chip).</summary>
         public long TagValue

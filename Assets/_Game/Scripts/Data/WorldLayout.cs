@@ -277,6 +277,10 @@ namespace FF.Data
             public Vector2 foundationSize = new Vector2(11f, 8f);
             public Vector2 billboard = new Vector2(81f, -23.2f);
             public Vector2 workArea = new Vector2(93.5f, -15f);
+            [Tooltip("Guide arrow target of the dream-plot unlock card (prototype V3(85, 0, -6)).")]
+            public Vector2 cardTarget = new Vector2(85f, -6f);
+            [Tooltip("\"Dream house / Soon\" chip, proto (x, y, z) (prototype V3(81, 1.4, -17)).")]
+            public Vector3 soonChip = new Vector3(81f, 1.4f, -17f);
         }
 
         /// <summary>Player region rules of the prototype <c>collide()</c>.</summary>

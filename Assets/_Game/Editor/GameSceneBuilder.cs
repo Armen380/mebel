@@ -16,6 +16,8 @@ using FF.Gameplay.Pads;
 using FF.Gameplay.Player;
 using FF.Gameplay.Shop;
 using FF.Gameplay.Tutorial;
+using FF.Gameplay.Unlocks;
+using FF.Save;
 using FF.Gameplay.Zones;
 using FF.UI.DevTools;
 using FF.UI.HUD;
@@ -116,7 +118,7 @@ namespace FF.Editor
         static void SetupSystems(List<Zone> zones, ShopBuilder.Result shop, Transform player, BuildingKit kit)
         {
             Transform systems = Root("Systems");
-            foreach (string name in new[] { "Items", "Zones", "Nodes", "Customers", "Pads", "Tutorial" })
+            foreach (string name in new[] { "Items", "Zones", "Nodes", "Customers", "Pads", "Tutorial", "Unlocks", "Save" })
             {
                 Transform old = systems.Find(name);
                 if (old != null) Object.DestroyImmediate(old.gameObject);
@@ -153,7 +155,15 @@ namespace FF.Editor
             tutorialGo.transform.SetParent(systems, false);
             var tutorial = tutorialGo.AddComponent<TutorialService>();
             tutorial.Setup(player);
-            ShopBuilder.BuildTutorialArrow(Root("World"), tutorial);
+            var unlocksGo = new GameObject("Unlocks");
+            unlocksGo.transform.SetParent(systems, false);
+            var unlocks = unlocksGo.AddComponent<UnlockService>();
+            unlocks.Setup(player);
+            ShopBuilder.BuildTutorialArrow(Root("World"), tutorial, unlocks);
+
+            var saveGo = new GameObject("Save");
+            saveGo.transform.SetParent(systems, false);
+            saveGo.AddComponent<SaveService>();
 
             var installer = systems.GetComponentInChildren<GameInstaller>(true);
             Wire(installer, "itemPool", pool);
@@ -258,6 +268,8 @@ namespace FF.Editor
             BuildThrowButton(safe);
             RectTransform upgradesButton = HudBuilder.BuildUpgradesButton(safe, out GameObject badge);
             BuildLocaleButton(safe);
+            HudBuilder.BuildDevPanel(safe);
+            HudBuilder.BuildUnlockCard(safe);
             HudBuilder.BuildUpgradesPanel(hud, db, upgradesButton.GetComponent<Button>(), badge, joystick);
             return joystick;
         }
@@ -322,6 +334,7 @@ namespace FF.Editor
             var tags = layer.gameObject.AddComponent<WorldTagLayer>();
             Wire(tags, "pillTemplate", pill);
             tags.SetIcons(HudBuilder.BubbleIcons(db));
+            tags.SetLockedSprite(TextureFactory.Rounded());
         }
 
         /// <summary>Prototype <c>.throw</c>: 72 px walnut circle bottom-right with a trash icon and "Throw".</summary>

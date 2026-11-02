@@ -201,5 +201,6 @@ namespace FF.Gameplay.Production
         public int TagCapacity => 1 + _qty;
         public long TagValue => 0;
         public string TagIcon => null;
+        public string TagText => null;
     }
 }

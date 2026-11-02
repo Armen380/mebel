@@ -5,13 +5,48 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
-### Next: M5 — 2026-11-01
-- [ ] Write the M5 plan from `Design/docs/04_IMPLEMENTATION_PLAN.md` and get the user's approval (no code before that)
+### Next: M6 — 2026-11-02
+- [ ] Write the M6 plan from `Design/docs/04_IMPLEMENTATION_PLAN.md` and get the user's approval (no code before that)
 
 Notes:
 - Open question to user: change "Communication" rule to "reply in the language of the user's message (Armenian or Russian)"? The user writes Russian; replies are in Russian until decided.
 
 ## Done
+
+### M5 — Product line expansion, shop growth, unlock cards, save — 2026-11-02 (branch `m5-expansion`)
+Result: factory buy pads + lock chips, shop expansion, register pads (6 registers), unlock cards with guide arrow, versioned save/autosave, dev panel; 545 tests green; user play-test OK 2026-11-02; merged into main.
+Goal (04_IMPLEMENTATION_PLAN): from a fresh save you can reach Lv 35 and own all furniture factories; restart restores everything.
+Prototype refs: factory buy pads + lock chips (~935–941, `ownFactory` ~1015), `shopW / layoutShop / refreshBlocks` (~456, 1022–1035),
+shop pad + `shopUnlockText` (~973, 1021), register pad + `placeRegPad` (~970–972), `notify / checkUnlocks / updUnlock / UN_ICON`
+(~1647–1695), guide arrow (~1641–1643), save/load (`KEY`, `S`, `save()`, `visibilitychange` ~256–264, 1723), spec §13, §16;
+CSS `.unlock` (~106–114), `.chip.locked` (~71).
+
+- [x] 0. Branch `m5-expansion` from main
+- [x] A. Factory buy pads (sofa, wardrobe, table, kitchen; sink in M8): pad shows on the lot when the factory is not owned and the player level ≥ unlock level; paying it → factory owned (building pops in, lot goes, shelf + machine + zones + speed/qty pads appear, blockers rebuilt), toast "sign · New factory opened"
+- [x] B. Lock chips over lots (`.chip.locked`): "Sofas / Opens at Lv 5" (honey second line) while level < unlock; "Sawmill 2" over its lot; "Dream house / Soon" over the dream plot — new world-tag style with two lines
+- [x] C. Shop expansion pad (`shop`, max 5): right wall moves to x = 25 + 4.2·lv, animated (lerp 3/s): floor, floor stripes, right wall + plants, front-right wall + trim; blockers follow; shelves +3 each level, more / faster walk-ins (already live through the level); toast "Shop Lv N" + "Can hire: … · +1 register slot"
+- [x] D. Register pad (`reg`, max 5): visible while reg < shop level, sits on the next free register slot and moves after each purchase; register i active when i < 1 + min(reg, shop) — stall appears, blockers + customers use it
+- [x] E. Pad visibility rules as one tested function (upgrade pads: owner owned; buy pads: not owned and level ≥ unlock; register pad: reg < shop; shop pad: always) instead of per-pad flags
+- [x] F. Unlock cards (`notify / checkUnlocks / updUnlock`): queue, one card at a time for 4.6 s, slide-in, cream card with honey border, icon tile, "NEW", title + subtitle; each id once (`seen`); guide arrow to the target for 12 s or until within 1.5 m (tutorial arrow wins). Cards now: factory reachable (with its price), new register slot, Sawmill 2 (after the tutorial), dream plot (after the tutorial). Checked on boot (silent), level-up, shop level, tutorial end
+- [x] G. Save (new `FF.Save` assembly): versioned JSON (`version`, money, total, xp, level, quest, lv{}, pads{lv, paid}, owned{}, seen{}, lang, skin) in `persistentDataPath/save.json`, written atomically (temp file + replace); autosave every 3 s when changed, on pause / focus loss / quit, right after every purchase; load at boot before the world starts (owned buildings, shop width, registers, pads, upgrades, tutorial step, language); migration hook per version; a broken file → backup + new game. Piles and positions are not saved (as in the prototype)
+- [x] H. Editor menu `FF/Delete Save` (new game while testing)
+- [x] I. EditMode tests (545/545 green): pad visibility rules, shop wall x / blockers per level, register slot + active rule, unlock rules (which cards, once only), save round-trip (every field), version / broken-file handling, owned factories after load
+- [x] J. Play Mode check: dev +25 Lv → card "Sofa factory · $19K"; bought Sofa $18.75K, Wardrobe $75K, Table $187.5K, Kitchen $500K (partial payment kept) — back row Sofas / Tables / Kitchens; shop Lv 5 (wall x 46) + 5 register pads → 6 registers; stop + start Play → level, money, owned, shop, registers, seen cards, language (ru) and the cap upgrade restored; new game shows "Wardrobes / Opens at Lv 12"; Console clean except Unity IAP's own services-token error
+- [x] K. Commit `M5: factory purchases, shop growth, unlock cards, save` (984e6bf), push, user play-test OK, PR → main
+
+Notes:
+- Tests through the Pipeline CLI need the Editor ticking when it is not focused: `unity command editor set_auto_tick --enable true` (otherwise the run times out after "Running N tests").
+- Unity IAP (kept by the user) logs "[InAppPurchasing] RequestFailedException" in the Editor (Unity Services token exchange) — not from our code.
+- Shop toast says "Shop Lv N · +1 register slot"; the prototype's "Can hire: …" part comes back with staff in M6.
+- Save file: `persistentDataPath/save.json` (macOS Editor: ~/Library/Application Support/DefaultCompany/Mebel/); `FF/Delete Save`, `FF/Reveal Save Folder`.
+
+Decisions (approved by the user):
+1. Unlock cards for things that are not in the game yet — staff (M6), mines / materials shop (M8), skins (M9) [show only cards for what already works: factories, registers, Sawmill 2, dream plot; the others come with their milestones]
+2. Testing up to Lv 35 takes hours of play [add a dev panel for Editor / development builds only: "+25 Lv, +$250K" (the prototype's menu test button) and "New game"; not in release builds]
+3. Consultant upgrade unlocks at shop Lv 5, but the staff group stays hidden until M6 [keep it hidden until M6 with the other staff]
+
+Notes:
+- Open question to user: change "Communication" rule to "reply in the language of the user's message (Armenian or Russian)"? The user writes Russian; replies are in Russian until decided.
 
 ### Fix: Android build output got committed — 2026-11-01 (branch `chore/untrack-build-artifacts`)
 Cause: the user's Android test build wrote `first.apk`, `first_BackUpThisFolder_ButDontShipItWithYourGame/` (IL2CPP backup,

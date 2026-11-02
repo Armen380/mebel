@@ -18,6 +18,7 @@ namespace FF.UI.WorldTags
         const float OffscreenMargin = 0.15f;
         /// <summary>Speed 8 + qty 3: the building is fully grown.</summary>
         const int MaxCombinedLevel = 11;
+        const float LockedRadiusScale = 16f / 33f;
 
         [SerializeField] RectTransform pillTemplate;
         [SerializeField] Color counterColor = new Color32(0x2b, 0x1d, 0x14, 0xd6);
@@ -28,6 +29,9 @@ namespace FF.UI.WorldTags
         [SerializeField] Color bubbleColor = Color.white;
         [SerializeField] Color levelColor = new Color32(0xf3, 0xb3, 0x3d, 0xff);
         [SerializeField] Color levelText = new Color32(0x2b, 0x1d, 0x14, 0xff);
+        [SerializeField] Color lockedColor = new Color32(0x2b, 0x1d, 0x14, 0xb8);
+        [Tooltip("Locked chips are rounded rectangles (radius 12), the others full pills.")]
+        [SerializeField] Sprite lockedSprite;
         [SerializeField] LocalizedString fullLabel = new LocalizedString("Game", "c.full");
         [SerializeField] LocalizedString maxLabel = new LocalizedString("Game", "ui.max");
         [Tooltip("Bubble icons by id: product ids, \"cash\", \"angry\".")]
@@ -51,6 +55,8 @@ namespace FF.UI.WorldTags
             public int Count = -1, Capacity = -1;
             public long ValueKey = -1;
             public string IconId;
+            public string Text;
+            public Sprite PillSprite;
             public bool TextDirty = true;
         }
 
@@ -139,9 +145,14 @@ namespace FF.UI.WorldTags
             {
                 pill.Style = style;
                 bool full = style == WorldTagStyle.Full, bubble = style == WorldTagStyle.Bubble;
-                bool level = style == WorldTagStyle.Level;
+                bool level = style == WorldTagStyle.Level, locked = style == WorldTagStyle.Locked;
                 pill.Background.color = full ? fullColor : style == WorldTagStyle.Cash ? cashColor : bubble ? bubbleColor
-                    : level ? levelColor : counterColor;
+                    : level ? levelColor : locked ? lockedColor : counterColor;
+                pill.Background.sprite = locked && lockedSprite != null ? lockedSprite : pill.PillSprite;
+                // rounded sprite: radius 16 px → 12 CSS px (≈ 33 canvas units)
+                pill.Background.pixelsPerUnitMultiplier = locked ? LockedRadiusScale : 1f;
+                pill.Label.textWrappingMode = locked ? TMPro.TextWrappingModes.Normal : TMPro.TextWrappingModes.NoWrap;
+                pill.Text = null;
                 pill.Label.color = style == WorldTagStyle.Counter ? counterText : level ? levelText : fullText;
                 pill.Label.characterSpacing = full ? 6f : 0f;
                 pill.Label.gameObject.SetActive(!bubble);
@@ -176,6 +187,16 @@ namespace FF.UI.WorldTags
                     else pill.Label.SetText("Lv {0} · ×{1}", (float)(combined + 1), (float)multiplier);
                 }
             }
+            else if (style == WorldTagStyle.Locked)
+            {
+                string text = s.TagText;
+                if (!ReferenceEquals(text, pill.Text))
+                {
+                    pill.Text = text;
+                    // .chip.locked b { color: honey }
+                    pill.Label.SetText(text?.Replace("<b>", "<b><color=#f3b33d>").Replace("</b>", "</color></b>"));
+                }
+            }
             else if (style == WorldTagStyle.Bubble)
             {
                 string id = s.TagIcon;
@@ -201,6 +222,9 @@ namespace FF.UI.WorldTags
         /// <summary>Editor tools only.</summary>
         public void SetIcons(List<BubbleIcon> list) => icons = list;
 
+        /// <summary>Editor tools only.</summary>
+        public void SetLockedSprite(Sprite sprite) => lockedSprite = sprite;
+
         void SetIcon(Image image, string id)
         {
             for (int i = 0; i < icons.Count; i++)
@@ -221,6 +245,7 @@ namespace FF.UI.WorldTags
             {
                 Rect = rect,
                 Background = rect.GetComponent<Image>(),
+                PillSprite = rect.GetComponent<Image>().sprite,
                 Label = rect.GetComponentInChildren<TMP_Text>(true),
                 Icon = rect.Find("Icon").GetComponent<Image>(),
             };

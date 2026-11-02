@@ -20,6 +20,7 @@ namespace FF.Gameplay.Progress
         readonly EconomyConfig _economy;
         readonly Dictionary<string, PadState> _pads = new Dictionary<string, PadState>();
         readonly Dictionary<string, int> _upgrades = new Dictionary<string, int>();
+        readonly HashSet<string> _seen = new HashSet<string>();
 
         public long Money { get; private set; }
         public long TotalEarned { get; private set; }
@@ -86,6 +87,38 @@ namespace FF.Gameplay.Progress
         public int GetUpgradeLevel(string upgradeId) => _upgrades.TryGetValue(upgradeId, out int level) ? level : 0;
 
         public void SetUpgradeLevel(string upgradeId, int level) => _upgrades[upgradeId] = level;
+
+        public IReadOnlyDictionary<string, PadState> Pads => _pads;
+        public IReadOnlyDictionary<string, int> Upgrades => _upgrades;
+        /// <summary>Unlock-card ids already announced (prototype <c>S.seen</c>).</summary>
+        public IReadOnlyCollection<string> Seen => _seen;
+
+        /// <summary>Records an unlock card id; false when it was already seen.</summary>
+        public bool MarkSeen(string id)
+        {
+            if (!_seen.Add(id)) return false;
+            GameEvents.RaiseProgressChanged();
+            return true;
+        }
+
+        /// <summary>Restores the save values (save system only).</summary>
+        public void Restore(long money, long totalEarned, int xp, int level, int questStep)
+        {
+            Money = money;
+            TotalEarned = totalEarned;
+            Xp = xp;
+            Level = level < 1 ? 1 : level;
+            QuestStep = questStep < 0 ? 0 : questStep;
+        }
+
+        /// <summary>Dev cheat (prototype menu test button): jumps levels without XP; LevelUp fires once for the new level.</summary>
+        public void AddLevels(int levels)
+        {
+            if (levels <= 0) return;
+            Level += levels;
+            Xp = 0;
+            GameEvents.RaiseLevelUp(Level);
+        }
     }
 
     public static class LevelMath

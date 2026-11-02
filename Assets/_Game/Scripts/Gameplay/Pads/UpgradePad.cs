@@ -16,16 +16,19 @@ namespace FF.Gameplay.Pads
         static readonly int BaseMapSt = Shader.PropertyToID("_BaseMap_ST");
 
         [SerializeField] PadDef def;
-        [Tooltip("Machine that must be owned for the pad to show (saw, saw2, a product id); empty = always.")]
-        [SerializeField] string ownerMachine;
-        [Tooltip("Buy pads: show while the owner is NOT owned yet.")]
-        [SerializeField] bool showWhileNotOwned;
+        [SerializeField] PadRule rule;
+        [Tooltip("Building the rule looks at (saw, saw2, a product id); empty for shop / register pads.")]
+        [SerializeField] string owner;
         [SerializeField] GameObject visual;
         [SerializeField] Transform fill;
         [SerializeField] TMP_Text priceLabel;
 
+        const string ShopPadId = "shop", RegisterPadId = "reg";
+
         EconomyConfig _economy;
         WorldStateSnapshot _state;
+        GameProgress _progress;
+        int _ownerUnlockLevel;
         GameProgress.PadState _pad;
         MaterialPropertyBlock _block;
         Renderer _fillRenderer;
@@ -37,15 +40,16 @@ namespace FF.Gameplay.Pads
         public GameProgress.PadState State => _pad;
         public Vector3 Position => transform.position;
         public long Price => _economy.PadPrice(def, _pad.Level);
-        public bool IsVisible =>
-            (string.IsNullOrEmpty(ownerMachine) || _state.Owns(ownerMachine) != showWhileNotOwned) && _pad.Level < def.maxLevel;
+        public bool IsVisible => PadRules.IsVisible(rule, _pad.Level, def.maxLevel,
+            !string.IsNullOrEmpty(owner) && _state.Owns(owner), _progress.Level, _ownerUnlockLevel,
+            _progress.GetLevel(RegisterPadId), _progress.GetLevel(ShopPadId));
 
         /// <summary>Editor tools only.</summary>
-        public void Setup(PadDef padDef, string owner, bool whileNotOwned, GameObject visualRoot, Transform fillQuad, TMP_Text price)
+        public void Setup(PadDef padDef, PadRule padRule, string ownerId, GameObject visualRoot, Transform fillQuad, TMP_Text price)
         {
             def = padDef;
-            ownerMachine = owner;
-            showWhileNotOwned = whileNotOwned;
+            rule = padRule;
+            owner = ownerId;
             visual = visualRoot;
             fill = fillQuad;
             priceLabel = price;
@@ -53,9 +57,13 @@ namespace FF.Gameplay.Pads
 
         void Awake()
         {
-            _economy = Services.Get<GameDatabase>().economy;
+            var db = Services.Get<GameDatabase>();
+            _economy = db.economy;
             _state = Services.Get<WorldStateSnapshot>();
-            _pad = Services.Get<GameProgress>().Pad(def.id);
+            _progress = Services.Get<GameProgress>();
+            _pad = _progress.Pad(def.id);
+            ProductDef product = string.IsNullOrEmpty(owner) ? null : db.Product(owner);
+            _ownerUnlockLevel = rule == PadRule.BuyOwner && product != null ? product.unlockLevel : 0;
             _block = new MaterialPropertyBlock();
             _fillRenderer = fill.GetComponent<Renderer>();
             _size = Services.Get<GameDatabase>().world.production.padSize;

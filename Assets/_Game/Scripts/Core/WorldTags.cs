@@ -15,6 +15,8 @@ namespace FF.Core
         Bubble,
         /// <summary>Honey pill "Lv 3 · ×2" over a building: TagCount = combined level, TagCapacity = output multiplier.</summary>
         Level,
+        /// <summary>Dark rounded chip over a closed lot (TagText, rich text, bold part in honey).</summary>
+        Locked,
     }
 
     /// <summary>Anything that shows a screen-space tag above a world position. Read once per frame by the UI.</summary>
@@ -29,6 +31,8 @@ namespace FF.Core
         long TagValue { get; }
         /// <summary>Icon id shown by <see cref="WorldTagStyle.Bubble"/>: a product id, "cash" or "angry".</summary>
         string TagIcon { get; }
+        /// <summary>Localized text of <see cref="WorldTagStyle.Locked"/>; a new string instance only when it changes.</summary>
+        string TagText { get; }
     }
 
     /// <summary>List of tag sources; gameplay objects register themselves, the UI layer draws them.</summary>

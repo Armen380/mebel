@@ -1,5 +1,6 @@
 using FF.Data;
 using FF.Gameplay.Nodes;
+using FF.Gameplay.Shop;
 using FF.Gameplay.World;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -361,10 +362,15 @@ namespace FF.Editor.World
             WorldLayout.MainShopSettings s = w.mainShop;
             Transform shop = b.Group("MainShop", root);
             float floorZ = 5.1f, floorD = 9.2f;
-            b.Flat(shop, wallX - s.floorMinX, floorD, ShopFloor, (s.floorMinX + wallX) / 2, floorZ, 0.013f, "Floor");
+            GameObject floor = b.Flat(shop, wallX - s.floorMinX, floorD, ShopFloor, (s.floorMinX + wallX) / 2, floorZ, 0.013f, "Floor");
             Transform stripes = b.Group("FloorStripes", shop);
+            var stripeList = new System.Collections.Generic.List<Transform>();
             for (float x = 3.2f; x < 46; x += 1.2f)
-                b.Flat(stripes, 0.04f, floorD, ShopStripe, x, floorZ, 0.014f, "Stripe").SetActive(x < wallX - 0.15f);
+            {
+                GameObject stripe = b.Flat(stripes, 0.04f, floorD, ShopStripe, x, floorZ, 0.014f, "Stripe");
+                stripe.SetActive(x < wallX - 0.15f);
+                stripeList.Add(stripe.transform);
+            }
 
             // low walls, the right wall moves out when the shop is expanded (M5)
             b.Box(shop, 0.22f, 1, 9.4f, Wall, s.floorMinX, 0.5f, floorZ, "LeftWall");
@@ -376,8 +382,10 @@ namespace FF.Editor.World
             b.Box(right, 0.24f, 0.1f, 9.5f, Trim, 0, 1.05f, floorZ, "Trim");
             foreach (float z in new[] { 9f, 0.9f }) Plant(b, right, -0.7f, z);
             float fw = wallX - s.doorX.max;
-            b.Box(shop, fw, 1, 0.22f, Wall, s.doorX.max + fw / 2, 0.5f, s.doorZ, "FrontRightWall");
-            b.Box(shop, fw + 0.1f, 0.1f, 0.24f, Trim, s.doorX.max + fw / 2, 1.05f, s.doorZ, "FrontRightTrim");
+            GameObject frontWall = b.Box(shop, fw, 1, 0.22f, Wall, s.doorX.max + fw / 2, 0.5f, s.doorZ, "FrontRightWall");
+            GameObject frontTrim = b.Box(shop, fw + 0.1f, 0.1f, 0.24f, Trim, s.doorX.max + fw / 2, 1.05f, s.doorZ, "FrontRightTrim");
+            // the shop pad moves these at runtime (prototype layoutShop)
+            shop.gameObject.AddComponent<ShopExpansion>().Setup(floor.transform, stripeList, right, frontWall.transform, frontTrim.transform);
 
             // entrance
             b.Box(shop, 0.3f, 2.8f, 0.3f, Trim, s.doorX.min, 1.4f, s.doorZ, "DoorPost");

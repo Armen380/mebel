@@ -85,5 +85,6 @@ namespace FF.Gameplay.Player
         public int TagCapacity => Stack.Capacity;
         public long TagValue => 0;
         public string TagIcon => null;
+        public string TagText => null;
     }
 }
