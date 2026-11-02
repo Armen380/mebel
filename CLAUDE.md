@@ -43,7 +43,7 @@ in Unity coordinates only. 1 unit = 1 m.
 - Floating virtual joystick anywhere on screen (touch), WASD/arrows in Editor. Q / Throw button drops carried items.
 - All gameplay text goes through Unity Localization with three locales: `hy` (default), `en`, `ru`.
   Keys and strings are in `Design/data/localization_*.json`. Fonts cover Armenian and Cyrillic
-  (Noto Sans Armenian + Noto Sans, TextMeshPro font assets with fallback).
+  (Noto Sans Armenian + Noto Sans, plus Noto Sans Symbols for arrows; TextMeshPro font assets with fallback).
 - Currency: US dollar, sign before the number — `$430`, `$1.2K`, `+$430` (user decision 2026-10-31; the prototype used
   the dram `֏` after the number). Number format: 1.2K, 3.4M (`fmt()` in the prototype → `NumberFormat`).
 - Save with a versioned JSON in `Application.persistentDataPath`, autosave every 3 s and on pause/quit. Schema in 02_SYSTEMS_SPEC.md §Save.

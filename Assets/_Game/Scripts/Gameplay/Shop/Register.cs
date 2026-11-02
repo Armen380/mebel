@@ -29,6 +29,8 @@ namespace FF.Gameplay.Shop
         public Zone CashZone => cashZone;
         /// <summary>Stall centre (prototype regs[i].x, z).</summary>
         public Vector3 Position => transform.position;
+        /// <summary>Serve rate of the cashier standing at this register this frame (0 = nobody); set by the workers.</summary>
+        public float StaffRate { get; set; }
 
         public bool IsActive
         {

@@ -10,7 +10,7 @@ namespace FF.Gameplay.Zones
     /// Prototype <c>addZone</c>: a ground marker with a pile. The owner (machine, shelf, register) calls
     /// <see cref="Configure"/> once; the player and AI query zones through the <see cref="ZoneRegistry"/>.
     /// </summary>
-    public sealed class Zone : MonoBehaviour, IWorldTagSource
+    public sealed class Zone : MonoBehaviour, IWorldTagSource, IPile
     {
         [SerializeField] string id;
         [SerializeField] ZoneKind kind;
@@ -27,6 +27,9 @@ namespace FF.Gameplay.Zones
         float _counterHeight;
 
         public string Id => id;
+        int IPile.Count => Stack.Count;
+        int IPile.Settled => Stack.Settled;
+        int IPile.Capacity => Stack.Capacity;
         public ZoneKind Kind => kind;
         public ItemType ItemType => itemType;
         public ItemStack Stack { get; private set; }

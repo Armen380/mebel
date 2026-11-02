@@ -1,6 +1,7 @@
 using FF.Core;
 using FF.Data;
 using System.Collections.Generic;
+using FF.AI;
 using FF.Editor.Art;
 using FF.Editor.Characters;
 using FF.Editor.Items;
@@ -118,7 +119,7 @@ namespace FF.Editor
         static void SetupSystems(List<Zone> zones, ShopBuilder.Result shop, Transform player, BuildingKit kit)
         {
             Transform systems = Root("Systems");
-            foreach (string name in new[] { "Items", "Zones", "Nodes", "Customers", "Pads", "Tutorial", "Unlocks", "Save" })
+            foreach (string name in new[] { "Items", "Zones", "Nodes", "Customers", "Workers", "Pads", "Tutorial", "Unlocks", "Save" })
             {
                 Transform old = systems.Find(name);
                 if (old != null) Object.DestroyImmediate(old.gameObject);
@@ -143,6 +144,11 @@ namespace FF.Editor
             customers.transform.SetParent(systems, false);
             var director = customers.AddComponent<CustomerDirector>();
             director.Setup(ShopBuilder.BuildCustomerVariants(false), shop.Shelves, shop.Registers, player);
+
+            var workersGo = new GameObject("Workers");
+            workersGo.transform.SetParent(systems, false);
+            workersGo.AddComponent<WorkerDirector>().Setup(WorkerPrefabBuilder.Build(false),
+                new List<Machine>(Root("World").GetComponentsInChildren<Machine>(true)), shop.Shelves, shop.Registers, director, player);
 
             var padGo = new GameObject("Pads");
             padGo.transform.SetParent(systems, false);

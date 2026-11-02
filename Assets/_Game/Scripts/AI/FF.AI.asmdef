@@ -1,0 +1,13 @@
+{
+    "name": "FF.AI",
+    "rootNamespace": "FF.AI",
+    "references": [
+        "FF.Core",
+        "FF.Data",
+        "FF.Gameplay",
+        "Unity.Localization",
+        "Unity.TextMeshPro"
+    ],
+    "autoReferenced": true,
+    "noEngineReferences": false
+}

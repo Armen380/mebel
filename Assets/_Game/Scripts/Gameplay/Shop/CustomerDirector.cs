@@ -174,8 +174,8 @@ namespace FF.Gameplay.Shop
             c.Animator.FacingYaw = -90f; // prototype face = −π/2: toward the counter
             if (c.QueueIndex != 0) return;
 
-            // workers serve registers from M6; the player serves while standing on the cash zone
-            float rate = r.PlayerServes(playerPos) ? _economy.playerServeRate : 0f;
+            // prototype regServer: the player on the cash zone first, else the cashier posted there
+            float rate = r.PlayerServes(playerPos) ? _economy.playerServeRate : r.StaffRate;
             c.WaitRegister = rate > 0f ? 0f : c.WaitRegister + dt;
             c.Serve += dt * rate;
             if (c.Serve < _economy.serveSeconds) return;

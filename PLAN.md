@@ -5,13 +5,46 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
-### Next: M6 — 2026-11-02
-- [ ] Write the M6 plan from `Design/docs/04_IMPLEMENTATION_PLAN.md` and get the user's approval (no code before that)
+Nothing in progress. Next: M7 (delivery & car park) — post the plan and wait for the user's approval.
 
 Notes:
 - Open question to user: change "Communication" rule to "reply in the language of the user's message (Armenian or Russian)"? The user writes Russian; replies are in Russian until decided.
 
 ## Done
+
+### M6 — Workers & robots — 2026-11-02 (branch `m6-workers`)
+Result: lumberjacks, carriers, stockers, robots (scored jobs + task tag), cashiers, manager, consultant; back-row trips through the gaps; Upgrades sheet tap/scroll fixes; 557 tests green; user play-test OK 2026-11-02; merged into main.
+Goal (04_IMPLEMENTATION_PLAN): a fully staffed factory runs without the player; robots prioritise empty shelves with waiting customers.
+Prototype refs: `REST / WORKER_SKIN / spawnWorker` (~1184–1203), `assignStaff / updCashier` (~1205–1216), `updManager / updConsult /
+regServer` (~1239–1250), `updLumber` (~1251–1265), `plankTarget / goodsTarget / sawOuts / sawIns / pickJob / updCarrier` (~1266–1336),
+`robotJob` (~1274–1296), `makeRobot` (~581), boot spawn (~1716), `.chip.bot` (~65), spec §8; numbers: economy.json `workers`.
+Section workers (miner, section carrier / cashier) come with plumbing in M8; truck jobs with the docks in M7.
+
+- [x] 0. Branch `m6-workers` from main
+- [x] A. Data: `WorkerDef` per kind (speed 3.4 / robot 5.2, carry cap lumber 4 / robot 8 / others 5, chop rate 0.75, transfer 0.12 s, stuck 1.5 s, rest spots, skin colours from WORKER_SKIN) imported from economy.json `workers` + prototype constants
+- [x] B. Prefabs: one per worker kind from the character rig (prototype skins: hard hat lumberjack, teal carrier, cream cashier, green stocker, navy manager, purple consultant) + the robot rig of `makeRobot` (wheel base, glowing ring, chest screen, head visor, antenna); pooled by a `WorkerDirector` that spawns `lv` workers per kind on load and one more on every purchase
+- [x] C. Shared kinematic motor (prototype `moveTo`, arrive 0.06 m) used by customers and workers; walking / carrying / chopping animation as for the player
+- [x] D. Lumberjack (`updLumber`): nearest unreserved tree, reserve, chop at 0.75, carry 4, deliver to the emptiest working sawmill input, one log per 0.12 s
+- [x] E. Carrier / Stocker (`pickJob / updCarrier`): carrier moves goods from the fullest factory output to the emptiest shelf with room, else planks from the fullest sawmill output to the emptiest plank-factory input; stocker shelves only; leftovers find a target by type; blocked for 1.5 s → drop the job; idle → rest spot
+- [x] F. Robot (`robotJob`): scores every job — shelf: (1 − n/cap) + 1.5·waiting customers + (empty ? 1) + (output > 80 % ? 1) − 0.9·other robots heading there; planks: 1.2·(1 − in/cap) + (factory idle and starving ? 1.6) − 0.9·busy; all − distance/60; takes the best above 0.15; teal task tag over it ("Shelf · Chairs", "Planks → Sofas", "!" when urgent). Pure scoring function, tested against the prototype numbers
+- [x] G. Cashier (`assignStaff / updCashier`): takes the next free active register in prototype order, stands at the counter, serves at rate 1 (player on the zone 1.4 wins); Manager (`updManager`): goes to the register with most bills, collects one per 0.08 s into the balance; Consultant (`updConsult`): stands in the shop and sways (effect already live: bills +15 %, patience ×1.6)
+- [x] H. Paths: workers walk straight lines like the prototype, except trips between the front yard and the back factory row, which go through the gap between front buildings nearest to the trip (our two-row layout; the prototype has a single row and only routes the mines trip, `routeVia`)
+- [x] I. Upgrades panel: Workers (lumberjack, carrier, robot) and Shop staff (cashier, stocker, manager, consultant) groups appear; shop toast gets "Can hire: …" back; unlock cards for staff that open with the shop level ("New staff: Stocker")
+- [x] J. EditMode tests (557/557 green): carrier job choice (goods first, emptiest shelf, planks fallback, stocker shelves only), robot scores and threshold, register assignment order, lumberjack target / delivery choice, motor arrive rule, worker counts from levels, staff unlock cards
+- [x] K. Play Mode check: shop Lv 5, hired 2 lumberjacks, 2 carriers, cashier, manager, robot; player parked in the forest for 2 min → logs → planks → chairs → shelf → 36 sales (+$15 480), Lv 1 → 6, without the player; robot took "! Shelf · Chair" (empty shelf, customers waiting); restart → 7 workers back; Console clean apart from Unity IAP's services-token error
+- [x] L. Commit `M6: workers and robots`, push, user play-test, PR → main
+- [x] Bug (user play-test 2026-11-02): a tap anywhere on the Upgrades sheet closes it — must close only on the ✕ button or outside the sheet. Cause: the sheet panel is a child of the backdrop Button, so uGUI bubbles the click up to it. Fix: backdrop and panel become siblings. Checked in Play Mode: tap inside → stays open, backdrop → closes, ✕ → closes
+- [x] Bug (user play-test 2026-11-02): scrolling the Upgrades list works badly. Causes: (1) the list has no raycast surface (cards and texts ignore pointers), so a drag only scrolls when it starts on a price button; (2) every money change (several per second with workers) re-localizes and re-lays out every row. Fix: transparent hit surface on the scroll viewport, elastic scrolling with inertia and a usable wheel step; money changes only update the buttons and the balance, once per frame and only when they change. Checked in Play Mode: a ray at the middle of the list hits Body, a 600 px drag scrolls, inertia keeps rolling after release, buttons go grey at $10 and green again after a refill; 557/557 tests
+
+Notes:
+- New FF.AI assembly (WorkerDirector, Worker, pure CarrierJobs / RobotScoring / StaffAssignment / WorkerRoutes); Gameplay only exposes hooks (Register.StaffRate, IPile on zones, AgentMotor).
+- "→" is missing from Noto Sans: Noto Sans Symbols Bold (notofonts, OFL) is now the second TMP fallback (FontSetup) — fixes "Planks → Sofas" and any other arrow in texts.
+- Lumberjacks use the player's axe level for chop time, like the prototype's `tryChop` → `st.chop()`.
+- Truck jobs for carriers / robots come with the docks in M7; section staff with plumbing in M8.
+
+Decisions (approved by the user):
+1. Worker paths [straight lines like the prototype, but trips to / from the back factory row go through the nearest gap between front buildings, so nobody walks through the walls]
+2. Section staff (miner, section carrier / cashier) [stay hidden until M8 with plumbing; the Workers and Shop staff groups open now]
 
 ### M5 — Product line expansion, shop growth, unlock cards, save — 2026-11-02 (branch `m5-expansion`)
 Result: factory buy pads + lock chips, shop expansion, register pads (6 registers), unlock cards with guide arrow, versioned save/autosave, dev panel; 545 tests green; user play-test OK 2026-11-02; merged into main.
@@ -55,7 +88,7 @@ Cause: the user's Android test build wrote `first.apk`, `first_BackUpThisFolder_
 No secrets inside (checked: no keystores/keys/tokens); CMake files contain local paths (/Users/armen/...).
 - [x] Remove the artifacts from the index (files stay on disk), ignore `*_BackUpThisFolder_ButDontShipItWithYourGame/`, `*_BurstDebugInformation_DoNotShip/`, `.utmp/`, `*.aab`, `*.symbols.zip`, `Builds/`
 - [x] Ask the user: purge the artifacts from git history (force-push main) or not; keep or remove Unity IAP → user: no history rewrite (cleanup commit only); keep Unity IAP (`com.unity.purchasing` 5.4.4, `Assets/Resources/BillingMode.json`)
-- [ ] PR → main, sync local main
+- [x] PR → main, sync local main (PR #5)
 - Rule from now on: stage files explicitly / review `git status` fully before committing; never `git add -A` blindly.
 
 ### M4 — Upgrade pads, building growth, upgrades panel — 2026-11-01 (branch `m4-upgrades`)

@@ -13,7 +13,7 @@ namespace FF.UI.Upgrades
     /// <summary>
     /// Prototype Upgrades sheet (<c>renderShop / openSheet / closeSheet</c>) and the badge on the Upgrades button
     /// (<c>hudMoney</c>: shown when any upgrade can be bought). Rows are built once from the data; only the groups in
-    /// <see cref="visibleGroups"/> are shown (worker groups join with their milestones).
+    /// <see cref="visibleGroups"/> are shown (section staff joins with plumbing in M8).
     /// </summary>
     public sealed class UpgradesPanel : MonoBehaviour
     {
@@ -32,7 +32,8 @@ namespace FF.UI.Upgrades
         [SerializeField] UpgradeRow rowTemplate;
         [SerializeField] TMP_Text groupTemplate;
         [SerializeField] VirtualJoystick joystick;
-        [SerializeField] List<string> visibleGroups = new List<string> { "g.player", "g.biz" };
+        [Tooltip("Section staff (g.section) joins with plumbing in M8.")]
+        [SerializeField] List<string> visibleGroups = new List<string> { "g.player", "g.workers", "g.staff", "g.biz" };
 
         static readonly Color Green = new Color32(0x5c, 0xae, 0x4a, 0xff);
         static readonly Color Grey = new Color32(0x52, 0x3a, 0x27, 0xff);
@@ -49,6 +50,8 @@ namespace FF.UI.Upgrades
         IProgressView _progress;
         EconomyConfig _economy;
         string _maxText = "MAX";
+        bool _moneyDirty;
+        long _balanceKey = -1;
 
         public bool IsOpen => sheet.activeSelf;
 
@@ -146,7 +149,12 @@ namespace FF.UI.Upgrades
 
         void LateUpdate()
         {
-            if (IsOpen) FitWidth();
+            if (!IsOpen) return;
+            FitWidth();
+            if (!_moneyDirty) return;
+            _moneyDirty = false;
+            RefreshBalance(false);
+            foreach (UpgradeRow row in _rows) row.RefreshButton(_shop, _maxText, Green, Grey, Honey, Muted, false);
         }
 
         /// <summary>CSS <c>width: min(560px, 100%)</c>; follows rotation and resolution changes.</summary>
@@ -163,10 +171,11 @@ namespace FF.UI.Upgrades
             if (_shop.TryBuy(id)) RefreshRows();
         }
 
+        /// <summary>Money changes several times a second with workers: only buttons and balance follow, once per frame.</summary>
         void OnMoneyChanged(long money, bool bump)
         {
             RefreshBadge();
-            if (IsOpen) RefreshRows();
+            _moneyDirty = true;
         }
 
         void OnUpgradeBought(string id, int level) => RefreshBadge();
@@ -184,12 +193,26 @@ namespace FF.UI.Upgrades
             if (IsOpen) RefreshRows();
         }
 
+        /// <summary>Everything: open, purchase, language change.</summary>
         void RefreshRows()
         {
+            _moneyDirty = false;
+            RefreshBalance(true);
+            foreach (UpgradeRow row in _rows)
+            {
+                row.RefreshValues(_shop, _economy, Green, Grey);
+                row.RefreshButton(_shop, _maxText, Green, Grey, Honey, Muted, true);
+            }
+        }
+
+        void RefreshBalance(bool force)
+        {
+            long key = NumberFormat.CompactChangeKey(_progress.Money);
+            if (!force && key == _balanceKey) return;
+            _balanceKey = key;
             _args.Clear();
             _args["v"] = NumberFormat.Compact(_progress.Money);
             balance.SetText(LocalizationSettings.StringDatabase.GetLocalizedString(Table, "ui.balance", new object[] { _args }));
-            foreach (UpgradeRow row in _rows) row.Refresh(_shop, _economy, _maxText, Green, Grey, Honey, Muted);
         }
 
         void RefreshBadge()

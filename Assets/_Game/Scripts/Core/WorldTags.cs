@@ -17,6 +17,8 @@ namespace FF.Core
         Level,
         /// <summary>Dark rounded chip over a closed lot (TagText, rich text, bold part in honey).</summary>
         Locked,
+        /// <summary>Teal robot task chip (TagText, "!" in honey when urgent).</summary>
+        Bot,
     }
 
     /// <summary>Anything that shows a screen-space tag above a world position. Read once per frame by the UI.</summary>

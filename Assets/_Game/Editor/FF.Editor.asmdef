@@ -6,6 +6,7 @@
         "FF.Data",
         "FF.Gameplay",
         "FF.UI",
+        "FF.AI",
         "FF.Save",
         "Unity.InputSystem",
         "Unity.Cinemachine",

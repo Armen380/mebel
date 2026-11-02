@@ -154,6 +154,42 @@ namespace FF.Data
             public float padSize = 1.8f;
         }
 
+        /// <summary>Where workers spawn, rest and stand (prototype spawnWorker, REST, updCarrier, updCashier, updManager, updConsult).</summary>
+        [Serializable]
+        public sealed class WorkerLayoutSettings
+        {
+            public Vector2 lumberSpawn = new Vector2(-16f, -2f);
+            public Vector2 carrierSpawn = new Vector2(-6f, -1.5f);
+            public Vector2 shopStaffSpawn = new Vector2(20f, 8f);
+            public Vector2 robotSpawn = new Vector2(2f, 5f);
+            [Tooltip("Carrier rest spots (prototype REST), used round-robin.")]
+            public Vector2[] carrierRest = { new Vector2(-6f, -1.2f), new Vector2(-4.5f, -1.2f), new Vector2(-3f, -1.2f), new Vector2(-1.5f, -1.2f) };
+            [Tooltip("Rest spot i = start + i · step.")]
+            public Vector2 stockerRest = new Vector2(6f, -0.8f);
+            public float stockerRestStep = 1.4f;
+            public Vector2 robotRest = new Vector2(3f, 6.2f);
+            public float robotRestStep = 1.3f;
+            public Vector2 cashierIdle = new Vector2(5f, 8.6f);
+            public float cashierIdleStep = 1.2f;
+            public Vector2 managerIdle = new Vector2(8f, 7.4f);
+            public float managerIdleStep = 2f;
+            public Vector2 consultantSpot = new Vector2(7f, 6.4f);
+            public float consultantSpotStep = 7f;
+            [Tooltip("Cashier stands at register + offset (prototype r.x − 1.15, r.z + 0.1).")]
+            public Vector2 cashierStand = new Vector2(-1.15f, 0.1f);
+            [Tooltip("Manager stands at cash zone + (x, z of the first / of the others).")]
+            public Vector3 managerStand = new Vector3(-0.3f, -0.4f, 0.7f);
+            [Tooltip("Robot task tag height: base + per carried item.")]
+            public float robotTagHeight = 2.3f;
+            public float robotTagPerItem = 0.04f;
+            [Tooltip("Gaps in the front factory row that back-row trips go through (our two-row layout).")]
+            public float[] backRowGapsX = { -15.8f, -6f, 2f, 10f, 14f };
+            public float gapFrontZ = -6.2f;
+            public float gapBackZ = -14.4f;
+            [Tooltip("Trips with both ends east of this are mines-area trips (M8), not back-row ones.")]
+            public float backRowMaxX = 27f;
+        }
+
         [Serializable]
         public sealed class GridSettings
         {
@@ -351,6 +387,7 @@ namespace FF.Data
         public Sawmill2Settings sawmill2 = new Sawmill2Settings();
         public FactoryRowSettings factories = new FactoryRowSettings();
         public ProductionSettings production = new ProductionSettings();
+        public WorkerLayoutSettings workers = new WorkerLayoutSettings();
         public GridSettings forest = new GridSettings { cols = 5, rows = 7, origin = new Vector2(-30.5f, -11.8f), step = new Vector2(2.4f, 2.55f), jitter = 0.7f };
         public MinesSettings mines = new MinesSettings();
         public MainShopSettings mainShop = new MainShopSettings();

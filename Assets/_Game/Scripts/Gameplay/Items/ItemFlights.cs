@@ -28,6 +28,7 @@ namespace FF.Gameplay.Items
             public Vector3 Target;
             public ItemStack Stack;
             public Transform Follow;
+            public bool Bump;
             public float Time;
             public float Duration;
             public float Arc;
@@ -74,11 +75,13 @@ namespace FF.Gameplay.Items
         /// A bill flies to a moving target (the player, live position + height) and its value is added to the
         /// balance on landing (prototype cash zone: <c>fly(b, ()=>P.pos…, …, addMoney(v))</c>).
         /// </summary>
-        public void FlyAndCollect(Item bill, Transform follow, float height, float duration, float arc)
+        /// <param name="bump">False for money collected far from the player (prototype <c>addMoney(v, quiet)</c>).</param>
+        public void FlyAndCollect(Item bill, Transform follow, float height, float duration, float arc, bool bump = true)
         {
             Add(bill, new Vector3(0f, height, 0f), null, duration, arc, Landing.Collect);
             Flight f = _flights[_flights.Count - 1];
             f.Follow = follow;
+            f.Bump = bump;
             _flights[_flights.Count - 1] = f;
         }
 
@@ -126,7 +129,7 @@ namespace FF.Gameplay.Items
                     case Landing.Collect:
                         long value = f.Item.Value;
                         _pool.Release(f.Item);
-                        _progress.AddMoney(value);
+                        _progress.AddMoney(value, f.Bump);
                         break;
                 }
             }

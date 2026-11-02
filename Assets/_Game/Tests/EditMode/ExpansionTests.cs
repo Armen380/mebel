@@ -83,7 +83,7 @@ namespace FF.Tests
         {
             var set = new HashSet<string>(owned) { "chair" };
             var cards = new List<UnlockCard>();
-            UnlockRules.Collect(_db.products, set.Contains, id => id != "sink", level, reg, shop, tutorialDone, cards);
+            UnlockRules.Collect(_db.products, _db.upgrades, set.Contains, id => id != "sink", level, reg, shop, false, tutorialDone, cards);
             return cards;
         }
 
@@ -103,7 +103,7 @@ namespace FF.Tests
         [Test]
         public void Unlocks_RegisterSlot_Sawmill2_DreamPlot()
         {
-            CollectionAssert.AreEquivalent(new[] { "reg_2" }, Ids(Cards(1, 1, 2, false)));
+            CollectionAssert.AreEquivalent(new[] { "reg_2", "staff_stocker" }, Ids(Cards(1, 1, 2, false)));
             CollectionAssert.AreEquivalent(new[] { "saw2", "dream" }, Ids(Cards(1, 0, 0, true)));
             CollectionAssert.AreEquivalent(new[] { "dream" }, Ids(Cards(1, 0, 0, true, "saw2")));
         }

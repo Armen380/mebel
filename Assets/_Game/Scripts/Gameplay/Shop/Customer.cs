@@ -22,7 +22,6 @@ namespace FF.Gameplay.Shop
         }
 
         const float BubbleHeight = 2.45f;
-        const float ArriveDistance = 0.06f;
 
         public const string CashIcon = "cash";
         public const string AngryIcon = "angry";
@@ -88,23 +87,7 @@ namespace FF.Gameplay.Shop
         }
 
         /// <summary>Prototype <c>moveTo</c>: straight step toward the target, faces the walking direction.</summary>
-        public bool MoveTo(Vector3 target, float dt, float speed)
-        {
-            Vector3 p = transform.position;
-            float dx = target.x - p.x, dz = target.z - p.z, d = Mathf.Sqrt(dx * dx + dz * dz);
-            if (d < ArriveDistance)
-            {
-                Animator.Moving = false;
-                return true;
-            }
-            float step = Mathf.Min(d, speed * dt);
-            p.x += dx / d * step;
-            p.z += dz / d * step;
-            transform.position = p;
-            Animator.FacingYaw = Mathf.Atan2(dx, dz) * Mathf.Rad2Deg;
-            Animator.Moving = true;
-            return d - step < ArriveDistance;
-        }
+        public bool MoveTo(Vector3 target, float dt, float speed) => AgentMotor.MoveTo(transform, Animator, target, dt, speed);
 
         public bool TagVisible => TagIcon != null;
         public Vector3 TagPosition

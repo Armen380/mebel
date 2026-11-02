@@ -226,9 +226,13 @@ namespace FF.Editor
         {
             RectTransform sheet = Rect("UpgradesSheet", hud);
             Stretch(sheet);
-            Image dim = sheet.gameObject.AddComponent<Image>();
+            // the backdrop is a sibling under the panel, not its parent: uGUI bubbles a click to the parents'
+            // handlers, so a parent backdrop button would close the sheet on any tap inside it
+            RectTransform dimRect = Rect("Backdrop", sheet);
+            Stretch(dimRect);
+            Image dim = dimRect.gameObject.AddComponent<Image>();
             dim.color = new Color(20 / 255f, 12 / 255f, 8 / 255f, 0.5f);
-            var backdrop = sheet.gameObject.AddComponent<Button>();
+            var backdrop = dimRect.gameObject.AddComponent<Button>();
             backdrop.transition = Selectable.Transition.None;
 
             const float corner = 26;
@@ -286,10 +290,16 @@ namespace FF.Editor
             RectTransform body = Rect("Body", panel);
             body.gameObject.AddComponent<LayoutElement>().flexibleHeight = 1;
             body.gameObject.AddComponent<RectMask2D>();
+            // invisible hit surface: cards and texts ignore pointers, so without it a drag only scrolls from a price button
+            Image hit = body.gameObject.AddComponent<Image>();
+            hit.color = Color.clear;
             var scroll = body.gameObject.AddComponent<ScrollRect>();
             scroll.horizontal = false;
-            scroll.movementType = ScrollRect.MovementType.Clamped;
-            scroll.scrollSensitivity = 30;
+            scroll.movementType = ScrollRect.MovementType.Elastic;
+            scroll.elasticity = 0.1f;
+            scroll.inertia = true;
+            scroll.decelerationRate = 0.135f;
+            scroll.scrollSensitivity = 60;
             RectTransform content = Rect("Content", body);
             content.anchorMin = new Vector2(0, 1);
             content.anchorMax = new Vector2(1, 1);
@@ -543,6 +553,11 @@ namespace FF.Editor
                 new UnlockCardView.Icon { id = "saw", sprite = TextureFactory.LineIcon("un_saw", 2f,
                     TextureFactory.Circle(12, 12, 7), TextureFactory.Circle(12, 12, 2), TextureFactory.Poly(12, 3, 12, 5),
                     TextureFactory.Poly(12, 19, 12, 21), TextureFactory.Poly(3, 12, 5, 12), TextureFactory.Poly(19, 12, 21, 12)) },
+                new UnlockCardView.Icon { id = "staff", sprite = TextureFactory.LineIcon("un_staff", 2f,
+                    TextureFactory.Circle(12, 8, 3.5f),
+                    // M5 20c.8-4 3.6-6 7-6s6.2 2 7 6
+                    TextureFactory.Cubic(new Vector2(5, 20), new Vector2(5.8f, 16), new Vector2(8.6f, 14), new Vector2(12, 14)),
+                    TextureFactory.Cubic(new Vector2(12, 14), new Vector2(15.4f, 14), new Vector2(18.2f, 16), new Vector2(19, 20))) },
                 new UnlockCardView.Icon { id = "house", sprite = TextureFactory.LineIcon("un_house", 2f,
                     TextureFactory.Closed(3, 11, 12, 4, 21, 11, 21, 20, 3, 20), TextureFactory.Poly(9, 20, 9, 14, 15, 14, 15, 20)) },
             };
