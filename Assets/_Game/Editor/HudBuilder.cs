@@ -290,10 +290,16 @@ namespace FF.Editor
             RectTransform body = Rect("Body", panel);
             body.gameObject.AddComponent<LayoutElement>().flexibleHeight = 1;
             body.gameObject.AddComponent<RectMask2D>();
+            // invisible hit surface: cards and texts ignore pointers, so without it a drag only scrolls from a price button
+            Image hit = body.gameObject.AddComponent<Image>();
+            hit.color = Color.clear;
             var scroll = body.gameObject.AddComponent<ScrollRect>();
             scroll.horizontal = false;
-            scroll.movementType = ScrollRect.MovementType.Clamped;
-            scroll.scrollSensitivity = 30;
+            scroll.movementType = ScrollRect.MovementType.Elastic;
+            scroll.elasticity = 0.1f;
+            scroll.inertia = true;
+            scroll.decelerationRate = 0.135f;
+            scroll.scrollSensitivity = 60;
             RectTransform content = Rect("Content", body);
             content.anchorMin = new Vector2(0, 1);
             content.anchorMax = new Vector2(1, 1);

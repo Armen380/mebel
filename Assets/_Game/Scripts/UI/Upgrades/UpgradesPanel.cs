@@ -50,6 +50,8 @@ namespace FF.UI.Upgrades
         IProgressView _progress;
         EconomyConfig _economy;
         string _maxText = "MAX";
+        bool _moneyDirty;
+        long _balanceKey = -1;
 
         public bool IsOpen => sheet.activeSelf;
 
@@ -147,7 +149,12 @@ namespace FF.UI.Upgrades
 
         void LateUpdate()
         {
-            if (IsOpen) FitWidth();
+            if (!IsOpen) return;
+            FitWidth();
+            if (!_moneyDirty) return;
+            _moneyDirty = false;
+            RefreshBalance(false);
+            foreach (UpgradeRow row in _rows) row.RefreshButton(_shop, _maxText, Green, Grey, Honey, Muted, false);
         }
 
         /// <summary>CSS <c>width: min(560px, 100%)</c>; follows rotation and resolution changes.</summary>
@@ -164,10 +171,11 @@ namespace FF.UI.Upgrades
             if (_shop.TryBuy(id)) RefreshRows();
         }
 
+        /// <summary>Money changes several times a second with workers: only buttons and balance follow, once per frame.</summary>
         void OnMoneyChanged(long money, bool bump)
         {
             RefreshBadge();
-            if (IsOpen) RefreshRows();
+            _moneyDirty = true;
         }
 
         void OnUpgradeBought(string id, int level) => RefreshBadge();
@@ -185,12 +193,26 @@ namespace FF.UI.Upgrades
             if (IsOpen) RefreshRows();
         }
 
+        /// <summary>Everything: open, purchase, language change.</summary>
         void RefreshRows()
         {
+            _moneyDirty = false;
+            RefreshBalance(true);
+            foreach (UpgradeRow row in _rows)
+            {
+                row.RefreshValues(_shop, _economy, Green, Grey);
+                row.RefreshButton(_shop, _maxText, Green, Grey, Honey, Muted, true);
+            }
+        }
+
+        void RefreshBalance(bool force)
+        {
+            long key = NumberFormat.CompactChangeKey(_progress.Money);
+            if (!force && key == _balanceKey) return;
+            _balanceKey = key;
             _args.Clear();
             _args["v"] = NumberFormat.Compact(_progress.Money);
             balance.SetText(LocalizationSettings.StringDatabase.GetLocalizedString(Table, "ui.balance", new object[] { _args }));
-            foreach (UpgradeRow row in _rows) row.Refresh(_shop, _economy, _maxText, Green, Grey, Honey, Muted);
         }
 
         void RefreshBadge()

@@ -34,7 +34,18 @@ namespace FF.UI.Upgrades
 
         readonly List<Image> _pips = new List<Image>(8);
         readonly Dictionary<string, object> _args = new Dictionary<string, object>();
+        enum ButtonState
+        {
+            Unset,
+            Max,
+            Locked,
+            Affordable,
+            TooExpensive,
+        }
+
         LocalizedString _name, _description;
+        ButtonState _buttonState;
+        long _buttonPrice = -1;
         LocalizedString.ChangeHandler _onName, _onDescription;
         UpgradeDef _def;
 
@@ -79,10 +90,10 @@ namespace FF.UI.Upgrades
             if (_description != null) _description.StringChanged -= _onDescription;
         }
 
-        public void Refresh(IUpgradeShop shop, EconomyConfig economy, string maxText, Color green, Color grey, Color honey, Color muted)
+        /// <summary>Level-dependent parts: pips and "now → next" (on open, after a purchase, on a language change).</summary>
+        public void RefreshValues(IUpgradeShop shop, EconomyConfig economy, Color green, Color grey)
         {
-            string id = _def.id;
-            int level = shop.GetLevel(id);
+            int level = shop.GetLevel(_def.id);
             bool maxed = level >= _def.maxLevel;
             for (int i = 0; i < _pips.Count && i < _def.maxLevel; i++) _pips[i].color = i < level ? green : grey;
 
@@ -90,24 +101,47 @@ namespace FF.UI.Upgrades
             arrow.SetActive(!maxed);
             nextValue.gameObject.SetActive(!maxed);
             if (!maxed) nextValue.SetText(UpgradeValueText.Format(_def, level + 1, economy));
+        }
 
-            if (maxed)
+        /// <summary>
+        /// The buy button (price / too expensive / lock text / MAX). Money changes call this every frame they happen,
+        /// so it only touches the UI when the look really changes; <paramref name="force"/> rebuilds the texts.
+        /// </summary>
+        public void RefreshButton(IUpgradeShop shop, string maxText, Color green, Color grey, Color honey, Color muted, bool force)
+        {
+            string id = _def.id;
+            ButtonState state;
+            long price = 0;
+            if (shop.GetLevel(id) >= _def.maxLevel) state = ButtonState.Max;
+            else if (shop.IsLocked(id, out _, out _)) state = ButtonState.Locked;
+            else
             {
-                SetButton(maxText, Color.clear, honey, false, false);
-                return;
+                price = shop.GetPrice(id);
+                state = shop.CanBuy(id) ? ButtonState.Affordable : ButtonState.TooExpensive;
             }
-            if (shop.IsLocked(id, out int needShop, out bool needPlumbing))
+            if (!force && state == _buttonState && price == _buttonPrice) return;
+            _buttonState = state;
+            _buttonPrice = price;
+
+            switch (state)
             {
-                _args.Clear();
-                _args["n"] = needShop;
-                string text = needPlumbing
-                    ? UnityEngine.Localization.Settings.LocalizationSettings.StringDatabase.GetLocalizedString(Table, "ui.lockSink")
-                    : UnityEngine.Localization.Settings.LocalizationSettings.StringDatabase.GetLocalizedString(Table, "ui.lockShop", new object[] { _args });
-                SetButton(text, grey, honey, false, false, true);
-                return;
+                case ButtonState.Max:
+                    SetButton(maxText, Color.clear, honey, false, false);
+                    break;
+                case ButtonState.Locked:
+                    shop.IsLocked(id, out int needShop, out bool needPlumbing);
+                    _args.Clear();
+                    _args["n"] = needShop;
+                    string text = needPlumbing
+                        ? UnityEngine.Localization.Settings.LocalizationSettings.StringDatabase.GetLocalizedString(Table, "ui.lockSink")
+                        : UnityEngine.Localization.Settings.LocalizationSettings.StringDatabase.GetLocalizedString(Table, "ui.lockShop", new object[] { _args });
+                    SetButton(text, grey, honey, false, false, true);
+                    break;
+                default:
+                    bool affordable = state == ButtonState.Affordable;
+                    SetButton(NumberFormat.Money(price), affordable ? green : grey, affordable ? Color.white : muted, affordable, affordable);
+                    break;
             }
-            bool affordable = shop.CanBuy(id);
-            SetButton(NumberFormat.Money(shop.GetPrice(id)), affordable ? green : grey, affordable ? Color.white : muted, affordable, affordable);
         }
 
         void SetButton(string text, Color background, Color textColor, bool interactable, bool shadow, bool small = false)
