@@ -1,20 +1,38 @@
+using System.Collections.Generic;
 using FF.Core;
+using FF.Data;
 using FF.Gameplay.World;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
 
 namespace FF.Gameplay.Pads
 {
     /// <summary>
-    /// What a completed pad does beyond its level (prototype <c>addPad({onLevel})</c>). Speed / qty pads need nothing
-    /// here: machines and buildings read the levels. Factory buy pads, shop, registers and trucks join in M5 / M7 / M8.
+    /// What a completed pad does beyond its level (prototype <c>addPad({onLevel})</c>): Sawmill 2 and factory buy pads
+    /// own the building (<c>ownFactory</c>), the shop pad widens the shop (<c>refreshBlocks</c> + toast), the register pad
+    /// opens the next register. Speed / qty pads need nothing here: machines and buildings read the levels.
     /// </summary>
     public sealed class PadRewards : MonoBehaviour
     {
         public const string Sawmill2BuyPad = "saw2_buy";
+        const string BuySuffix = "_buy";
+        const string Table = "Game";
 
+        readonly Dictionary<string, object> _args = new Dictionary<string, object>();
+        GameDatabase _db;
         Ownership _ownership;
+        WorldStateSnapshot _state;
+        WorldCollision _collision;
+        IUpgradeLevels _levels;
 
-        void Start() => _ownership = Services.Get<Ownership>();
+        void Start()
+        {
+            _db = Services.Get<GameDatabase>();
+            _ownership = Services.Get<Ownership>();
+            _state = Services.Get<WorldStateSnapshot>();
+            _collision = Services.Get<WorldCollision>();
+            _levels = Services.Get<IUpgradeLevels>();
+        }
 
         void OnEnable() => GameEvents.PadCompleted += OnPadCompleted;
 
@@ -22,9 +40,34 @@ namespace FF.Gameplay.Pads
 
         void OnPadCompleted(string padId, int level)
         {
-            if (padId != Sawmill2BuyPad) return;
-            _ownership.Own(WorldStateSnapshot.Sawmill2Id);
-            GameEvents.RaiseToast("sign.saw2", "t.saw2");
+            if (padId == Sawmill2BuyPad)
+            {
+                _ownership.Own(WorldStateSnapshot.Sawmill2Id);
+                GameEvents.RaiseToast(Text("sign.saw2"), Text("t.saw2"));
+            }
+            else if (padId.EndsWith(BuySuffix))
+            {
+                ProductDef p = _db.Product(padId.Substring(0, padId.Length - BuySuffix.Length));
+                if (p == null) return;
+                _ownership.Own(p.id);
+                GameEvents.RaiseToast(Text(p.signKey), Text("t.factoryOpened"));
+            }
+            else if (padId == WorldStateSync.ShopPadId || padId == WorldStateSync.RegisterPadId)
+            {
+                WorldStateSync.Apply(_state, _levels);
+                _collision.Rebuild(_state);
+                // prototype shopUnlockText adds "Can hire: …" for staff opening at this shop level; staff come in M6
+                if (padId == WorldStateSync.ShopPadId) GameEvents.RaiseToast(Text("t.shopLv", "n", level), Text("t.regSlot"));
+            }
+        }
+
+        string Text(string key) => LocalizationSettings.StringDatabase.GetLocalizedString(Table, key);
+
+        string Text(string key, string arg, object value)
+        {
+            _args.Clear();
+            _args[arg] = value;
+            return LocalizationSettings.StringDatabase.GetLocalizedString(Table, key, new object[] { _args });
         }
     }
 }

@@ -39,6 +39,7 @@ namespace FF.Gameplay.Bootstrap
             Services.Register<IUpgradeLevels>(progress);
             Services.Register<IProgressView>(progress);
             Services.Register<IUpgradeShop>(new UpgradeShop(database, progress, state));
+            Services.Register<IDevCheats>(new DevCheats(progress));
             Services.Register(state);
             var collision = new WorldCollision(database, state);
             Services.Register(collision);

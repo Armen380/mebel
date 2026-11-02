@@ -1,0 +1,13 @@
+{
+    "name": "FF.Save",
+    "rootNamespace": "FF.Save",
+    "references": [
+        "FF.Core",
+        "FF.Data",
+        "FF.Gameplay",
+        "Unity.Localization",
+        "Unity.ResourceManager"
+    ],
+    "autoReferenced": true,
+    "noEngineReferences": false
+}

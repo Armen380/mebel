@@ -120,6 +120,7 @@ namespace FF.Gameplay.Shop
         public int TagCount => 0;
         public int TagCapacity => 0;
         public long TagValue => 0;
+        public string TagText => null;
 
         /// <summary>Prototype bubble rules: angry face; cash icon at a register nobody serves; wanted product at an empty shelf.</summary>
         public string TagIcon

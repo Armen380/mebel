@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using FF.Core;
 using FF.Data;
 using FF.Editor.Art;
+using FF.UI.DevTools;
 using FF.UI.HUD;
 using FF.UI.Input;
 using FF.UI.Layout;
@@ -430,6 +431,122 @@ namespace FF.Editor
             var shoulders1 = TextureFactory.Cubic(new Vector2(3.5f, 19), new Vector2(4.1f, 15.8f), new Vector2(6.3f, 14), new Vector2(9, 14));
             var shoulders2 = TextureFactory.Cubic(new Vector2(9, 14), new Vector2(11.7f, 14), new Vector2(13.9f, 15.8f), new Vector2(14.5f, 19));
             return TextureFactory.LineIcon("upgrade", 2.4f, head, shoulders1, shoulders2, TextureFactory.Poly(17, 8, 17, 14), TextureFactory.Poly(14, 11, 20, 11));
+        }
+
+        /// <summary>Dev buttons under the language button (Editor / development builds only, see DevPanel).</summary>
+        public static void BuildDevPanel(Transform safe)
+        {
+            RectTransform column = Rect("DevPanel", safe);
+            column.anchorMin = column.anchorMax = column.pivot = new Vector2(1, 1);
+            column.anchoredPosition = new Vector2(-16 * Px, -(12 + 44 + 10 + 10) * Px - 96);
+            var v = column.gameObject.AddComponent<VerticalLayoutGroup>();
+            v.spacing = 6 * Px;
+            v.childAlignment = TextAnchor.UpperRight;
+            v.childControlWidth = v.childControlHeight = true;
+            v.childForceExpandWidth = v.childForceExpandHeight = false;
+            Fit(column.gameObject);
+
+            Button test = DevButton(column, "Test", "ui.test", out _);
+            Button newGame = DevButton(column, "NewGame", "ui.new", out TMP_Text newGameLabel);
+            column.gameObject.AddComponent<DevPanel>().Setup(test, newGame, newGameLabel);
+        }
+
+        static Button DevButton(Transform parent, string name, string key, out TMP_Text label)
+        {
+            RectTransform r = Pill(name, parent, new Color32(0x2b, 0x1d, 0x14, 0xd0), new RectOffset(10, 10, 5, 5), 0, false);
+            r.GetComponent<Image>().raycastTarget = true;
+            var button = r.gameObject.AddComponent<Button>();
+            button.targetGraphic = r.GetComponent<Image>();
+            label = Text("Label", r, key, 12, UiPalette.Cream, "ExtraBold");
+            label.gameObject.AddComponent<LocalizedTmpText>().SetKey(key);
+            return button;
+        }
+
+        /// <summary>
+        /// Prototype <c>.unlock</c>: cream card with a 3 px honey border and honey-dark lip, 160 px under the safe top;
+        /// honey icon tile, red "NEW", title and subtitle (wraps on phones).
+        /// </summary>
+        public static void BuildUnlockCard(Transform safe)
+        {
+            RectTransform root = Rect("UnlockCard", safe);
+            Stretch(root);
+
+            RectTransform card = Rect("Card", root);
+            card.anchorMin = card.anchorMax = card.pivot = new Vector2(0.5f, 1);
+            card.anchoredPosition = new Vector2(0, -160 * Px);
+            Image border = card.gameObject.AddComponent<Image>();
+            border.sprite = TextureFactory.Rounded();
+            border.type = Image.Type.Sliced;
+            border.pixelsPerUnitMultiplier = 16f / (18 * Px);
+            border.color = UiPalette.Honey;
+            border.raycastTarget = false;
+            var lip = card.gameObject.AddComponent<UnityEngine.UI.Shadow>();
+            lip.effectColor = UiPalette.HoneyDark;
+            lip.effectDistance = new Vector2(0, -5 * Px);
+            var group = card.gameObject.AddComponent<CanvasGroup>();
+            group.blocksRaycasts = false;
+            Row(card.gameObject, new RectOffset(10, 18, 10, 10), 12);
+            card.GetComponent<HorizontalLayoutGroup>().childAlignment = TextAnchor.MiddleLeft;
+            Fit(card.gameObject);
+
+            RectTransform inner = Rect("Inner", card);
+            inner.gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
+            Stretch(inner);
+            inner.offsetMin = new Vector2(3 * Px, 3 * Px);
+            inner.offsetMax = new Vector2(-3 * Px, -3 * Px);
+            Image cream = inner.gameObject.AddComponent<Image>();
+            cream.sprite = TextureFactory.Rounded();
+            cream.type = Image.Type.Sliced;
+            cream.pixelsPerUnitMultiplier = 16f / (15 * Px);
+            cream.color = UiPalette.Cream;
+            cream.raycastTarget = false;
+
+            RectTransform tile = Rect("Tile", card);
+            Image tileImage = tile.gameObject.AddComponent<Image>();
+            tileImage.sprite = TextureFactory.Rounded();
+            tileImage.type = Image.Type.Sliced;
+            tileImage.pixelsPerUnitMultiplier = 16f / (14 * Px);
+            tileImage.color = UiPalette.Honey;
+            tileImage.raycastTarget = false;
+            Size(tile.gameObject, 46, 46);
+            RectTransform iconRect = Rect("Icon", tile);
+            iconRect.anchorMin = iconRect.anchorMax = new Vector2(0.5f, 0.5f);
+            iconRect.sizeDelta = new Vector2(28 * Px, 28 * Px);
+            Image icon = iconRect.gameObject.AddComponent<Image>();
+            icon.color = UiPalette.Walnut;
+            icon.raycastTarget = false;
+
+            RectTransform texts = Rect("Texts", card);
+            var column = texts.gameObject.AddComponent<VerticalLayoutGroup>();
+            column.childControlWidth = column.childControlHeight = true;
+            column.childForceExpandWidth = column.childForceExpandHeight = false;
+            TMP_Text tag = Text("New", texts, "ՆՈՐ", 10.5f, UiPalette.Danger, "Black");
+            tag.alignment = TextAlignmentOptions.Left;
+            tag.characterSpacing = 14;
+            tag.gameObject.AddComponent<LocalizedTmpText>().SetKey("un.new");
+            TMP_Text title = Text("Title", texts, "", 16, UiPalette.Walnut, "Black");
+            title.alignment = TextAlignmentOptions.Left;
+            TMP_Text subtitle = Text("Subtitle", texts, "", 12.5f, new Color(43 / 255f, 29 / 255f, 20 / 255f, 0.75f), "Bold");
+            subtitle.alignment = TextAlignmentOptions.Left;
+            // .unlock max-width: calc(100% - 32px) minus padding (10 + 18), tile 46 and gap 12
+            Wrap(subtitle, safe, (32 + 28 + 46 + 12) * Px, null);
+            Wrap(title, safe, (32 + 28 + 46 + 12) * Px, null);
+
+            var icons = new List<UnlockCardView.Icon>
+            {
+                // prototype UN_ICON paths (stroke 2)
+                new UnlockCardView.Icon { id = "fac", sprite = TextureFactory.LineIcon("un_fac", 2f,
+                    TextureFactory.Closed(3, 21, 3, 10, 9, 13, 9, 10, 15, 13, 15, 6, 19, 6, 19, 21),
+                    TextureFactory.Poly(7, 17, 9, 17), TextureFactory.Poly(13, 17, 15, 17)) },
+                new UnlockCardView.Icon { id = "reg", sprite = TextureFactory.LineIcon("un_reg", 2f,
+                    TextureFactory.RoundRect(3, 9, 18, 10, 2), TextureFactory.Poly(7, 9, 7, 5, 17, 5, 17, 9), TextureFactory.Poly(12, 12, 12, 16)) },
+                new UnlockCardView.Icon { id = "saw", sprite = TextureFactory.LineIcon("un_saw", 2f,
+                    TextureFactory.Circle(12, 12, 7), TextureFactory.Circle(12, 12, 2), TextureFactory.Poly(12, 3, 12, 5),
+                    TextureFactory.Poly(12, 19, 12, 21), TextureFactory.Poly(3, 12, 5, 12), TextureFactory.Poly(19, 12, 21, 12)) },
+                new UnlockCardView.Icon { id = "house", sprite = TextureFactory.LineIcon("un_house", 2f,
+                    TextureFactory.Closed(3, 11, 12, 4, 21, 11, 21, 20, 3, 20), TextureFactory.Poly(9, 20, 9, 14, 15, 14, 15, 20)) },
+            };
+            root.gameObject.AddComponent<UnlockCardView>().Setup(card, group, icon, title, subtitle, icons);
         }
 
         /// <summary>Bubble icons from the prototype SVGs: one per product, the cash note and the angry face.</summary>

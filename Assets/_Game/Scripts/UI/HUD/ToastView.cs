@@ -38,19 +38,19 @@ namespace FF.UI.HUD
         void OnEnable()
         {
             GameEvents.LevelUp += ShowLevel;
-            GameEvents.Toast += ShowKeys;
+            GameEvents.Toast += ShowText;
         }
 
         void OnDisable()
         {
             GameEvents.LevelUp -= ShowLevel;
-            GameEvents.Toast -= ShowKeys;
+            GameEvents.Toast -= ShowText;
         }
 
-        void ShowKeys(string titleKey, string subtitleKey)
+        void ShowText(string titleText, string subtitleText)
         {
-            title.SetText(LocalizationSettings.StringDatabase.GetLocalizedString(Table, titleKey));
-            subtitle.SetText(string.IsNullOrEmpty(subtitleKey) ? "" : LocalizationSettings.StringDatabase.GetLocalizedString(Table, subtitleKey));
+            title.SetText(titleText);
+            subtitle.SetText(subtitleText ?? "");
             Pop();
         }
 

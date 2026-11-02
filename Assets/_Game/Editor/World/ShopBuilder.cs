@@ -6,6 +6,7 @@ using FF.Editor.Characters;
 using FF.Gameplay.Pads;
 using FF.Gameplay.Shop;
 using FF.Gameplay.Tutorial;
+using FF.Gameplay.Unlocks;
 using FF.Gameplay.World;
 using FF.Gameplay.Zones;
 using TMPro;
@@ -64,17 +65,56 @@ namespace FF.Editor.World
             }
 
             Transform padsRoot = FreshRoot(world, PadsRootName);
-            PadDef saw2Buy = db.Pad(PadRewards.Sawmill2BuyPad);
-            if (saw2Buy != null) result.Pads.Add(ctx.Pad(padsRoot, saw2Buy, WorldStateSnapshot.Sawmill2Id, true));
+            AddPad(result, ctx, padsRoot, db.Pad(PadRewards.Sawmill2BuyPad), PadRule.BuyOwner, WorldStateSnapshot.Sawmill2Id);
             foreach (string machine in MachineIds(db))
             foreach (string suffix in new[] { "_speed", "_qty" })
-            {
-                PadDef def = db.Pad(machine + suffix);
-                if (def != null) result.Pads.Add(ctx.Pad(padsRoot, def, machine, false));
-            }
+                AddPad(result, ctx, padsRoot, db.Pad(machine + suffix), PadRule.OwnerOwned, machine);
+            // factory buy pads of the main shop's products (Sink / Materials come with plumbing in M8)
+            foreach (ProductDef p in db.products)
+                if (p.factoryCost > 0 && p.sellsIn == ShopKind.Main)
+                    AddPad(result, ctx, padsRoot, db.Pad(p.id + "_buy"), PadRule.BuyOwner, p.id);
+            AddPad(result, ctx, padsRoot, db.Pad(WorldStateSync.ShopPadId), PadRule.Always, null);
+            UpgradePad reg = AddPad(result, ctx, padsRoot, db.Pad(WorldStateSync.RegisterPadId), PadRule.Register, null);
+            if (reg != null)
+                reg.gameObject.AddComponent<RegisterPadPlacer>().Setup(result.Registers.GetRange(0, main.registersX.Length));
+
+            BuildLockedLabels(world, db);
 
             Debug.Log($"[FF] Shop built: {result.Shelves.Count} shelves, {result.Registers.Count} registers, {result.Pads.Count} pads.");
             return result;
+        }
+
+        static UpgradePad AddPad(Result result, Context ctx, Transform root, PadDef def, PadRule rule, string owner)
+        {
+            if (def == null) return null;
+            UpgradePad pad = ctx.Pad(root, def, rule, owner);
+            result.Pads.Add(pad);
+            return pad;
+        }
+
+        /// <summary>
+        /// Prototype <c>addLabel(…, 'locked')</c> chips: each factory lot until its level (lk.lv), Sawmill 2's lot until
+        /// bought, and "Dream house / Soon" over the dream plot.
+        /// </summary>
+        static void BuildLockedLabels(Transform world, GameDatabase db)
+        {
+            Transform root = FreshRoot(world, "LockedLabels");
+            WorldLayout w = db.world;
+            foreach (ProductDef p in db.products)
+                if (p.factoryCost > 0 && p.sellsIn == ShopKind.Main)
+                    Label(root, "Lock_" + p.id, LockedLabel.Kind.FactoryLevel, p.id, null,
+                        new Vector3(p.factoryX, 2.4f, w.factories.RowZ(p.factoryRow) + 1f));
+            Vector2 saw2 = w.sawmill2.building;
+            Label(root, "Lock_saw2", LockedLabel.Kind.NotOwned, WorldStateSnapshot.Sawmill2Id, "sign.saw2", new Vector3(saw2.x, 2.2f, saw2.y + 0.5f));
+            Label(root, "DreamSoon", LockedLabel.Kind.Fixed, null, "dream.chip", w.dreamHouse.soonChip);
+        }
+
+        static void Label(Transform root, string name, LockedLabel.Kind kind, string owner, string key, Vector3 protoPos)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(root, false);
+            go.transform.position = ProtoCoords.ToUnity(protoPos.x, protoPos.y, protoPos.z);
+            go.AddComponent<LockedLabel>().Setup(kind, owner, key);
         }
 
         static IEnumerable<string> MachineIds(GameDatabase db)
@@ -132,7 +172,7 @@ namespace FF.Editor.World
         // ---------- tutorial arrow ----------
 
         /// <summary>Prototype arrow: ConeGeometry(.34, .7, 4), honey, unlit, pointing down.</summary>
-        public static TutorialArrow BuildTutorialArrow(Transform parent, TutorialService service)
+        public static TutorialArrow BuildTutorialArrow(Transform parent, TutorialService service, UnlockService unlocks)
         {
             Transform old = parent.Find("TutorialArrow");
             if (old != null) Object.DestroyImmediate(old.gameObject);
@@ -147,7 +187,7 @@ namespace FF.Editor.World
             r.sharedMaterial = MaterialPaletteEditor.Get(Blockout.Hex(Honey), true);
             r.shadowCastingMode = ShadowCastingMode.Off;
             var arrow = go.AddComponent<TutorialArrow>();
-            arrow.Setup(service, cone);
+            arrow.Setup(service, unlocks, cone);
             return arrow;
         }
 
@@ -205,8 +245,7 @@ namespace FF.Editor.World
                 return register;
             }
 
-            /// <param name="whileNotOwned">Buy pad: visible until the owner is bought.</param>
-            public UpgradePad Pad(Transform root, PadDef def, string owner, bool whileNotOwned)
+            public UpgradePad Pad(Transform root, PadDef def, PadRule rule, string owner)
             {
                 float size = _db.world.production.padSize;
                 var go = new GameObject("Pad_" + def.id);
@@ -224,7 +263,7 @@ namespace FF.Editor.World
                     new Vector2(size * 216f / 256f, size * 0.4f), size * (128f - 180f) / 256f, size * 6f);
 
                 var pad = go.AddComponent<UpgradePad>();
-                pad.Setup(def, owner, whileNotOwned, visual, fill, price);
+                pad.Setup(def, rule, owner, visual, fill, price);
                 return pad;
             }
         }

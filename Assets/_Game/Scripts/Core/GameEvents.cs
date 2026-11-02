@@ -31,10 +31,15 @@ namespace FF.Core
         public static event Action<int> QuestChanged;
         /// <summary>Floating world text such as "+$430" (prototype <c>floatText</c>).</summary>
         public static event Action<Vector3, string> FloatText;
-        /// <summary>Centre toast with a localization key for the title and the subtitle (prototype <c>toast</c>).</summary>
+        /// <summary>Centre toast with an already localized title and subtitle (prototype <c>toast</c>).</summary>
         public static event Action<string, string> Toast;
         /// <summary>An Upgrades-panel item was bought: id and its new level.</summary>
         public static event Action<string, int> UpgradeBought;
+        /// <summary>Something worth saving changed that has no event of its own (e.g. an unlock card was marked seen).</summary>
+        public static event Action ProgressChanged;
+        /// <summary>An unlock card appears: icon id, title, subtitle (prototype <c>updUnlock</c>).</summary>
+        public static event Action<string, string, string> UnlockCardShown;
+        public static event Action UnlockCardHidden;
 
         public static void RaiseMoneyChanged(long money, bool bump) => MoneyChanged?.Invoke(money, bump);
         public static void RaiseLevelUp(int level) => LevelUp?.Invoke(level);
@@ -48,8 +53,11 @@ namespace FF.Core
         public static void RaiseCashCollected() => CashCollected?.Invoke();
         public static void RaiseQuestChanged(int step) => QuestChanged?.Invoke(step);
         public static void RaiseFloatText(Vector3 position, string text) => FloatText?.Invoke(position, text);
-        public static void RaiseToast(string titleKey, string subtitleKey) => Toast?.Invoke(titleKey, subtitleKey);
+        public static void RaiseToast(string title, string subtitle) => Toast?.Invoke(title, subtitle);
         public static void RaiseUpgradeBought(string id, int level) => UpgradeBought?.Invoke(id, level);
+        public static void RaiseProgressChanged() => ProgressChanged?.Invoke();
+        public static void RaiseUnlockCardShown(string icon, string title, string subtitle) => UnlockCardShown?.Invoke(icon, title, subtitle);
+        public static void RaiseUnlockCardHidden() => UnlockCardHidden?.Invoke();
 
         /// <summary>Drops all subscribers (domain-reload-free Play Mode and tests).</summary>
         public static void Reset()
@@ -68,6 +76,9 @@ namespace FF.Core
             FloatText = null;
             Toast = null;
             UpgradeBought = null;
+            ProgressChanged = null;
+            UnlockCardShown = null;
+            UnlockCardHidden = null;
         }
     }
 }

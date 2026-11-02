@@ -36,7 +36,7 @@ namespace FF.Gameplay.Shop
             {
                 if (index == FirstAnnexIndex) return _state.OwnsPlumbing;
                 if (index > FirstAnnexIndex) return _state.OwnsPlumbing && _levels.GetLevel("reg_annex") > 0;
-                return index < 1 + Mathf.Min(_levels.GetLevel("reg"), _levels.GetLevel("shop"));
+                return index < WorldStateSync.MainRegisters(_levels.GetLevel(WorldStateSync.RegisterPadId), _levels.GetLevel(WorldStateSync.ShopPadId));
             }
         }
 
