@@ -5,8 +5,16 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
+### Next: M6 — 2026-11-02
+- [ ] Write the M6 plan from `Design/docs/04_IMPLEMENTATION_PLAN.md` and get the user's approval (no code before that)
+
+Notes:
+- Open question to user: change "Communication" rule to "reply in the language of the user's message (Armenian or Russian)"? The user writes Russian; replies are in Russian until decided.
+
+## Done
+
 ### M5 — Product line expansion, shop growth, unlock cards, save — 2026-11-02 (branch `m5-expansion`)
-Status: **In progress** — implemented and checked; waiting for the user's play-test (step K).
+Result: factory buy pads + lock chips, shop expansion, register pads (6 registers), unlock cards with guide arrow, versioned save/autosave, dev panel; 545 tests green; user play-test OK 2026-11-02; merged into main.
 Goal (04_IMPLEMENTATION_PLAN): from a fresh save you can reach Lv 35 and own all furniture factories; restart restores everything.
 Prototype refs: factory buy pads + lock chips (~935–941, `ownFactory` ~1015), `shopW / layoutShop / refreshBlocks` (~456, 1022–1035),
 shop pad + `shopUnlockText` (~973, 1021), register pad + `placeRegPad` (~970–972), `notify / checkUnlocks / updUnlock / UN_ICON`
@@ -24,7 +32,7 @@ CSS `.unlock` (~106–114), `.chip.locked` (~71).
 - [x] H. Editor menu `FF/Delete Save` (new game while testing)
 - [x] I. EditMode tests (545/545 green): pad visibility rules, shop wall x / blockers per level, register slot + active rule, unlock rules (which cards, once only), save round-trip (every field), version / broken-file handling, owned factories after load
 - [x] J. Play Mode check: dev +25 Lv → card "Sofa factory · $19K"; bought Sofa $18.75K, Wardrobe $75K, Table $187.5K, Kitchen $500K (partial payment kept) — back row Sofas / Tables / Kitchens; shop Lv 5 (wall x 46) + 5 register pads → 6 registers; stop + start Play → level, money, owned, shop, registers, seen cards, language (ru) and the cap upgrade restored; new game shows "Wardrobes / Opens at Lv 12"; Console clean except Unity IAP's own services-token error
-- [ ] K. Commit `M5: factory purchases, shop growth, unlock cards, save`, push, user play-test, PR → main
+- [x] K. Commit `M5: factory purchases, shop growth, unlock cards, save` (984e6bf), push, user play-test OK, PR → main
 
 Notes:
 - Tests through the Pipeline CLI need the Editor ticking when it is not focused: `unity command editor set_auto_tick --enable true` (otherwise the run times out after "Running N tests").
@@ -39,8 +47,6 @@ Decisions (approved by the user):
 
 Notes:
 - Open question to user: change "Communication" rule to "reply in the language of the user's message (Armenian or Russian)"? The user writes Russian; replies are in Russian until decided.
-
-## Done
 
 ### Fix: Android build output got committed — 2026-11-01 (branch `chore/untrack-build-artifacts`)
 Cause: the user's Android test build wrote `first.apk`, `first_BackUpThisFolder_ButDontShipItWithYourGame/` (IL2CPP backup,
