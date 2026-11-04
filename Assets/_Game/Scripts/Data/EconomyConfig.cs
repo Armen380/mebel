@@ -163,10 +163,38 @@ namespace FF.Data
         public float robotStarvingBonus = 1.6f;
         public float robotDistanceDivisor = 60f;
         public float robotMinScore = 0.15f;
+        [Tooltip("Truck job: base + fill·(n / order) + full output bonus − busy penalty.")]
+        public float robotTruckBase = 1.1f;
+        public float robotTruckFillWeight = 0.8f;
 
-        [Header("Delivery")]
+        [Header("Delivery (prototype updTrucks)")]
         public int truckOrderSize = 8;
         public float truckAwaySeconds = 10f;
+        [Tooltip("Arrival speed = clamp((bayX − x)·factor, min, max): the truck slows down toward its bay.")]
+        public float truckArriveSpeedFactor = 1.6f;
+        public float truckArriveMinSpeed = 3f;
+        public float truckMaxSpeed = 18f;
+        [Tooltip("Sideways speed between the lane and the bay (park / unpark).")]
+        public float truckParkSpeed = 3f;
+        public float truckAcceleration = 9f;
+        [Tooltip("Seconds a full truck waits at the bay before it leaves.")]
+        public float truckFullWaitSeconds = 0.6f;
+        [Tooltip("Wheel spin, radians per metre travelled.")]
+        public float truckWheelSpin = 2.6f;
+
+        [Header("Car park (prototype updCars / lotSlots)")]
+        [Tooltip("First car after the scene starts (prototype carT = 3).")]
+        public float carFirstSpawnSeconds = 3f;
+        public float carSpawnMinSeconds = 6f;
+        public float carSpawnMaxSeconds = 11f;
+        public int carSlotsBase = 4;
+        public int carSlotsPerShopLevel = 1;
+        public int carSlotsMax = 8;
+        public float carRoadSpeed = 10f;
+        public float carLotSpeed = 3.4f;
+        public float carTurnRate = 8f;
+        [Tooltip("Wheel spin, radians per metre travelled.")]
+        public float carWheelSpin = 3f;
 
         [Header("Resource nodes")]
         public float treeRegrowSeconds = 9f;
@@ -198,6 +226,12 @@ namespace FF.Data
             JsMath.RoundToLong(baseCost * econCost * Math.Pow(multiplier, level) / 50) * 50;
 
         public long TruckItemPayout(long salePrice) => JsMath.RoundToLong(salePrice * truckMultiplier);
+
+        /// <summary>Truck bays in use: 1 + parking pad level (prototype <c>b.active</c>), at most <paramref name="bays"/>.</summary>
+        public static int ActiveBays(int parkingLevel, int bays) => Math.Min(bays, 1 + parkingLevel);
+
+        /// <summary>Car-park slots open to cars: min(8, 4 + shopLv) (prototype <c>lotSlots</c>).</summary>
+        public int CarSlots(int shopLevel) => Math.Min(carSlotsMax, carSlotsBase + carSlotsPerShopLevel * shopLevel);
 
         public float PlayerSpeed(int speedLevel) => playerBaseSpeed * (1 + playerSpeedPerLevel * speedLevel);
 

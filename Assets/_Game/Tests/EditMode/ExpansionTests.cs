@@ -136,13 +136,13 @@ namespace FF.Tests
             state.OwnedProducts.Add("sofa");
             state.OwnsSawmill2 = true;
 
-            string json = SaveSerializer.ToJson(SaveMapper.Capture(progress, state, "ru"));
+            string json = SaveSerializer.ToJson(SaveMapper.Capture(progress, state, null, "ru"));
             SaveData data = SaveSerializer.FromJson(json);
             Assert.AreEqual("ru", data.lang);
 
             var loaded = new GameProgress(_db.economy);
             WorldStateSnapshot loadedState = WorldStateSnapshot.NewGame(_db.products);
-            SaveMapper.Apply(data, loaded, loadedState);
+            SaveMapper.Apply(data, loaded, loadedState, null);
 
             Assert.AreEqual(123_000, loaded.Money);
             Assert.AreEqual(123_456, loaded.TotalEarned);

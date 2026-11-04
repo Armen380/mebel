@@ -3,6 +3,7 @@ using FF.Core;
 using FF.Data;
 using FF.Editor.Art;
 using FF.Editor.Characters;
+using FF.Gameplay.Delivery;
 using FF.Gameplay.Pads;
 using FF.Gameplay.Shop;
 using FF.Gameplay.Tutorial;
@@ -17,8 +18,9 @@ using UnityEngine.Rendering;
 namespace FF.Editor.World
 {
     /// <summary>
-    /// Builds World/Shop (shelves + shelf zones, registers + cash zones), World/Pads (sawmill / factory speed and
-    /// quantity pads), the customer variant prefabs and the tutorial arrow. Prototype ~941–960, addPad/drawPad.
+    /// Builds World/Shop (shelves + shelf zones, registers + cash zones), World/Delivery (truck bays + dock zones),
+    /// World/Pads (sawmill / factory speed and quantity pads, shop, register, truck, parking), the customer variant prefabs
+    /// and the tutorial arrow. Prototype ~941–1000, addPad/drawPad.
     /// </summary>
     public static class ShopBuilder
     {
@@ -43,6 +45,8 @@ namespace FF.Editor.World
             public readonly List<Shelf> Shelves = new List<Shelf>();
             public readonly List<Register> Registers = new List<Register>();
             public readonly List<UpgradePad> Pads = new List<UpgradePad>();
+            public readonly List<TruckBay> Bays = new List<TruckBay>();
+            public readonly List<Zone> Docks = new List<Zone>();
         }
 
         public static Result Build(GameDatabase db)
@@ -64,6 +68,14 @@ namespace FF.Editor.World
                 result.Registers.Add(ctx.Register(root, index, annex[i], main.stallCenterZ, blockout?.Find($"MaterialsShop/Registers/Register{index}"), result.Zones));
             }
 
+            Transform delivery = FreshRoot(world, "Delivery");
+            for (int i = 0; i < db.world.delivery.baysX.Length; i++)
+            {
+                TruckBay bay = ctx.Bay(delivery, i, blockout?.Find($"Ground/DeliveryYard/Bay{i}"), result.Zones);
+                result.Bays.Add(bay);
+                result.Docks.Add(bay.Dock);
+            }
+
             Transform padsRoot = FreshRoot(world, PadsRootName);
             AddPad(result, ctx, padsRoot, db.Pad(PadRewards.Sawmill2BuyPad), PadRule.BuyOwner, WorldStateSnapshot.Sawmill2Id);
             foreach (string machine in MachineIds(db))
@@ -77,10 +89,12 @@ namespace FF.Editor.World
             UpgradePad reg = AddPad(result, ctx, padsRoot, db.Pad(WorldStateSync.RegisterPadId), PadRule.Register, null);
             if (reg != null)
                 reg.gameObject.AddComponent<RegisterPadPlacer>().Setup(result.Registers.GetRange(0, main.registersX.Length));
+            AddPad(result, ctx, padsRoot, db.Pad(DeliveryDirector.TruckPadId), PadRule.Always, null);
+            AddPad(result, ctx, padsRoot, db.Pad(TruckBay.ParkingPadId), PadRule.Always, null);
 
             BuildLockedLabels(world, db);
 
-            Debug.Log($"[FF] Shop built: {result.Shelves.Count} shelves, {result.Registers.Count} registers, {result.Pads.Count} pads.");
+            Debug.Log($"[FF] Shop built: {result.Shelves.Count} shelves, {result.Registers.Count} registers, {result.Bays.Count} truck bays, {result.Pads.Count} pads.");
             return result;
         }
 
@@ -243,6 +257,24 @@ namespace FF.Editor.World
                 var register = go.AddComponent<Register>();
                 register.Setup(index, zone, stall != null ? stall.gameObject : null);
                 return register;
+            }
+
+            /// <summary>Prototype bay: dock zone "TRUCK" (drop marker, any furniture) in front of the bay asphalt.</summary>
+            public TruckBay Bay(Transform root, int index, Transform visual, List<Zone> zones)
+            {
+                WorldLayout.DeliverySettings d = _db.world.delivery;
+                var go = new GameObject("Bay" + index);
+                go.transform.SetParent(root, false);
+                go.transform.position = ProtoCoords.ToUnity(d.baysX[index], d.truckParkZ);
+                if (visual == null) Debug.LogWarning($"[FF] Truck bay {index} not found; build the world blockout first.");
+
+                Zone zone = _zones.Zone("dock" + index, go.transform, ZoneKind.Drop, ItemType.None, new Vector2(d.baysX[index], d.dockZoneZ),
+                    Vector3.zero, "z.truck", null, _dropMaterial);
+                zone.SetupAnyProduct();
+                zones.Add(zone);
+                var bay = go.AddComponent<TruckBay>();
+                bay.Setup(index, zone, visual != null ? visual.gameObject : null);
+                return bay;
             }
 
             public UpgradePad Pad(Transform root, PadDef def, PadRule rule, string owner)

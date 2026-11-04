@@ -1,5 +1,6 @@
 using FF.Core;
 using FF.Data;
+using FF.Gameplay.Delivery;
 using FF.Gameplay.Effects;
 using FF.Gameplay.Items;
 using FF.Gameplay.Nodes;
@@ -45,6 +46,7 @@ namespace FF.Gameplay.Bootstrap
             Services.Register(collision);
             Services.Register(new Ownership(state, collision));
             Services.Register(new WorldTagRegistry());
+            Services.Register(new DeliveryCargo());
             Services.Register(itemPool);
             Services.Register(itemFlights);
             Services.Register(zones);

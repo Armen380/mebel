@@ -221,6 +221,15 @@ MonoBehaviour:
     dockZoneZ: 10.1
     truckPad: {x: 1.2, y: 10.4}
     parkingPad: {x: -1.4, y: 7.6}
+    truckStartX: -80
+    truckDespawnX: 80
+    truckBed:
+      cols: 2
+      rows: 4
+      spacing: {x: 0.66, y: 0.64}
+      offset: {x: 0, y: 0.84, z: -0.62}
+    bayTagHeight: 1.4
+    idleDockOpacity: 0.4
   road:
     z:
       min: 11.2
@@ -244,6 +253,10 @@ MonoBehaviour:
     aisleZ: 19.6
     slotZ: 22.6
     drivewayX: 33
+    carSpawnX: 140
+    roadSpeedMaxZ: 16.4
+    driverSideOffset: 1.15
+    sidewalkZ: 18
   customerPaths:
     spawn: {x: 34, y: 17.5}
     exit: {x: 42, y: 17.5}

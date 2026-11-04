@@ -17,6 +17,12 @@ namespace FF.Data
         Material,
     }
 
+    public static class ItemTypes
+    {
+        /// <summary>Furniture and building materials (prototype <c>isProduct</c>): everything a truck takes.</summary>
+        public static bool IsProduct(ItemType type) => type >= ItemType.Chair;
+    }
+
     public enum ShopKind
     {
         Main,

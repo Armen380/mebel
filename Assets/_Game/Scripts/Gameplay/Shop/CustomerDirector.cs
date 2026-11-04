@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using FF.Core;
 using FF.Data;
+using FF.Gameplay.CarPark;
 using FF.Gameplay.Items;
 using FF.Gameplay.Progress;
 using FF.Gameplay.World;
@@ -32,6 +33,7 @@ namespace FF.Gameplay.Shop
         readonly List<Stack<Customer>> _free = new List<Stack<Customer>>();
         readonly List<ProductDef> _ownedScratch = new List<ProductDef>(8);
         readonly List<int> _candidateScratch = new List<int>(8);
+        readonly List<Vector2> _wayScratch = new List<Vector2>(4);
         int[] _shelfQueue, _registerQueue, _registerLoad;
 
         GameDatabase _db;
@@ -110,11 +112,12 @@ namespace FF.Gameplay.Shop
             for (int i = 0; i < _customers.Count; i++) _customers[i].Animator.Carrying = _customers[i].Hands.Count > 0;
         }
 
+        /// <summary>Prototype: customers in the shop that came on foot (car customers have their own limit, the car park).</summary>
         int WalkIns()
         {
             int n = 0;
             for (int i = 0; i < _customers.Count; i++)
-                if (_customers[i].State != Customer.Phase.Out) n++;
+                if (_customers[i].State != Customer.Phase.Out && _customers[i].Ride == null) n++;
             return n;
         }
 
@@ -233,28 +236,51 @@ namespace FF.Gameplay.Shop
             c.ClearWay();
             c.AddWaypoint(ProtoCoords.ToUnity(doorIn));
             c.AddWaypoint(ProtoCoords.ToUnity(doorOut));
-            c.AddWaypoint(ProtoCoords.ToUnity(_world.customerPaths.exit));
+            if (c.Ride == null)
+            {
+                c.AddWaypoint(ProtoCoords.ToUnity(_world.customerPaths.exit));
+                return;
+            }
+            // prototype leave(c) with a car: back over the zebra to the car
+            _wayScratch.Clear();
+            CarRoute.WalkToCar(_world.carPark, c.Ride.DriverDoor, doorOut.x, _wayScratch);
+            for (int i = 0; i < _wayScratch.Count; i++) c.AddWaypoint(ProtoCoords.ToUnity(_wayScratch[i]));
         }
 
-        void Spawn()
+        void Spawn() => Spawn(null);
+
+        /// <summary>Prototype <c>spawnCustomer(false, car)</c>: the driver of a parked car goes shopping.</summary>
+        /// <returns>False when nobody can come (nothing owned): the car should leave again.</returns>
+        public bool SpawnFromCar(ICarRide ride) => Spawn(ride) != null;
+
+        Customer Spawn(ICarRide ride)
         {
             _ownedScratch.Clear();
             foreach (Shelf shelf in shelves)
                 if (_state.Owns(shelf.Product.id)) _ownedScratch.Add(shelf.Product);
-            if (_ownedScratch.Count == 0 || variants.Count == 0) return;
+            if (_ownedScratch.Count == 0 || variants.Count == 0) return null;
 
             ProductDef want = _ownedScratch[Random.Range(0, _ownedScratch.Count)];
             Customer c = Take(Random.Range(0, variants.Count));
             c.Begin(want, ShelfOf(want), _economy.CustomerPatience(_levels.GetLevel(ConsultantId)));
-            c.transform.position = ProtoCoords.ToUnity(_world.customerPaths.spawn);
+            c.Ride = ride;
 
             Doors(want, out Vector2 doorOut, out Vector2 doorIn);
+            if (ride == null) c.transform.position = ProtoCoords.ToUnity(_world.customerPaths.spawn);
+            else
+            {
+                c.transform.position = ProtoCoords.ToUnity(ride.DriverDoor);
+                _wayScratch.Clear();
+                CarRoute.WalkToShop(_world.carPark, ride.DriverDoor, doorOut.x, _wayScratch);
+                for (int i = 0; i < _wayScratch.Count; i++) c.AddWaypoint(ProtoCoords.ToUnity(_wayScratch[i]));
+            }
             WorldLayout.MainShopSettings shop = _world.mainShop;
             Vector2 inside = doorIn + new Vector2((Random.value - 0.5f) * shop.doorJitter, shop.doorInsideOffset);
             c.AddWaypoint(ProtoCoords.ToUnity(doorOut));
             c.AddWaypoint(ProtoCoords.ToUnity(inside));
             _customers.Add(c);
             _tags?.Register(c);
+            return c;
         }
 
         void Doors(ProductDef want, out Vector2 doorOut, out Vector2 doorIn)
@@ -283,6 +309,9 @@ namespace FF.Gameplay.Shop
         {
             Customer c = _customers[index];
             _customers.RemoveAt(index);
+            // prototype: a car customer reaching the car lets it drive away
+            c.Ride?.DriverReturned();
+            c.Ride = null;
             _tags?.Unregister(c);
             while (c.Hands.Settled > 0) _items.Release(c.Hands.Pop());
             c.gameObject.SetActive(false);

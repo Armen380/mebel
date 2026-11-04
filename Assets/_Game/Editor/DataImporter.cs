@@ -58,6 +58,9 @@ namespace FF.Editor
             e.truckMultiplier = (double)j["ECON"]["truck"];
             e.truckOrderSize = (int)j["truckOrderSize"];
             e.truckAwaySeconds = (float)j["truckAwaySeconds"];
+            JObject cars = (JObject)j["carPark"];
+            e.carRoadSpeed = (float)cars["roadSpeed"];
+            e.carLotSpeed = (float)cars["lotSpeed"];
 
             JObject player = (JObject)j["player"];
             e.itemsPerChop = (int)player["itemsPerChop"];

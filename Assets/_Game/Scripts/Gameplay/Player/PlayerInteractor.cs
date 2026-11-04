@@ -106,7 +106,7 @@ namespace FF.Gameplay.Player
                 Zone z = zones[i];
                 if (!z.IsActive || ZoneRegistry.Distance(p, z.Position) > z.Radius) continue;
 
-                if (z.Kind == ZoneKind.Drop && ZoneTransferRules.CanDrop(hands, z.ItemType, z.Stack))
+                if (z.Kind == ZoneKind.Drop && ZoneTransferRules.CanDrop(hands, z))
                 {
                     _flights.FlyToStack(hands.Pop(), z.Stack, _economy.transferFlightSeconds, _economy.flightArc);
                     GameEvents.RaiseZoneDropped(z.Id);
