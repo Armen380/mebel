@@ -5,10 +5,32 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
-Nothing in progress. Next: M7 (delivery & car park) — post the plan and wait for the user's approval.
+### M7 — Delivery & car park — 2026-11-02 (branch `m7-delivery`)
+Status: **In progress** — plan approved by the user 2026-11-04.
+Goal (04_IMPLEMENTATION_PLAN): truck bays, truck state machine, dock zones, payout pop next to the balance; car park, cars,
+car customers crossing the zebra. Done when trucks and cars loop indefinitely without getting stuck (soak test 30 min).
+Prototype refs: `LANE/PARK/ORDER/BAYZ` (645), bays + truck/parking pads (987–1000), `makeTruck / updTrucks` (1405–1432),
+bay chip (1506–1511), `moneyPop` + `.mpop` (1457, css 32–34), `LOT / buildLot / makeCar / spawnCar / carLeave / updCars` (824–866),
+car customer path in `spawnCustomer / leave` (1357–1365), car spawn timer (1376), `freeDock / goodsTarget` (1267–1269),
+robot truck job (1285–1286); spec §9 (car customers), §10; data: economy.json `truckOrderSize/truckAwaySeconds/carPark`,
+world_layout.json `delivery / road / carPark`, pads.json `truck / parking`.
 
-Notes:
-- Open question to user: change "Communication" rule to "reply in the language of the user's message (Armenian or Russian)"? The user writes Russian; replies are in Russian until decided.
+- [x] 0. Branch `m7-delivery` from main
+- [ ] A. Data: `DeliveryConfig` numbers (order 8, away 10 s, start x −80, despawn x > 80, in-speed clamp((bayX − x)·1.6, 3, 18), park/unpark 3 m/s, out accel 9 → 18 m/s, full-wait 0.6 s, bed pile 2×4 at 0.66 × 0.64) and car numbers (spawn 6–11 s, slots min(8, 4 + shopLv), road 10 / lot 3.4 m/s, heading lerp 8, spawn x 140, 8 colours) — from the JSON where it has them, prototype constants otherwise (noted as such)
+- [ ] B. Prefabs (low-poly like the prototype, pooled): Truck (`makeTruck`: dark chassis, red cab, windshield, wooden bed with sides, 4 rolling wheels, load anchor) and Car (`makeCar`: body, glass, roof, bumpers, glowing head / tail lights, 4 wheels; colour per spawn)
+- [ ] C. Bays and docks: 3 bays at x −4 / −9.2 / −14.4, bay i active when i < 1 + parking level (inactive bays hidden); dock zone "TRUCK" accepts any furniture and its pile is the parked truck's bed, open only while a truck is at the bay and has < 8; marker bright with a truck, dim without. `Zone` gets an "any product" accept mode and a swappable pile
+- [ ] D. Trucks (pure `TruckStateMachine`, tested): away (10 s) → in (lane 14.6 from x −80, slowing to the bay) → park (to z 12.3) → bay (load until 8, then 0.6 s) → unpark → out (accelerate east) → past x 80: payout Σ round(salePrice·1.4) + Σ XP, then away. One truck per bay; extra trucks wait. Truck pad (+1 truck, max 4) and Parking pad (+1 bay, max 2) work; trucks spawn from the pad level on load
+- [ ] E. Bay tag (prototype chip): "No truck" (bay 0, no trucks bought) / "Arriving…" / "n/8" / "Free · N s" / "Free"
+- [ ] F. Payout pop: small green chip with a truck icon to the right of the balance, "+$12K", slides in, holds, rises and fades in 2.2 s; several can overlap (pooled)
+- [ ] G. Workers: carriers send furniture to a free dock when its shelf is full (prototype `goodsTarget`); robots get the truck job (score 1.1 + 0.8·n/8 + (output > 80 % ? 1) − 0.9·other robots, tag "Truck") and drop leftovers dock-first; the M6 notes "truck jobs in M7" are closed
+- [ ] H. Cars (`CarDirector`): every 6–11 s, if a slot below min(8, 4 + shopLv) is free and a product is owned, a car comes from x 140 on the west lane (z 12.3) → driveway (33, 12.3) → aisle (33, 19.6) → (slotX, 19.6) → nose-in (slotX, 22.6); 10 m/s on the road, 3.4 in the lot. Parked → its driver walks (slotX + 1.15, 19.6) → (20, 18) → over the zebra to the shop door and shops as usual; leaving, walks back, gets in, the car reverses to the aisle, drives to (33, 14.6) and east off-screen, the slot frees. Car customers don't count toward the walk-in limit
+- [ ] I. EditMode tests: truck states and timings, payout with ×1.4 and XP, bay assignment / waiting trucks, dock accept rules, bay tag state, carrier and robot dock jobs, car-park slot count, car path points and speed rule, car customer way-points
+- [ ] J. Play Mode + soak: 30 min of game time (time scale ×4) with 4 trucks, 3 bays, robots, carriers and cars: a watchdog reports any truck or car stuck in one state (> 60 s, parked cars > patience + shopping time); Console without errors
+- [ ] K. Commit `M7: delivery and car park`, push, user play-test, PR → main
+
+Decisions (user, 2026-11-02):
+1. Truck loads on restart [save them — deviation from the prototype, which loses them]: the save gets the furniture on each docked truck (types in order); on load the truck stands at its bay with that load. Save version +1 with migration (older saves → empty trucks). Covered by a save round-trip test.
+
 
 ## Done
 
