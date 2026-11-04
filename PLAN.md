@@ -6,7 +6,7 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 ## In progress
 
 ### M7 — Delivery & car park — 2026-11-02 (branch `m7-delivery`)
-Status: **In progress** — plan approved by the user 2026-11-04.
+Status: **In progress** — implemented and checked; waiting for the user's play-test (step K).
 Goal (04_IMPLEMENTATION_PLAN): truck bays, truck state machine, dock zones, payout pop next to the balance; car park, cars,
 car customers crossing the zebra. Done when trucks and cars loop indefinitely without getting stuck (soak test 30 min).
 Prototype refs: `LANE/PARK/ORDER/BAYZ` (645), bays + truck/parking pads (987–1000), `makeTruck / updTrucks` (1405–1432),
@@ -25,7 +25,7 @@ world_layout.json `delivery / road / carPark`, pads.json `truck / parking`.
 - [x] G. Workers: carriers send furniture to a free dock when its shelf is full (prototype `goodsTarget`); robots get the truck job (score 1.1 + 0.8·n/8 + (output > 80 % ? 1) − 0.9·other robots, tag "Truck") and drop leftovers dock-first; the M6 notes "truck jobs in M7" are closed
 - [x] H. Cars (`CarDirector`): every 6–11 s, if a slot below min(8, 4 + shopLv) is free and a product is owned, a car comes from x 140 on the west lane (z 12.3) → driveway (33, 12.3) → aisle (33, 19.6) → (slotX, 19.6) → nose-in (slotX, 22.6); 10 m/s on the road, 3.4 in the lot. Parked → its driver walks (slotX + 1.15, 19.6) → (20, 18) → over the zebra to the shop door and shops as usual; leaving, walks back, gets in, the car reverses to the aisle, drives to (33, 14.6) and east off-screen, the slot frees. Car customers don't count toward the walk-in limit
 - [x] I. EditMode tests (580/580 green): truck states and timings, payout with ×1.4 and XP, bay assignment / waiting trucks, dock accept rules, bay tag state, carrier and robot dock jobs, car-park slot count, car path points and speed rule, car customer way-points
-- [ ] J. Play Mode + soak: 30 min of game time (time scale ×4) with 4 trucks, 3 bays, robots, carriers and cars: a watchdog reports any truck or car stuck in one state (> 60 s, parked cars > patience + shopping time); Console without errors
+- [x] J. Play Mode + soak: 30 min of game time (time scale ×4) with 4 trucks, 3 bays, robots, carriers and cars: a watchdog reports any truck or car stuck in one state (> 60 s, parked cars > patience + shopping time); Console without errors → done 2026-11-04: 2 046 s of game time at ×4 on the user's save (4 trucks, 3 bays, 3 robots, 4 carriers): 50 deliveries, every truck kept cycling (the 4th waits for a free bay), cars parked / shopped / left with max 18 s arriving and 92 s parked, 0 stuck vehicles, no errors (the user's save was backed up before and restored after)
 - [ ] K. Commit `M7: delivery and car park`, push, user play-test, PR → main
 
 Notes (implementation):
@@ -33,6 +33,8 @@ Notes (implementation):
 - Prototype quirks kept: trucks slide sideways between the lane and the bay; the bay chip says "Arriving…" while a full truck pulls out.
 - Save v4: `trucks` = item types per truck index; restored trucks stand at the first free open bay with their load; a truck keeps its entry until it has delivered, so quitting while it drives away pays later instead of losing the load.
 - Play Mode (user save, 4 trucks / 3 bays given in the session only): carriers and robots load trucks, the player can drop furniture on a dock, trucks cycle and pay ("+$4.8K" chip next to the balance), the 4th truck waits for a free bay; cars park, drivers shop and walk back over the zebra; save → restart restores each bed exactly.
+
+Follow-up (M9 performance): item pools of furniture are prewarmed with 4 each (M2 value; the builder keeps tuned values), so with all factories and trucks they grow at runtime ("Item pool 'Chair' ran dry" warnings) — size them for the full game.
 
 Decisions (user, 2026-11-02):
 1. Truck loads on restart [save them — deviation from the prototype, which loses them]: the save gets the furniture on each docked truck (types in order); on load the truck stands at its bay with that load. Save version +1 with migration (older saves → empty trucks). Covered by a save round-trip test.
