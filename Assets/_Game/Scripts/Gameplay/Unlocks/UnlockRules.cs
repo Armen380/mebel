@@ -11,6 +11,10 @@ namespace FF.Gameplay.Unlocks
         Sawmill2,
         DreamPlot,
         Staff,
+        /// <summary>A product that opened together with another one (prototype <c>un.with.s</c>).</summary>
+        FactoryWith,
+        Mines,
+        MaterialsShop,
     }
 
     /// <summary>One "NEW" card candidate; <see cref="Id"/> is what <c>S.seen</c> remembers.</summary>
@@ -30,23 +34,27 @@ namespace FF.Gameplay.Unlocks
     }
 
     /// <summary>
-    /// Prototype <c>checkUnlocks</c> for the features that exist so far: a factory the player can now buy, staff that the
-    /// shop level (or plumbing) opens, a new register slot, Sawmill 2 and the dream plot after the tutorial. Mines,
-    /// materials shop and skins join in M8 / M9.
+    /// Prototype <c>checkUnlocks</c> (in its order): a factory the player can now buy or one that opened with another,
+    /// staff that the shop level (or plumbing) opens, a new register slot, Sawmill 2, the mines and the materials shop with
+    /// plumbing, the dream plot after the tutorial. Skins join in M9.
     /// </summary>
     public static class UnlockRules
     {
         public const int MaxRegisterPads = 5;
 
-        /// <param name="hasBuyPad">Whether the factory's buy pad exists in the game yet (sink's comes in M8).</param>
+        /// <param name="hasBuyPad">Whether the factory's buy pad exists in the scene.</param>
         public static void Collect(IReadOnlyList<ProductDef> products, IReadOnlyList<UpgradeDef> upgrades, Func<string, bool> owns,
             Func<string, bool> hasBuyPad, int playerLevel, int registerLevel, int shopLevel, bool ownsPlumbing, bool tutorialDone,
             List<UnlockCard> into)
         {
             into.Clear();
             foreach (ProductDef p in products)
+            {
                 if (p.factoryCost > 0 && playerLevel >= p.unlockLevel && !owns(p.id) && hasBuyPad(p.id))
                     into.Add(new UnlockCard("fac_" + p.id, UnlockKind.Factory, p.id));
+                if (p.unlocksWith != null && owns(p.id))
+                    into.Add(new UnlockCard("fac_" + p.id, UnlockKind.FactoryWith, p.id));
+            }
             foreach (UpgradeDef u in upgrades)
                 if ((u.requiresShopLevel > 0 && shopLevel >= u.requiresShopLevel) || (u.requiresPlumbing && ownsPlumbing))
                     into.Add(new UnlockCard("staff_" + u.id, UnlockKind.Staff, u.id));
@@ -54,6 +62,11 @@ namespace FF.Gameplay.Unlocks
                 into.Add(new UnlockCard("reg_" + shopLevel, UnlockKind.Register));
             if (tutorialDone && !owns(World.WorldStateSnapshot.Sawmill2Id))
                 into.Add(new UnlockCard("saw2", UnlockKind.Sawmill2));
+            if (ownsPlumbing)
+            {
+                into.Add(new UnlockCard("mines", UnlockKind.Mines));
+                into.Add(new UnlockCard("matshop", UnlockKind.MaterialsShop));
+            }
             if (tutorialDone)
                 into.Add(new UnlockCard("dream", UnlockKind.DreamPlot));
         }

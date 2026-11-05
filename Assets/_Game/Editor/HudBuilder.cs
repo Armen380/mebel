@@ -595,6 +595,14 @@ namespace FF.Editor
                     // M5 20c.8-4 3.6-6 7-6s6.2 2 7 6
                     TextureFactory.Cubic(new Vector2(5, 20), new Vector2(5.8f, 16), new Vector2(8.6f, 14), new Vector2(12, 14)),
                     TextureFactory.Cubic(new Vector2(12, 14), new Vector2(15.4f, 14), new Vector2(18.2f, 16), new Vector2(19, 20))) },
+                new UnlockCardView.Icon { id = "mine", sprite = TextureFactory.LineIcon("un_mine", 2f,
+                    TextureFactory.Poly(4, 20, 13, 11),
+                    // M14 4c3 0 6 3 6 6l-4-2-2-4z
+                    TextureFactory.Cubic(new Vector2(14, 4), new Vector2(17, 4), new Vector2(20, 7), new Vector2(20, 10)),
+                    TextureFactory.Poly(20, 10, 16, 8, 14, 4)) },
+                new UnlockCardView.Icon { id = "shop", sprite = TextureFactory.LineIcon("un_shop", 2f,
+                    TextureFactory.Closed(4, 10, 20, 10, 19, 5, 5, 5), TextureFactory.Poly(5, 10, 5, 20, 19, 20, 19, 10),
+                    TextureFactory.Poly(10, 20, 10, 15, 14, 15, 14, 20)) },
                 new UnlockCardView.Icon { id = "house", sprite = TextureFactory.LineIcon("un_house", 2f,
                     TextureFactory.Closed(3, 11, 12, 4, 21, 11, 21, 20, 3, 20), TextureFactory.Poly(9, 20, 9, 14, 15, 14, 15, 20)) },
             };

@@ -81,14 +81,15 @@ namespace FF.Editor.World
             foreach (string machine in MachineIds(db))
             foreach (string suffix in new[] { "_speed", "_qty" })
                 AddPad(result, ctx, padsRoot, db.Pad(machine + suffix), PadRule.OwnerOwned, machine);
-            // factory buy pads of the main shop's products (Sink / Materials come with plumbing in M8)
+            // factory buy pads (Building materials has none: it opens with Plumbing)
             foreach (ProductDef p in db.products)
-                if (p.factoryCost > 0 && p.sellsIn == ShopKind.Main)
+                if (p.factoryCost > 0)
                     AddPad(result, ctx, padsRoot, db.Pad(p.id + "_buy"), PadRule.BuyOwner, p.id);
             AddPad(result, ctx, padsRoot, db.Pad(WorldStateSync.ShopPadId), PadRule.Always, null);
             UpgradePad reg = AddPad(result, ctx, padsRoot, db.Pad(WorldStateSync.RegisterPadId), PadRule.Register, null);
             if (reg != null)
                 reg.gameObject.AddComponent<RegisterPadPlacer>().Setup(result.Registers.GetRange(0, main.registersX.Length));
+            AddPad(result, ctx, padsRoot, db.Pad(WorldStateSync.AnnexRegisterPadId), PadRule.OwnerOwned, WorldStateSnapshot.PlumbingId);
             AddPad(result, ctx, padsRoot, db.Pad(DeliveryDirector.TruckPadId), PadRule.Always, null);
             AddPad(result, ctx, padsRoot, db.Pad(TruckBay.ParkingPadId), PadRule.Always, null);
 
@@ -107,7 +108,8 @@ namespace FF.Editor.World
         }
 
         /// <summary>
-        /// Prototype <c>addLabel(…, 'locked')</c> chips: each factory lot until its level (lk.lv), Sawmill 2's lot until
+        /// Prototype <c>addLabel(…, 'locked')</c> chips: each factory lot until its level (lk.lv), Building materials until
+        /// Plumbing is bought (lk.with), Sawmill 2's lot until
         /// bought, and "Dream house / Soon" over the dream plot.
         /// </summary>
         static void BuildLockedLabels(Transform world, GameDatabase db)
@@ -115,9 +117,11 @@ namespace FF.Editor.World
             Transform root = FreshRoot(world, "LockedLabels");
             WorldLayout w = db.world;
             foreach (ProductDef p in db.products)
-                if (p.factoryCost > 0 && p.sellsIn == ShopKind.Main)
-                    Label(root, "Lock_" + p.id, LockedLabel.Kind.FactoryLevel, p.id, null,
-                        new Vector3(p.factoryX, 2.4f, w.factories.RowZ(p.factoryRow) + 1f));
+            {
+                var at = new Vector3(p.factoryX, 2.4f, w.factories.RowZ(p.factoryRow) + 1f);
+                if (p.factoryCost > 0) Label(root, "Lock_" + p.id, LockedLabel.Kind.FactoryLevel, p.id, null, at);
+                else if (p.unlocksWith != null) Label(root, "Lock_" + p.id, LockedLabel.Kind.OpensWith, p.id, null, at);
+            }
             Vector2 saw2 = w.sawmill2.building;
             Label(root, "Lock_saw2", LockedLabel.Kind.NotOwned, WorldStateSnapshot.Sawmill2Id, "sign.saw2", new Vector3(saw2.x, 2.2f, saw2.y + 0.5f));
             Label(root, "DreamSoon", LockedLabel.Kind.Fixed, null, "dream.chip", w.dreamHouse.soonChip);

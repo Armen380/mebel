@@ -97,7 +97,7 @@ namespace FF.Tests
         {
             CollectionAssert.AreEquivalent(new[] { "fac_sofa" }, Ids(Cards(5, 0, 0, false)));
             CollectionAssert.AreEquivalent(new[] { "fac_wardrobe", "fac_table" }, Ids(Cards(22, 0, 0, false, "sofa")));
-            CollectionAssert.DoesNotContain(Ids(Cards(150, 0, 0, false)), "fac_sink", "sink buy pad comes in M8");
+            CollectionAssert.DoesNotContain(Ids(Cards(150, 0, 0, false)), "fac_sink", "no card without a buy pad in the scene");
         }
 
         [Test]

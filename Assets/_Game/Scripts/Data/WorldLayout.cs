@@ -162,6 +162,18 @@ namespace FF.Data
             public Vector2 carrierSpawn = new Vector2(-6f, -1.5f);
             public Vector2 shopStaffSpawn = new Vector2(20f, 8f);
             public Vector2 robotSpawn = new Vector2(2f, 5f);
+            [Tooltip("Miners and section carriers spawn here (prototype (44, −5)); miners idle here without plumbing.")]
+            public Vector2 sectionSpawn = new Vector2(44f, -5f);
+            public Vector2 sectionCashierSpawn = new Vector2(51.5f, 8f);
+            [Tooltip("Miner trips go through the gap between the Plumbing and Materials factories (prototype GAP_FRONT / GAP_BACK).")]
+            public Vector2 minerGapFront = new Vector2(44f, -6.2f);
+            public Vector2 minerGapBack = new Vector2(44f, -14.6f);
+            [Tooltip("Proto z: a miner north of this line is in the mines yard.")]
+            public float minesYardEdgeZ = -13.4f;
+            public Vector2 sectionCarrierRest = new Vector2(43.4f, -3.4f);
+            public float sectionCarrierRestStep = 1.2f;
+            public Vector2 sectionCashierIdle = new Vector2(47.6f, 8.4f);
+            public float sectionCashierIdleStep = 1.2f;
             [Tooltip("Carrier rest spots (prototype REST), used round-robin.")]
             public Vector2[] carrierRest = { new Vector2(-6f, -1.2f), new Vector2(-4.5f, -1.2f), new Vector2(-3f, -1.2f), new Vector2(-1.5f, -1.2f) };
             [Tooltip("Rest spot i = start + i · step.")]
@@ -230,6 +242,8 @@ namespace FF.Data
             public ProtoRange z = new ProtoRange(-25f, -13.6f);
             public GridSettings clay = new GridSettings { cols = 4, rows = 4, origin = new Vector2(36.5f, -15.8f), step = new Vector2(2.4f, -2.4f), jitter = 0.5f };
             public GridSettings iron = new GridSettings { cols = 5, rows = 4, origin = new Vector2(47f, -15.8f), step = new Vector2(2.4f, -2.4f), jitter = 0.5f };
+            [Tooltip("Guide arrow of the \"Clay pit and iron mine\" card (prototype checkUnlocks).")]
+            public Vector2 cardTarget = new Vector2(47f, -17f);
         }
 
         [Serializable]
@@ -276,6 +290,8 @@ namespace FF.Data
             public float shelfSinkX = 48f;
             public float shelfMaterialX = 50.6f;
             public float[] registersX = { 54.4f, 58.2f };
+            [Tooltip("Guide arrow of the \"Building materials shop\" card (prototype checkUnlocks).")]
+            public Vector2 cardTarget = new Vector2(51.5f, 6f);
         }
 
         [Serializable]

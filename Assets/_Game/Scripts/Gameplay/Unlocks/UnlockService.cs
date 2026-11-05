@@ -111,6 +111,25 @@ namespace FF.Gameplay.Unlocks
                     subtitle = Text("un.fac.s", "price", NumberFormat.Compact(pad.Price - pad.State.Paid));
                     target = pad.Position;
                     break;
+                case UnlockKind.FactoryWith:
+                    ProductDef with = _db.Product(card.ProductId);
+                    icon = "fac";
+                    title = Text("un.fac.t", "name", Text(with.nameKey));
+                    subtitle = Text("un.with.s");
+                    target = ProtoCoords.ToUnity(with.factoryX, _db.world.factories.ZoneZ(with.factoryRow));
+                    break;
+                case UnlockKind.Mines:
+                    icon = "mine";
+                    title = Text("un.mines.t");
+                    subtitle = Text("un.mines.s");
+                    target = ProtoCoords.ToUnity(_db.world.mines.cardTarget);
+                    break;
+                case UnlockKind.MaterialsShop:
+                    icon = "shop";
+                    title = Text("un.matshop.t");
+                    subtitle = Text("un.matshop.s");
+                    target = ProtoCoords.ToUnity(_db.world.materialsShop.cardTarget);
+                    break;
                 case UnlockKind.Register:
                     icon = "reg";
                     title = Text("un.reg.t");

@@ -26,6 +26,9 @@ namespace FF.Editor.Characters
                 { WorkerKind.Stocker, (0x5cae4a, 0x2a3a2a, 0x3d8a31, HatType.Cap) },
                 { WorkerKind.Manager, (0x34495e, 0x1f2a36, 0x1f2a36, HatType.None) },
                 { WorkerKind.Consultant, (0x8d5fd3, 0x2b1d14, 0x8d5fd3, HatType.None) },
+                { WorkerKind.Miner, (0x6b4e16, 0x34404f, 0xf4c430, HatType.Hard) },
+                { WorkerKind.SectionCarrier, (0x3a6ea5, 0x2a3a5c, 0xf3b33d, HatType.Hard) },
+                { WorkerKind.SectionCashier, (0xc9ccd1, 0x2b1d14, 0x5a6470, HatType.Cap) },
             };
 
         [MenuItem("FF/Build Worker Prefabs", priority = 24)]

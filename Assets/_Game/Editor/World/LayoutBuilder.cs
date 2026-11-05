@@ -19,6 +19,8 @@ namespace FF.Editor.World
     {
         public const string RootName = "Blockout";
         const int ForestSeed = 20261031;
+        const int RockSeed = 20261105;
+        const int Ore = 0xc8743a;
 
         // Palette (05_ART_UI_AUDIO + prototype literals)
         const int Grass = 0x9cce68, Paving = 0xe8d29f, Road = 0x5d5a57, Sidewalk = 0xd8d0c0, Marking = 0xf3efe4;
@@ -65,6 +67,9 @@ namespace FF.Editor.World
             BuildMainShop(b, root, w, db.economy.ShopWallX(state.ShopLevel), state);
             BuildMaterialsShop(b, root, w, state);
             BuildForest(b, root, w);
+            root.gameObject.AddComponent<PlumbingSwitch>().Setup(
+                new[] { root.Find("MinesYard").gameObject, root.Find("MaterialsShop").gameObject },
+                new[] { root.Find("Gate").gameObject });
 
             Debug.Log($"[FF] World blockout built: {root.GetComponentsInChildren<MeshRenderer>(true).Length} renderers.");
             return root.gameObject;
@@ -156,11 +161,46 @@ namespace FF.Editor.World
             b.Box(yard, 0.12f, 1.6f, 0.12f, Wood, 52, 0.8f, -14.5f, "SignPost");
             Blockout.SetStaticRecursive(yard.gameObject);
 
+            // rocks (not static: they shrink when mined and grow back)
+            Transform rocks = b.Group("Rocks", yard);
+            var rng = new System.Random(RockSeed);
+            RockGrid(b, rocks, w.mines.clay, ItemType.Clay, rng);
+            RockGrid(b, rocks, w.mines.iron, ItemType.Iron, rng);
+
             // gate segment of the factory fence: closes the yard until plumbing is bought
             Transform gate = b.Group("Gate", root);
             for (float px = 35.6f; px <= 60f; px += 1.6f) Post(b, gate, px, w.fenceLineZ);
             Rails(b, gate, 26, 47, w.fenceLineZ);
+            yard.gameObject.SetActive(state.MinesOpen);
             gate.gameObject.SetActive(!state.MinesOpen);
+        }
+
+        static void RockGrid(Blockout b, Transform parent, WorldLayout.GridSettings g, ItemType type, System.Random rng)
+        {
+            for (int c = 0; c < g.cols; c++)
+            for (int r = 0; r < g.rows; r++)
+            {
+                float x = g.origin.x + c * g.step.x + ((float)rng.NextDouble() - 0.5f) * g.jitter;
+                float z = g.origin.y + r * g.step.y + ((float)rng.NextDouble() - 0.5f) * g.jitter;
+                Rock(b, parent, x, z, type);
+            }
+        }
+
+        /// <summary>Prototype <c>makeRock()</c>: ground patch + "Top" (two icosahedrons, iron with orange ore) that shrinks when mined.</summary>
+        static void Rock(Blockout b, Transform parent, float x, float z, ItemType type)
+        {
+            bool iron = type == ItemType.Iron;
+            Transform g = b.Group(iron ? "IronRock" : "ClayRock", parent, x, z);
+            b.Flat(g, 1.3f, 1.3f, iron ? 0x4a4f56 : 0x8e6248, 0, 0, 0.02f, "Patch");
+            Transform top = b.Group("Top", g);
+            b.Ico(top, 0.75f, iron ? 0x5b6470 : 0xb5653d, 0, 0.45f, 0, "Body");
+            b.Ico(top, 0.45f, iron ? 0x8a949c : 0xc97b52, 0.35f, 0.75f, 0.15f, "Lump");
+            if (iron)
+            {
+                b.Ico(top, 0.18f, Ore, -0.35f, 0.7f, 0.35f, "Ore");
+                b.Ico(top, 0.14f, Ore, 0.1f, 0.95f, -0.3f, "Ore");
+            }
+            g.gameObject.AddComponent<ResourceNode>().Setup(type, top, 1f);
         }
 
         // ---------- dream house plot (placeholder) ----------

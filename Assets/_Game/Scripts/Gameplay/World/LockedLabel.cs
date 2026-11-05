@@ -23,6 +23,8 @@ namespace FF.Gameplay.World
             NotOwned,
             /// <summary>Always shows <c>textKey</c>.</summary>
             Fixed,
+            /// <summary>lk.with: product sign + the product it opens with, while it is not owned.</summary>
+            OpensWith,
         }
 
         const string Table = "Game";
@@ -50,7 +52,7 @@ namespace FF.Gameplay.World
         {
             _state = Services.Get<WorldStateSnapshot>();
             _progress = Services.Get<GameProgress>();
-            if (kind == Kind.FactoryLevel) _product = Services.Get<GameDatabase>().Product(ownerId);
+            if (kind == Kind.FactoryLevel || kind == Kind.OpensWith) _product = Services.Get<GameDatabase>().Product(ownerId);
         }
 
         void Start() => Services.Get<WorldTagRegistry>().Register(this);
@@ -73,7 +75,8 @@ namespace FF.Gameplay.World
                 switch (kind)
                 {
                     case Kind.FactoryLevel: return !_state.Owns(ownerId) && _progress.Level < _product.unlockLevel;
-                    case Kind.NotOwned: return !_state.Owns(ownerId);
+                    case Kind.NotOwned:
+                    case Kind.OpensWith: return !_state.Owns(ownerId);
                     default: return true;
                 }
             }
@@ -83,9 +86,15 @@ namespace FF.Gameplay.World
 
         string Build()
         {
-            if (kind != Kind.FactoryLevel) return LocalizationSettings.StringDatabase.GetLocalizedString(Table, textKey);
+            if (kind != Kind.FactoryLevel && kind != Kind.OpensWith)
+                return LocalizationSettings.StringDatabase.GetLocalizedString(Table, textKey);
             _args.Clear();
             _args["sign"] = LocalizationSettings.StringDatabase.GetLocalizedString(Table, _product.signKey);
+            if (kind == Kind.OpensWith)
+            {
+                _args["name"] = LocalizationSettings.StringDatabase.GetLocalizedString(Table, _product.unlocksWith.nameKey);
+                return LocalizationSettings.StringDatabase.GetLocalizedString(Table, "lk.with", new object[] { _args });
+            }
             _args["n"] = _product.unlockLevel;
             return LocalizationSettings.StringDatabase.GetLocalizedString(Table, "lk.lv", new object[] { _args });
         }

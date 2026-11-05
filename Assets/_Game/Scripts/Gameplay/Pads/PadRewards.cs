@@ -9,8 +9,8 @@ namespace FF.Gameplay.Pads
 {
     /// <summary>
     /// What a completed pad does beyond its level (prototype <c>addPad({onLevel})</c>): Sawmill 2 and factory buy pads
-    /// own the building (<c>ownFactory</c>), the shop pad widens the shop (<c>refreshBlocks</c> + toast), the register pad
-    /// opens the next register. Speed / qty pads need nothing here: machines and buildings read the levels.
+    /// own the building (<c>ownFactory</c>; Plumbing also opens Building materials, the mines and the materials shop), the
+    /// shop pad widens the shop (<c>refreshBlocks</c> + toast), the register pads open the next register. Speed / qty pads need nothing here: machines and buildings read the levels.
     /// </summary>
     public sealed class PadRewards : MonoBehaviour
     {
@@ -50,9 +50,9 @@ namespace FF.Gameplay.Pads
                 ProductDef p = _db.Product(padId.Substring(0, padId.Length - BuySuffix.Length));
                 if (p == null) return;
                 _ownership.Own(p.id);
-                GameEvents.RaiseToast(Text(p.signKey), Text("t.factoryOpened"));
+                GameEvents.RaiseToast(Text(p.signKey), Text(p.id == WorldStateSnapshot.PlumbingId ? "t.sinkOpened" : "t.factoryOpened"));
             }
-            else if (padId == WorldStateSync.ShopPadId || padId == WorldStateSync.RegisterPadId)
+            else if (padId == WorldStateSync.ShopPadId || padId == WorldStateSync.RegisterPadId || padId == WorldStateSync.AnnexRegisterPadId)
             {
                 WorldStateSync.Apply(_state, _levels);
                 _collision.Rebuild(_state);
