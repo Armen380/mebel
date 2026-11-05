@@ -8,8 +8,8 @@ namespace FF.Gameplay.CameraRig
     /// <summary>
     /// Prototype menu camera (<c>updCamera</c>, mode 'menu'): orbits the player at 0.22 rad/s, radius 6.2 in portrait /
     /// 5.4 in landscape, 1.7 m high, looking at the player's feet (y −0.55 / −0.05); the player turns to the camera.
-    /// Real time, so it moves while the menu pauses the game. Its Cinemachine camera wins only while the menu is open;
-    /// the brain blends between it and the play camera.
+    /// Real time, so it moves while the menu pauses the game. Its Cinemachine camera is enabled only while the menu is
+    /// open (a disabled camera never competes with the play camera); the brain blends between the two.
     /// </summary>
     public sealed class MenuCameraOrbit : MonoBehaviour
     {
@@ -17,7 +17,6 @@ namespace FF.Gameplay.CameraRig
         const float RadiusPortrait = 6.2f, RadiusLandscape = 5.4f;
         const float Height = 1.7f;
         const float LookYPortrait = -0.55f, LookYLandscape = -0.05f;
-        const int MenuPriority = 20;
 
         [SerializeField] CinemachineCamera menuCamera;
         [SerializeField] Transform player;
@@ -50,7 +49,11 @@ namespace FF.Gameplay.CameraRig
             if (_mode != null) _mode.Changed -= OnModeChanged;
         }
 
-        void OnModeChanged(bool inMenu) => menuCamera.Priority = inMenu ? MenuPriority : 0;
+        void OnModeChanged(bool inMenu)
+        {
+            if (inMenu) Place(); // start the blend from the orbit spot, not from where the menu camera was left
+            menuCamera.enabled = inMenu;
+        }
 
         void LateUpdate()
         {

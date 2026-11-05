@@ -467,6 +467,7 @@ namespace FF.Editor
             var menuCam = menuGo.AddComponent<CinemachineCamera>();
             menuCam.Lens = vcam.Lens;
             menuCam.Priority = 20;
+            vcam.Priority = 10;
             menuGo.AddComponent<MenuCameraOrbit>().Setup(menuCam, player, player.GetComponent<FF.Gameplay.Characters.CharacterAnimator>());
         }
 
