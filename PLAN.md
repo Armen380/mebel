@@ -6,7 +6,7 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 ## In progress
 
 ### M8 — Plumbing & Building materials — 2026-11-05 (branch `m8-plumbing`)
-Status: **In progress** — approved by the user 2026-11-05.
+Status: **In progress** — implemented and checked; pushed, waiting for the user's play-test (step I).
 Goal (04_IMPLEMENTATION_PLAN): mines yard (gate opens), clay / iron rocks, Plumbing + Materials factories, materials shop
 with its own door / shelves / registers, Miner, Section carrier, Section cashier, routing through the factory gap; Dream
 House placeholder. Done when the Lv 150 content works end-to-end.
