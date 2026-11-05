@@ -6,7 +6,7 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 ## In progress
 
 ### M9 — Polish & release prep — 2026-11-05 (branch `m9-polish`)
-Status: **In progress** — plan posted, waiting for the user's approval and answers (see "Open questions").
+Status: **In progress** — plan posted with the user's answers, waiting for approval.
 Goal (04_IMPLEMENTATION_PLAN): menu (language switch, skins with orbit camera), settings (sound, haptics, quality), SFX / music,
 haptics on pickups / purchases, app icon, splash; performance pass on a low-end Android; build AAB / IPA. Optional with
 approval: rewarded ads, IAP, analytics, cloud save.
@@ -27,10 +27,15 @@ un.skin.*), dev HUD buttons (HY language, Test, New game) that the menu replaces
 - [ ] G. Performance: item pool prewarm sized for the full game (M7 follow-up), no GC allocations per frame in steady play (Profiler), world tags culled off-screen, static batching / instancing check, quality tiers above; profile a development build on the user's Android phone (Profiler over USB) at the end-game save (all factories, 60+ agents)
 - [ ] H. App identity: product name, bundle id, version 1.0.0 (build 1), app icon (low-poly in the game's style, all Android / iOS sizes), launch screen in the game's colours without the Unity logo
 - [ ] I. Builds: Android AAB (IL2CPP, ARM64 + ARMv7, latest target API) signed with the user's keystore (the user creates it and types the passwords); iOS: Xcode project export (the user signs and archives the IPA in Xcode)
+- [ ] L. Rewarded ads (user decision 2026-11-05): LevelPlay (Unity's ad mediation, includes Unity Ads) via its UPM package; two placements from the docs — "×2" on a delivery payout (button on the payout chip for a few seconds after a truck pays) and "instant cash" (HUD button when ads are ready, amount and cooldown to be agreed); test-mode ads in the Editor / development builds; consent (GDPR / UMP) and iOS ATT prompt; the user creates the LevelPlay account and gives the app keys. No ads ever interrupt play (rewarded only)
 - [ ] J. EditMode tests (menu state, skin unlock, settings → quality tier mapping, audio cooldowns, pool sizes) + Play Mode check (menu ↔ play, skins, settings, sounds) + device check
 - [ ] K. Commit `M9: polish and release prep`, push, user play-test, PR → main
 
-Open questions (asked 2026-11-05): sound source, ads / IAP in M9 or later, app name + bundle id, build targets.
+Decisions (user, 2026-11-05):
+1. Sounds: Kenney CC0 packs (+ a CC0 music loop); the exact files are listed to the user before downloading.
+2. Monetization in M9: rewarded ads (step L); no IAP.
+3. App: "Furniture Factory", bundle id com.armen380.furniturefactory, company Armen380.
+4. Builds: Android AAB signed with the user's keystore + iOS Xcode project (the user archives the IPA).
 
 
 ## Done
