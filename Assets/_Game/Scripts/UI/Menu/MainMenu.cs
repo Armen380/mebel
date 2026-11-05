@@ -158,6 +158,9 @@ namespace FF.UI.Menu
             testButton.gameObject.SetActive(dev);
             if (dev) testButton.onClick.AddListener(OnTest);
 
+            foreach (Button b in GetComponentsInChildren<Button>(true)) b.onClick.AddListener(Click);
+            menuButton.onClick.AddListener(Click);
+
             _mode.Changed += OnModeChanged;
             _skins.Changed += OnSkinChanged;
             LocalizationSettings.SelectedLocaleChanged += OnLocale;
@@ -354,6 +357,8 @@ namespace FF.UI.Menu
             newGameLabel.color = Muted;
             newGameBorder.color = UiPalette.Walnut3;
         }
+
+        static void Click() => GameEvents.RaiseSound(SoundCue.Click);
 
         string Text(string key) => LocalizationSettings.StringDatabase.GetLocalizedString(Table, key);
 

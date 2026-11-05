@@ -1,0 +1,94 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1af6b8e04e2c840d192da1e216366d38, type: 3}
+  m_Name: AudioLibrary
+  m_EditorClassIdentifier: FF.Data::FF.Data.AudioLibrary
+  entries:
+  - id: 0
+    clips:
+    - {fileID: 8300000, guid: 0e7c9ab0eff1e404f99d2b8c000cdcf5, type: 3}
+    volume: 0.45
+    pitchJitter: 0.06
+    cooldown: 0.05
+  - id: 1
+    clips:
+    - {fileID: 8300000, guid: b01a909e0e3614a25b36897e3938b690, type: 3}
+    volume: 0.7
+    pitchJitter: 0.03
+    cooldown: 0.3
+  - id: 2
+    clips:
+    - {fileID: 8300000, guid: b4cd26ec7035a447a8a33114454185ed, type: 3}
+    - {fileID: 8300000, guid: ad6ff05ca9cd947b6bd7c1d6b569bd45, type: 3}
+    - {fileID: 8300000, guid: cfa3cae7f481a4db4a468b5ccf670139, type: 3}
+    volume: 0.55
+    pitchJitter: 0.06
+    cooldown: 0.1
+  - id: 3
+    clips:
+    - {fileID: 8300000, guid: 780edc28cd9ec4f95aeb56a7203aaa85, type: 3}
+    - {fileID: 8300000, guid: 8ca124e1cbeb54af19a0d52eda35997a, type: 3}
+    - {fileID: 8300000, guid: 1c219c6a9ab5c48d1a5e7d4b82affa5e, type: 3}
+    volume: 0.5
+    pitchJitter: 0.06
+    cooldown: 0.1
+  - id: 4
+    clips:
+    - {fileID: 8300000, guid: 39a5b06865ee74b829211eaf3b158d3c, type: 3}
+    volume: 0.6
+    pitchJitter: 0
+    cooldown: 0.2
+  - id: 5
+    clips:
+    - {fileID: 8300000, guid: 2a0dad6c1ec754dcd80f94e686e51be9, type: 3}
+    volume: 0.55
+    pitchJitter: 0
+    cooldown: 0.15
+  - id: 6
+    clips:
+    - {fileID: 8300000, guid: 68d632852063e4c8e80a311952a939b5, type: 3}
+    volume: 0.6
+    pitchJitter: 0
+    cooldown: 0.5
+  - id: 7
+    clips:
+    - {fileID: 8300000, guid: faf1be810fa5d4a74a798f191ccf8555, type: 3}
+    volume: 0.6
+    pitchJitter: 0.05
+    cooldown: 0.2
+  - id: 8
+    clips:
+    - {fileID: 8300000, guid: cc9f96e27312d41239c14bc63dde1cff, type: 3}
+    volume: 0.3
+    pitchJitter: 0.08
+    cooldown: 0.4
+  - id: 9
+    clips:
+    - {fileID: 8300000, guid: 637a2cfb5f4c440b2a410a44d0503c22, type: 3}
+    volume: 0.25
+    pitchJitter: 0.05
+    cooldown: 0.6
+  - id: 10
+    clips:
+    - {fileID: 8300000, guid: e3769bd84647f472091e2fba2641e83a, type: 3}
+    volume: 0.5
+    pitchJitter: 0.03
+    cooldown: 0.03
+  - id: 11
+    clips: []
+    volume: 0.35
+    pitchJitter: 0.04
+    cooldown: 1.5
+  music: {fileID: 8300000, guid: 11f4a02961b0545048c9e33da0d3f1b3, type: 3}
+  musicVolume: 0.35
+  ambient: {fileID: 8300000, guid: d6a86f359a4184399be4e7d003f8a3a3, type: 3}
+  ambientVolume: 0.25

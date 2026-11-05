@@ -28,6 +28,7 @@ namespace FF.Gameplay.Shop
 
         readonly List<Vector3> _way = new List<Vector3>(6);
         int _wayIndex;
+        int _bellAt = -1;
 
         public CharacterAnimator Animator { get; private set; }
         public ItemStack Hands { get; private set; }
@@ -78,14 +79,22 @@ namespace FF.Gameplay.Shop
         {
             _way.Clear();
             _wayIndex = 0;
+            _bellAt = -1;
         }
 
         public void AddWaypoint(Vector3 p) => _way.Add(p);
 
+        /// <summary>The next way-point added goes through the shop door: the bell rings when it is reached.</summary>
+        public void MarkDoorBell() => _bellAt = _way.Count;
+
         /// <summary>Walks the next way-point; returns true when the whole way is done.</summary>
         public bool FollowWay(float dt, float speed)
         {
-            if (MoveTo(_way[_wayIndex], dt, speed)) _wayIndex++;
+            if (MoveTo(_way[_wayIndex], dt, speed))
+            {
+                if (_wayIndex == _bellAt) GameEvents.RaiseSound(SoundCue.DoorBell);
+                _wayIndex++;
+            }
             return !HasWay;
         }
 

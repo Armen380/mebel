@@ -130,6 +130,8 @@ namespace FF.Editor
             menu.transform.SetParent(systems, false);
             menu.AddComponent<FF.Gameplay.Bootstrap.MenuPause>();
             menu.AddComponent<FF.Gameplay.Bootstrap.SettingsApplier>();
+            menu.AddComponent<FF.Gameplay.Audio.AudioService>().Setup(AudioLibraryBuilder.Build());
+            menu.AddComponent<FF.Gameplay.Audio.Haptics>();
 
             var items = new GameObject("Items");
             items.transform.SetParent(systems, false);

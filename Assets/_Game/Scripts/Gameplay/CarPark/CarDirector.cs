@@ -70,7 +70,11 @@ namespace FF.Gameplay.CarPark
                 car.StateTime += dt;
                 if (car.State == Car.Phase.Parked)
                 {
-                    if (car.DriverBack) Leave(car);
+                    if (car.DriverBack)
+                    {
+                        GameEvents.RaiseSound(SoundCue.CarDoor);
+                        Leave(car);
+                    }
                     continue;
                 }
                 car.Motion.Step(dt, _lot, _economy);
@@ -80,7 +84,8 @@ namespace FF.Gameplay.CarPark
                 {
                     car.State = Car.Phase.Parked;
                     car.StateTime = 0f;
-                    if (!customers.SpawnFromCar(car)) Leave(car);
+                    if (customers.SpawnFromCar(car)) GameEvents.RaiseSound(SoundCue.CarDoor);
+                    else Leave(car);
                 }
                 else Despawn(i);
             }

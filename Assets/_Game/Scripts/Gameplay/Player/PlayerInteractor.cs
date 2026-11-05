@@ -86,7 +86,7 @@ namespace FF.Gameplay.Player
                 Vector3 d = node.Position - p;
                 animator.FacingYaw = Mathf.Atan2(d.x, d.z) * Mathf.Rad2Deg;
             }
-            if (r.Hit) GameEvents.RaiseChopHit();
+            if (r.Hit) GameEvents.RaiseChopHit(node.State.IsRock);
             if (r.Yield > 0)
             {
                 Vector3 at = node.Position;
