@@ -5,7 +5,33 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
-_Nothing in progress. Next: M9 — plan to be posted for approval._
+### M9 — Polish & release prep — 2026-11-05 (branch `m9-polish`)
+Status: **In progress** — plan posted, waiting for the user's approval and answers (see "Open questions").
+Goal (04_IMPLEMENTATION_PLAN): menu (language switch, skins with orbit camera), settings (sound, haptics, quality), SFX / music,
+haptics on pickups / purchases, app icon, splash; performance pass on a low-end Android; build AAB / IPA. Optional with
+approval: rewarded ads, IAP, analytics, cloud save.
+Prototype refs: menu HTML (175–198) + css, `SKINS` (459–465), `setSkin` (1141–1146), `sfx` (1436–1442), `renderSkins / openMenu /
+startPlay / btnTest / btnReset` (1546–1570), menu orbit camera in `updCamera` (1607–1612), skin unlock card (checkUnlocks 1680);
+docs 01 §9, 03 (performance rules), 05 (menu, audio, haptics); screenshot 01_menu_skins_language.png.
+Already in place: SkinDef ×5 (gold unlocks at 100K total earned), `skin` in the save, `CharacterRigBuilder` takes a SkinDef,
+menu texts (ui.h1, ui.kicker, ui.intro, ui.skin, ui.play, ui.continue, ui.test, ui.new, ui.reset, ui.controls, skin.*, ui.earn,
+un.skin.*), dev HUD buttons (HY language, Test, New game) that the menu replaces.
+
+- [ ] 0. Branch `m9-polish` from main
+- [ ] A. Main menu = pause screen (prototype `#menu`): bottom sheet over the game — kicker with the app version, two-tone title, intro, language segmented control Հայ / EN / RU, "Choose a character" skin cards (colour swatch, name, gold locked with "Earn $100K"), Play (first launch) / Continue, row "Test: +25 Lv, +$250K" (development builds only) + New game (two-tap confirm), controls hint. The game opens in the menu; a Menu button in the HUD opens it; the HUD, joystick and input are off while it is open; the dev HUD buttons go away
+- [ ] B. Menu camera: Cinemachine orbit around the player (0.22 rad/s, radius 6.2 portrait / 5.4 landscape, height 1.7, look at y −0.55 / −0.05), blends to the follow camera on Play; the player faces the camera angle and stands still
+- [ ] C. Skins: picking a card swaps the player's look at once (prebuilt prefab per skin, carried items move over), saved in `skin`; card "New character: Golden" when total earned reaches $100K (prototype `skin_gold`)
+- [ ] D. Settings in the menu: sound on/off, music on/off, vibration on/off, graphics Low / Medium / High (Low: no shadows, no MSAA, render scale 0.8; Medium: shadows 35 m 1 cascade, MSAA 2×; High: soft shadows, render scale 1.0); default by device (low RAM / old GPU → Low); stored per device (PlayerPrefs). New texts in the three tables
+- [ ] E. Audio: `AudioService` (pooled 2D sources, Music / SFX mixer groups, per-sound cooldown like the prototype's coin 50 ms): coin, chop, quest step, purchase, level up, throw, truck pass, car door, shop door bell, ambient town loop, light music loop; triggered through GameEvents (no audio code in gameplay)
+- [ ] F. Haptics: light on pickup batches, medium on purchase / level up; Android vibrator with amplitude (AndroidJavaObject), iOS impact feedback via a tiny native plugin (.mm), nothing in the Editor; off in settings
+- [ ] G. Performance: item pool prewarm sized for the full game (M7 follow-up), no GC allocations per frame in steady play (Profiler), world tags culled off-screen, static batching / instancing check, quality tiers above; profile a development build on the user's Android phone (Profiler over USB) at the end-game save (all factories, 60+ agents)
+- [ ] H. App identity: product name, bundle id, version 1.0.0 (build 1), app icon (low-poly in the game's style, all Android / iOS sizes), launch screen in the game's colours without the Unity logo
+- [ ] I. Builds: Android AAB (IL2CPP, ARM64 + ARMv7, latest target API) signed with the user's keystore (the user creates it and types the passwords); iOS: Xcode project export (the user signs and archives the IPA in Xcode)
+- [ ] J. EditMode tests (menu state, skin unlock, settings → quality tier mapping, audio cooldowns, pool sizes) + Play Mode check (menu ↔ play, skins, settings, sounds) + device check
+- [ ] K. Commit `M9: polish and release prep`, push, user play-test, PR → main
+
+Open questions (asked 2026-11-05): sound source, ads / IAP in M9 or later, app name + bundle id, build targets.
+
 
 ## Done
 
