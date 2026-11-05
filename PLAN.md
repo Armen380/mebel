@@ -5,8 +5,12 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
+_Nothing in progress. Next: M10 — see Design/docs/04_IMPLEMENTATION_PLAN.md (plan to be posted for approval)._
+
+## Done
+
 ### M9 — Polish & release prep — 2026-11-05 (branch `m9-polish`)
-Status: **In progress** — approved by the user 2026-11-05.
+Result: menu (pause) with language switch, skins and orbit camera; settings (sound, music, vibration, graphics tiers Low / Medium / High); CC0 sounds + music; haptics; pool sizes from an end-game soak; app identity + icon; rewarded ads (LevelPlay, ×2 payout + instant cash, consent + ATT); dev APK / release AAB / iOS Xcode export; 618 tests green; user play-test OK 2026-11-06 (camera fix); merged into main.
 Goal (04_IMPLEMENTATION_PLAN): menu (language switch, skins with orbit camera), settings (sound, haptics, quality), SFX / music,
 haptics on pickups / purchases, app icon, splash; performance pass on a low-end Android; build AAB / IPA. Optional with
 approval: rewarded ads, IAP, analytics, cloud save.
@@ -24,12 +28,12 @@ un.skin.*), dev HUD buttons (HY language, Test, New game) that the menu replaces
 - [x] D. Settings in the menu: sound on/off, music on/off, vibration on/off, graphics Low / Medium / High (Low: no shadows, no MSAA, render scale 0.8; Medium: shadows 35 m 1 cascade, MSAA 2×; High: soft shadows, render scale 1.0); default by device (low RAM / old GPU → Low); stored per device (PlayerPrefs). New texts in the three tables
 - [x] E. Audio: `AudioService` (pooled 2D sources, Music / SFX mixer groups, per-sound cooldown like the prototype's coin 50 ms): coin, chop, quest step, purchase, level up, throw, truck pass, car door, shop door bell, ambient town loop, light music loop; triggered through GameEvents (no audio code in gameplay)
 - [x] F. Haptics: light on pickup batches, medium on purchase / level up; Android vibrator with amplitude (AndroidJavaObject), iOS impact feedback via a tiny native plugin (.mm), nothing in the Editor; off in settings
-- [ ] G. Performance: item pool prewarm sized for the full game (M7 follow-up), no GC allocations per frame in steady play (Profiler), world tags culled off-screen, static batching / instancing check, quality tiers above; profile a development build on the user's Android phone (Profiler over USB) at the end-game save (all factories, 60+ agents)
+- [x] G. Performance: item pool prewarm sized for the full game (M7 follow-up), no GC allocations per frame in steady play (Profiler), world tags culled off-screen, static batching / instancing check, quality tiers above; profile a development build on the user's Android phone (Profiler over USB) at the end-game save (all factories, 60+ agents)
 - [x] H. App identity: product name, bundle id, version 1.0.0 (build 1), app icon (low-poly in the game's style, all Android / iOS sizes), launch screen in the game's colours without the Unity logo
 - [x] I. Builds: Android AAB (IL2CPP, ARM64 + ARMv7, latest target API) signed with the user's keystore (the user creates it and types the passwords); iOS: Xcode project export (the user signs and archives the IPA in Xcode)
 - [x] L. Rewarded ads (user decision 2026-11-05): LevelPlay (Unity's ad mediation, includes Unity Ads) via its UPM package; two placements from the docs — "×2" on a delivery payout (button on the payout chip for a few seconds after a truck pays) and "instant cash" (HUD button when ads are ready, amount and cooldown to be agreed); test-mode ads in the Editor / development builds; consent (GDPR / UMP) and iOS ATT prompt; the user creates the LevelPlay account and gives the app keys. No ads ever interrupt play (rewarded only)
-- [ ] J. EditMode tests (menu state, skin unlock, settings → quality tier mapping, audio cooldowns, pool sizes) + Play Mode check (menu ↔ play, skins, settings, sounds) + device check
-- [ ] K. Commit `M9: polish and release prep`, push, user play-test, PR → main
+- [x] J. EditMode tests (menu state, skin unlock, settings → quality tier mapping, audio cooldowns, pool sizes) + Play Mode check (menu ↔ play, skins, settings, sounds) + device check
+- [x] K. Commit `M9: polish and release prep`, push, user play-test, PR → main
 
 Notes (implementation):
 - A–C: `GameMode` (Core) — the game opens in the menu; `MenuPause` sets time scale 0 in the menu (the prototype runs no simulation there), the player's animator and the Cinemachine brain use real time; `MainMenu` (UI/Menu) on its own "Menu" canvas hides the HUD through a CanvasGroup; `MenuCameraOrbit` places a second Cinemachine camera (priority 20 in the menu), the brain blends 1.1 s. Player / interactor / unlock cards / tutorial arrow do nothing in the menu. The dev HUD buttons (HY, Test, New game) are gone — Test (development builds only) and New game live in the menu.
@@ -53,8 +57,12 @@ Decisions (user, 2026-11-05):
 3. App: "Furniture Factory", bundle id com.armen380.furniturefactory, company Armen380.
 4. Builds: Android AAB signed with the user's keystore + iOS Xcode project (the user archives the IPA).
 
-
-## Done
+Follow-ups (open, need the user):
+- LevelPlay: create the app in the dashboard, put the Android / iOS app keys and rewarded ad unit ids into Data/AdsConfig.asset; optionally the dashboard placements (double_payout, instant_cash → useDashboardPlacements) and bid floors; run the Test Suite once (launchTestSuite in a development build), then turn it off.
+- Google Play: the user creates the upload keystore (Player Settings › Publishing Settings) → FF › Build › Android Release AAB.
+- iOS: open Builds/iOS/Unity-iPhone.xcworkspace, set the team, archive the IPA.
+- Profiler on a mid-range Android (the S25 is a flagship); GC per frame on device.
+- Idea: on phones show only the touch part of the controls hint.
 
 ### M8 — Plumbing & Building materials — 2026-11-05 (branch `m8-plumbing`)
 Result: Plumbing buy pad (Lv 150) also opens Building materials, the mines yard (16 clay + 20 iron rocks) and the materials shop (registers 6 / 7); Miner, Section carrier, Section cashier; unlock cards; 604 tests green, 16-min soak clean; play-test fix (section group in Upgrades); user play-test OK 2026-11-05; merged into main.
