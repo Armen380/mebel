@@ -38,6 +38,23 @@ namespace FF.UI.Menu
         }
 
         [Serializable]
+        public struct ToggleButton
+        {
+            public Button button;
+            public Image background;
+            public Image icon;
+        }
+
+        [Serializable]
+        public struct QualityButton
+        {
+            public QualityTier tier;
+            public Button button;
+            public Image background;
+            public TMP_Text label;
+        }
+
+        [Serializable]
         public struct SkinCardParts
         {
             public Button button;
@@ -64,6 +81,10 @@ namespace FF.UI.Menu
         [SerializeField] Button newGameButton;
         [SerializeField] Image newGameBorder;
         [SerializeField] TMP_Text newGameLabel;
+        [SerializeField] ToggleButton sound;
+        [SerializeField] ToggleButton music;
+        [SerializeField] ToggleButton vibration;
+        [SerializeField] List<QualityButton> quality = new List<QualityButton>();
 
         readonly List<(SkinDef skin, SkinCardParts parts)> _cards = new List<(SkinDef, SkinCardParts)>();
         readonly Dictionary<string, object> _args = new Dictionary<string, object>();
@@ -71,6 +92,7 @@ namespace FF.UI.Menu
         GameMode _mode;
         IProgressView _progress;
         ISkinSelection _skins;
+        GameSettings _settings;
         float _armedUntil = -1f;
         long _cardsTotalKey = -1;
         bool _textsDirty;
@@ -96,12 +118,31 @@ namespace FF.UI.Menu
             newGameLabel = newGameText;
         }
 
+        /// <summary>Editor tools only.</summary>
+        public void SetupSettings(ToggleButton soundToggle, ToggleButton musicToggle, ToggleButton vibrationToggle, List<QualityButton> qualityButtons)
+        {
+            sound = soundToggle;
+            music = musicToggle;
+            vibration = vibrationToggle;
+            quality = qualityButtons;
+        }
+
         void Start()
         {
             _db = Services.Get<GameDatabase>();
             _mode = Services.Get<GameMode>();
             _progress = Services.Get<IProgressView>();
             _skins = Services.Get<ISkinSelection>();
+            _settings = Services.Get<GameSettings>();
+            sound.button.onClick.AddListener(() => _settings.SetSound(!_settings.Sound));
+            music.button.onClick.AddListener(() => _settings.SetMusic(!_settings.Music));
+            vibration.button.onClick.AddListener(() => _settings.SetVibration(!_settings.Vibration));
+            foreach (QualityButton q in quality)
+            {
+                QualityTier tier = q.tier;
+                q.button.onClick.AddListener(() => _settings.SetQuality(tier));
+            }
+            _settings.Changed += RefreshSettings;
 
             kicker.SetText("v" + Application.version);
             foreach (LanguageButton l in languages)
@@ -127,6 +168,7 @@ namespace FF.UI.Menu
         {
             if (_mode != null) _mode.Changed -= OnModeChanged;
             if (_skins != null) _skins.Changed -= OnSkinChanged;
+            if (_settings != null) _settings.Changed -= RefreshSettings;
             LocalizationSettings.SelectedLocaleChanged -= OnLocale;
         }
 
@@ -141,6 +183,7 @@ namespace FF.UI.Menu
             RefreshTexts();
             RefreshSkins();
             RefreshLanguages();
+            RefreshSettings();
             if (Services.TryGet(out ISaveService save)) save.SaveNow();
         }
 
@@ -180,6 +223,27 @@ namespace FF.UI.Menu
                 l.background.color = on ? (Color)UiPalette.Honey : Color.clear;
                 l.label.color = on ? UiPalette.Walnut : Muted;
             }
+        }
+
+        // ---------- settings ----------
+
+        void RefreshSettings()
+        {
+            Style(sound, _settings.Sound);
+            Style(music, _settings.Music);
+            Style(vibration, _settings.Vibration);
+            foreach (QualityButton q in quality)
+            {
+                bool on = q.tier == _settings.Quality;
+                q.background.color = on ? (Color)UiPalette.Honey : Color.clear;
+                q.label.color = on ? UiPalette.Walnut : Muted;
+            }
+        }
+
+        static void Style(ToggleButton t, bool on)
+        {
+            t.background.color = on ? (Color)UiPalette.Honey : Walnut2;
+            t.icon.color = on ? UiPalette.Walnut : Muted;
         }
 
         // ---------- skins ----------

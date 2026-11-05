@@ -165,5 +165,12 @@
   "un.bulk.t": "Sales area is open",
   "un.bulk.s": "Contractors buy building materials and plumbing in bulk",
   "ui.home": "Home",
-  "sign.lot": "P · CUSTOMERS"
+  "sign.lot": "P · CUSTOMERS",
+  "ui.sound": "Sounds",
+  "ui.music": "Music",
+  "ui.vibration": "Vibration",
+  "ui.graphics": "Graphics",
+  "ui.gLow": "Low",
+  "ui.gMed": "Medium",
+  "ui.gHigh": "High"
 }

@@ -129,6 +129,7 @@ namespace FF.Editor
             var menu = new GameObject("Menu");
             menu.transform.SetParent(systems, false);
             menu.AddComponent<FF.Gameplay.Bootstrap.MenuPause>();
+            menu.AddComponent<FF.Gameplay.Bootstrap.SettingsApplier>();
 
             var items = new GameObject("Items");
             items.transform.SetParent(systems, false);

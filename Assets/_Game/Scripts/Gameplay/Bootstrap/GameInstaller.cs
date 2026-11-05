@@ -47,6 +47,8 @@ namespace FF.Gameplay.Bootstrap
             Services.Register(new Ownership(state, collision, database.products));
             Services.Register(new WorldTagRegistry());
             Services.Register(new GameMode());
+            Services.Register(new GameSettings(new PlayerPrefsSettingsStore(),
+                Application.isEditor ? QualityTier.High : QualityRules.DefaultTier(SystemInfo.systemMemorySize, SystemInfo.processorCount)));
             Services.Register(new DeliveryCargo());
             Services.Register(itemPool);
             Services.Register(itemFlights);

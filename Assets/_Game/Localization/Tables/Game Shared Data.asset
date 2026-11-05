@@ -683,6 +683,34 @@ MonoBehaviour:
     m_Key: sign.lot
     m_Metadata:
       m_Items: []
+  - m_Id: 2122962089009152
+    m_Key: ui.sound
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2122962097397760
+    m_Key: ui.music
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2122962097397761
+    m_Key: ui.vibration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2122962097397762
+    m_Key: ui.graphics
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2122962097397763
+    m_Key: ui.gLow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2122962097397764
+    m_Key: ui.gMed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2122962097397765
+    m_Key: ui.gHigh
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

@@ -107,6 +107,21 @@ namespace FF.Editor
             label.gameObject.AddComponent<LocalizedTmpText>().SetKey("ui.skin");
             RectTransform cards = BuildSkinStrip(skins, out MainMenu.SkinCardParts template);
 
+            // settings: sound, music, vibration toggles and the graphics tier
+            RectTransform settings = Rect("Settings", card);
+            Row(settings.gameObject, new RectOffset(0, 0, 0, 0), 6);
+            MainMenu.ToggleButton sound = IconToggle(settings, "Sound", TextureFactory.LineIcon("sound", 2.2f,
+                TextureFactory.Closed(4, 9, 8, 9, 13, 5, 13, 19, 8, 15, 4, 15),
+                TextureFactory.Cubic(new Vector2(16, 8.5f), new Vector2(17.5f, 9.5f), new Vector2(17.5f, 14.5f), new Vector2(16, 15.5f)),
+                TextureFactory.Cubic(new Vector2(18.5f, 6), new Vector2(21.5f, 8.5f), new Vector2(21.5f, 15.5f), new Vector2(18.5f, 18))));
+            MainMenu.ToggleButton music = IconToggle(settings, "Music", TextureFactory.LineIcon("music", 2.2f,
+                TextureFactory.Poly(9, 17, 9, 5, 19, 3, 19, 15), TextureFactory.Circle(7, 17, 2.2f), TextureFactory.Circle(17, 15, 2.2f)));
+            MainMenu.ToggleButton vibration = IconToggle(settings, "Vibration", TextureFactory.LineIcon("vibration", 2.2f,
+                TextureFactory.RoundRect(8, 4, 8, 16, 2), TextureFactory.Poly(4, 9, 4, 15), TextureFactory.Poly(20, 9, 20, 15)));
+            RectTransform spacer = Rect("Spacer", settings);
+            spacer.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
+            List<MainMenu.QualityButton> quality = BuildQuality(settings);
+
             // actions
             RectTransform actions = Rect("Actions", card);
             VerticalColumn(actions, 10);
@@ -128,6 +143,7 @@ namespace FF.Editor
             var menu = canvasGo.AddComponent<MainMenu>();
             menu.Setup(root.gameObject, hudGroup, menuButton, kicker, languages, cards, template, play, playLabel, test, testLabel,
                 newGame, newGameBorder, newGameLabel);
+            menu.SetupSettings(sound, music, vibration, quality);
         }
 
         /// <summary>Prototype <c>.icon-btn#btnMenu</c>: 44 px walnut square with the pause bars, top-right.</summary>
@@ -178,6 +194,53 @@ namespace FF.Editor
                 b.GetComponent<HorizontalLayoutGroup>().childAlignment = TextAnchor.MiddleCenter;
                 TMP_Text label = Text("Label", b, text, 13, Muted, "ExtraBold");
                 list.Add(new MainMenu.LanguageButton { code = code, button = button, background = image, label = label });
+            }
+            return list;
+        }
+
+        /// <summary>44 px rounded square with a line icon; honey when on, walnut when off.</summary>
+        static MainMenu.ToggleButton IconToggle(Transform parent, string name, Sprite iconSprite)
+        {
+            RectTransform r = Card(name, parent, UiPalette.Honey, 12);
+            Image bg = r.GetComponent<Image>();
+            bg.raycastTarget = true;
+            var button = r.gameObject.AddComponent<Button>();
+            button.targetGraphic = bg;
+            button.transition = Selectable.Transition.None;
+            Size(r.gameObject, 40, 40);
+            RectTransform icon = Rect("Icon", r);
+            icon.anchorMin = icon.anchorMax = new Vector2(0.5f, 0.5f);
+            icon.sizeDelta = new Vector2(22 * Px, 22 * Px);
+            Image iconImage = icon.gameObject.AddComponent<Image>();
+            iconImage.sprite = iconSprite;
+            iconImage.color = UiPalette.Walnut;
+            iconImage.raycastTarget = false;
+            return new MainMenu.ToggleButton { button = button, background = bg, icon = iconImage };
+        }
+
+        /// <summary>Graphics tier as a segmented control like the languages.</summary>
+        static List<MainMenu.QualityButton> BuildQuality(Transform parent)
+        {
+            RectTransform group = Card("Quality", parent, Walnut2, 12);
+            Row(group.gameObject, new RectOffset(3, 3, 3, 3), 2);
+            var list = new List<MainMenu.QualityButton>();
+            foreach ((FF.Core.QualityTier tier, string key) in new[]
+                     { (FF.Core.QualityTier.Low, "ui.gLow"), (FF.Core.QualityTier.Medium, "ui.gMed"), (FF.Core.QualityTier.High, "ui.gHigh") })
+            {
+                RectTransform b = Card("Quality_" + tier, group, Color.clear, 9);
+                Image image = b.GetComponent<Image>();
+                image.raycastTarget = true;
+                var button = b.gameObject.AddComponent<Button>();
+                button.targetGraphic = image;
+                button.transition = Selectable.Transition.None;
+                var size = b.gameObject.AddComponent<LayoutElement>();
+                size.minWidth = 40 * Px;
+                size.preferredHeight = size.minHeight = 34 * Px;
+                Row(b.gameObject, new RectOffset(5, 5, 0, 0), 0);
+                b.GetComponent<HorizontalLayoutGroup>().childAlignment = TextAnchor.MiddleCenter;
+                TMP_Text label = Text("Label", b, "", 11, Muted, "ExtraBold");
+                label.gameObject.AddComponent<LocalizedTmpText>().SetKey(key);
+                list.Add(new MainMenu.QualityButton { tier = tier, button = button, background = image, label = label });
             }
             return list;
         }
