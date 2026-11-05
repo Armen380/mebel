@@ -17,7 +17,7 @@ MonoBehaviour:
   nameKey: upg.lumber
   descriptionKey: upgd.lumber
   valueFormat: 3
-  maxLevel: 4
+  maxLevel: 5
   baseCost: 3750
   costMultiplier: 2.2
   requiresShopLevel: 0

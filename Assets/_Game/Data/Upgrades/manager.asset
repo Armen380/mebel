@@ -17,7 +17,7 @@ MonoBehaviour:
   nameKey: upg.manager
   descriptionKey: upgd.manager
   valueFormat: 3
-  maxLevel: 2
+  maxLevel: 3
   baseCost: 20000
   costMultiplier: 2.5
   requiresShopLevel: 4

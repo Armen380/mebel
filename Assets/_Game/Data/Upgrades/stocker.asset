@@ -17,7 +17,7 @@ MonoBehaviour:
   nameKey: upg.stocker
   descriptionKey: upgd.stocker
   valueFormat: 3
-  maxLevel: 3
+  maxLevel: 4
   baseCost: 9000
   costMultiplier: 2.2
   requiresShopLevel: 2

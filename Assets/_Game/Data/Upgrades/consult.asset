@@ -17,7 +17,7 @@ MonoBehaviour:
   nameKey: upg.consult
   descriptionKey: upgd.consult
   valueFormat: 5
-  maxLevel: 2
+  maxLevel: 3
   baseCost: 40000
   costMultiplier: 2.5
   requiresShopLevel: 5

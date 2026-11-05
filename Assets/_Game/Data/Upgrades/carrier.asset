@@ -17,7 +17,7 @@ MonoBehaviour:
   nameKey: upg.carrier
   descriptionKey: upgd.carrier
   valueFormat: 3
-  maxLevel: 4
+  maxLevel: 5
   baseCost: 5500
   costMultiplier: 2.2
   requiresShopLevel: 0

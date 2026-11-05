@@ -60,6 +60,21 @@ namespace FF.Tests
             Assert.AreEqual(1, _db.Pad("saw2_buy").maxLevel);
         }
 
+        /// <summary>User decision 2026-11-05: one more of each hired worker than the prototype (cashier unchanged).</summary>
+        [TestCase("lumber", 5, 109800)]
+        [TestCase("carrier", 5, 161050)]
+        [TestCase("robot", 5, 1658900)]
+        [TestCase("stocker", 4, 119800)]
+        [TestCase("manager", 3, 156250)]
+        [TestCase("consult", 3, 312500)]
+        [TestCase("cashier", 8, 935400)]
+        public void WorkerHireLimits(string id, int max, long lastPrice)
+        {
+            UpgradeDef u = _db.Upgrade(id);
+            Assert.AreEqual(max, u.maxLevel);
+            Assert.AreEqual(lastPrice, _db.economy.UpgradePrice(u, max - 1));
+        }
+
         [Test]
         public void SkinsUpgradesTutorial()
         {
