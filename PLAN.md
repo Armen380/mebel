@@ -43,6 +43,9 @@ Notes (implementation):
 - Unlock cards: `FactoryWith` (fac_material), `Mines`, `MaterialsShop`; icons "mine" and "shop" from the prototype UN_ICON.
 - G: 604/604 EditMode (15 new in PlumbingTests).
 
+Play-test fixes (user, 2026-11-05):
+- "No Miner and no Section carrier in Upgrades": the Upgrades sheet still filtered out the group g.section (an M4 placeholder "joins with plumbing in M8", missed because my Play Mode check hired the section staff through the shop API). The filter is gone: every group shows, like the prototype `renderShop`; section rows stay locked ("Plumbing") until it is bought. Checked in Play Mode on the user's save: the group shows Miner / Section carrier / Section cashier, buying a miner through its button hires one; 604/604 EditMode.
+
 Prototype quirks / not ported (prototype wins):
 - The back "sales area" (BULK wholesale zones at (51.4, −30.4 / −33.6), register 8, contractor customers, "Sales area seller") is dead code in the prototype: `buildBulk()` is never called and the register list has 8 entries, so register 8 never exists. Not built (texts stay in the tables).
 - `routeVia` (gap at x 53) only served those bulk zones; only the miner's gap at x 44 is used.
