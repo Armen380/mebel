@@ -301,5 +301,25 @@ namespace FF.Tests
                 Object.DestroyImmediate(go);
             }
         }
+
+        [Test]
+        public void CarrierRest_PrototypeSpotsThenAlongTheRow()
+        {
+            WorldLayout.WorkerLayoutSettings s = _world.workers;
+            Assert.AreEqual(new Vector2(-6f, -1.2f), s.CarrierRest(0));
+            Assert.AreEqual(new Vector2(-1.5f, -1.2f), s.CarrierRest(3));
+            Vector2 fifth = s.CarrierRest(4);
+            Assert.AreEqual(0f, fifth.x, 1e-4f);
+            Assert.AreEqual(-1.2f, fifth.y, 1e-4f);
+        }
+
+        [Test]
+        public void ManagerStand_ThirdManagerHasItsOwnSpot()
+        {
+            WorldLayout.WorkerLayoutSettings s = _world.workers;
+            Assert.AreEqual(-0.4f, s.ManagerStandZ(0), 1e-4f);
+            Assert.AreEqual(0.7f, s.ManagerStandZ(1), 1e-4f);
+            Assert.AreEqual(-1.5f, s.ManagerStandZ(2), 1e-4f);
+        }
     }
 }

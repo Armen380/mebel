@@ -179,6 +179,29 @@ namespace FF.Data
             public Vector2 cashierStand = new Vector2(-1.15f, 0.1f);
             [Tooltip("Manager stands at cash zone + (x, z of the first / of the others).")]
             public Vector3 managerStand = new Vector3(-0.3f, -0.4f, 0.7f);
+
+            /// <summary>
+            /// Carrier rest spot <paramref name="index"/>: the prototype REST spots, then further along the same row
+            /// (hire limits above the prototype's).
+            /// </summary>
+            public Vector2 CarrierRest(int index)
+            {
+                int n = carrierRest.Length;
+                if (index < n) return carrierRest[index];
+                Vector2 step = n > 1 ? (carrierRest[n - 1] - carrierRest[0]) / (n - 1) : new Vector2(1.5f, 0f);
+                return carrierRest[n - 1] + step * (index - n + 1);
+            }
+
+            /// <summary>
+            /// Manager's z offset from the cash zone (prototype: first −0.4, the other 0.7); a third and later manager
+            /// stands one gap further on the first one's side.
+            /// </summary>
+            public float ManagerStandZ(int index)
+            {
+                if (index <= 0) return managerStand.y;
+                if (index == 1) return managerStand.z;
+                return managerStand.y - (managerStand.z - managerStand.y) * (index - 1);
+            }
             [Tooltip("Robot task tag height: base + per carried item.")]
             public float robotTagHeight = 2.3f;
             public float robotTagPerItem = 0.04f;

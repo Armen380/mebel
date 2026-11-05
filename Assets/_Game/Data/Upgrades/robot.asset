@@ -17,7 +17,7 @@ MonoBehaviour:
   nameKey: upg.robot
   descriptionKey: upgd.robot
   valueFormat: 4
-  maxLevel: 4
+  maxLevel: 5
   baseCost: 40000
   costMultiplier: 2.4
   requiresShopLevel: 0

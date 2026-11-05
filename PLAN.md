@@ -13,12 +13,18 @@ manager, consultant 2→3. Cashier stays at 8 (only 6 main registers + 1 annex, 
 the same formula round(base·1.25·mul^lv/50)·50: lumber $109,800, carrier $161,050, robot $1,658,900, stocker $119,800,
 manager $156,250, consultant $312,500. Deviation from the prototype (`UPG` max values) — on purpose.
 
-- [ ] 0. Branch `workers-plus-one` from main (after the M7 merge)
-- [ ] A. Design/data/upgrades.json: `max` +1 and `costPerLevel_beforeECON` extended for the six ids; FF/Import Design Data
-- [ ] B. Check the code has no hidden 4/3/2 caps (rest spots, manager stands, consultant spots, robot tag, upgrade pips) and the 5th / 4th / 3rd worker gets a sane spot
-- [ ] C. Tests: upgrade max levels and new-level prices; full EditMode run
-- [ ] D. Play Mode: hire the extra workers on a copy of the save, check spots and Console; restore the save
+- [x] 0. Branch `workers-plus-one` from main (after the M7 merge)
+- [x] A. Design/data/upgrades.json: `max` +1 and `costPerLevel_beforeECON` extended for the six ids; FF/Import Design Data
+- [x] B. Check the code has no hidden 4/3/2 caps (rest spots, manager stands, consultant spots, robot tag, upgrade pips) and the 5th / 4th / 3rd worker gets a sane spot
+- [x] C. Tests: upgrade max levels and new-level prices; full EditMode run
+- [x] D. Play Mode: hire the extra workers on a copy of the save, check spots and Console; restore the save
 - [ ] E. Commit, push, PR; merge after the user's play-test
+
+Notes:
+- B: carriers rested on 4 REST spots round-robin, so a 5th sat on the 1st one's spot → `WorkerLayoutSettings.CarrierRest(i)` continues the row (5th at (0, −1.2)); managers had two stands (−0.4 / +0.7 from the cash zone) → `ManagerStandZ(i)`, the 3rd stands at −1.5. Stocker / robot / cashier / manager idle and consultant spots were already start + i·step (consultant 3 at x 21).
+- C: 589/589 EditMode (new: hire limits + last-level prices, carrier rest, manager stand).
+- D: Play Mode on the user's save (backed up, restored after): all six bought up to the new limit (31 workers), after 60 s every new worker had a job or its own spot; no new Console errors on play / stop. A one-frame NullReference burst (87, at 14:12:23) came when the first test run timed out and stopped Play Mode — not from this change, not reproduced on a normal stop.
+- `Game.unity` shows Editor re-serialization noise (TMP auto-size, Cinemachine streaming version) — not committed.
 
 ## Done
 

@@ -330,7 +330,7 @@ namespace FF.AI
             WorldLayout.WorkerLayoutSettings s = _world.workers;
             Vector2 spot = w.Kind == WorkerKind.Stocker ? s.stockerRest + new Vector2(w.Index * s.stockerRestStep, 0f)
                 : w.Kind == WorkerKind.Robot ? s.robotRest + new Vector2(w.Index * s.robotRestStep, 0f)
-                : s.carrierRest[w.Index % s.carrierRest.Length];
+                : s.CarrierRest(w.Index);
             w.MoveTo(ProtoCoords.ToUnity(spot), dt, w.Speed * _economy.workerIdleSpeedFactor);
         }
 
@@ -414,7 +414,7 @@ namespace FF.AI
                 return;
             }
             Zone cash = w.Register.CashZone;
-            float dz = w.Index > 0 ? s.managerStand.z : s.managerStand.y;
+            float dz = s.ManagerStandZ(w.Index);
             if (!w.MoveTo(cash.Position + new Vector3(s.managerStand.x, 0f, -dz), dt, w.Speed)) return;
             w.Animator.FacingYaw = AgentMotor.YawFromPrototype(Mathf.PI / 2f);
             w.Cooldown -= dt;
