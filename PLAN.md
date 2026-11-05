@@ -5,7 +5,40 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
-_Nothing in progress. Next: M8 (Plumbing & Building materials) — plan to be posted for approval._
+### M8 — Plumbing & Building materials — 2026-11-05 (branch `m8-plumbing`)
+Status: **In progress** — plan posted, waiting for the user's approval.
+Goal (04_IMPLEMENTATION_PLAN): mines yard (gate opens), clay / iron rocks, Plumbing + Materials factories, materials shop
+with its own door / shelves / registers, Miner, Section carrier, Section cashier, routing through the factory gap; Dream
+House placeholder. Done when the Lv 150 content works end-to-end.
+Prototype refs: PRODUCTS sink / material (232–235), UPG miner / secCarrier / secCashier (245–247), `ownFactory` + `with` (1015–1019),
+`refreshBlocks` materials-shop walls (1032), materials-shop block (968–981), `reg_annex` pad (984), rocks `makeRock` (1003–1004, 1049–1056),
+gate / back area (888–900, 1639), `updMiner` + GAP (1217–1235), `assignStaff` / `updCashier` (1204–1216), `pickJob(sec)` / `updCarrier` rest
+(1307–1318), `checkUnlocks` mines / matshop / with / staff (1668–1679), WORKER_SKIN (1186–1197); spec §6–§8.
+
+Already in place from M1–M7 (only wire up / verify): mines-yard fence, gate and signs, materials-shop shell, Plumbing and
+Materials machines + their speed / qty pads, shelves at x 48 / 50.6, registers 6 / 7 with their activity rule, customers
+routed to the annex door by product, `PlayerRegionRules.minesOpen`, ResourceNode clay / iron hardness and regrow, item
+prefabs clay / iron / sink / material, Dream House plot (fence, arch, road, lamps, foundation, billboard, work area, "Soon").
+
+- [ ] 0. Branch `m8-plumbing` from main
+- [ ] A. Buying Plumbing: pad `sink_buy` ($1.5M × ECON, shows from Lv 150) at (40, −9.6) with the "Lv 150" lot chip; `Ownership.Own("sink")` also owns every product with `unlocksWith = sink` (Materials), sets `OwnsPlumbing`, toast "t.sinkOpened"; old saves keep working (plumbing is derived from owned "sink")
+- [ ] B. World switches at runtime (no rebuild): gate hides, mines yard / materials shop show, materials-shop walls join the blockers (4 AABBs), register 6 activates, pad `reg_annex` ($400K × ECON, max 1) at (58.2, 3.5) opens register 7, shelves 48 / 50.6 show; the player can enter the mines yard
+- [ ] C. Rocks: clay 4×4 from (36.5, −15.8), iron 5×4 from (47, −15.8), step 2.4, seeded jitter ±0.25; low-poly prefab like `makeRock` (ground slab + icosahedron top, iron with orange ore bits); hardness 1.5 / 1.8, regrow 12 s, shrink on depletion and elastic grow back; mined like trees (axe level, 2 items per rock), only with plumbing; registered in NodeRegistry
+- [ ] D. Factories: Plumbing (2 clay → sink, 5 s) and Materials (2 iron → material, 5.5 s) run end-to-end — player carries clay / iron in, products to the materials-shop shelves, annex customers buy and pay at registers 6 / 7, trucks take sinks / materials
+- [ ] E. Workers (upgrades group "Plumbing & Materials", locked until plumbing):
+  - Miner (max 4): spawns at (44, −5); goes through the factory gap (44, −6.2) ↔ (44, −14.6); picks clay or iron by the emptier factory input; mines, carries 5, unloads into the input; idles at (44, −5) without plumbing
+  - Section carrier (max 3): only Plumbing / Materials outputs → their shelves (or a free truck dock), rests at (43.4 + i·1.2, −3.4)
+  - Section cashier (max 2): spawns at (51.5, 8), takes registers 6 / 7 before the cashiers do, idles at (47.6 + i·1.2, 8.4)
+  - Carriers / robots holding clay or iron deliver it to the matching factory input (prototype `updCarrier`); prefabs per WORKER_SKIN (miner brown shirt + hard hat, section carrier blue + hard hat, section cashier grey + cap)
+- [ ] F. Unlock cards: Plumbing factory at Lv 150 (price), "Building materials" with-card, "Clay pit and iron mine" → (47, −17), "Building materials shop" → (51.5, 6), staff cards for the three section workers
+- [ ] G. EditMode tests: ownership with `unlocksWith`, plumbing-derived state + blockers, register 6 / 7 activity, rock grid positions / hardness / regrow, miner resource choice and gap way-points, section carrier job filter, section cashier register order (6, 7 first), unlock cards, save round-trip
+- [ ] H. Play Mode on a copy of the user's save (Lv 150 + money given in the session only): buy plumbing, mine by hand, hire the section workers, check the full chain and the Console; 15-minute soak at ×4 with all workers; restore the save
+- [ ] I. Commit `M8: plumbing and building materials`, push, user play-test, PR → main
+
+Prototype quirks / not ported (prototype wins):
+- The back "sales area" (BULK wholesale zones at (51.4, −30.4 / −33.6), register 8, contractor customers, "Sales area seller") is dead code in the prototype: `buildBulk()` is never called and the register list has 8 entries, so register 8 never exists. Not built (texts stay in the tables).
+- `routeVia` (gap at x 53) only served those bulk zones; only the miner's gap at x 44 is used.
+
 
 ## Done
 
