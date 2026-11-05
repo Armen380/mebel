@@ -17,12 +17,14 @@ namespace FF.Editor.Items
         public const string Folder = "Assets/_Game/Prefabs/Items";
         public const string CatalogPath = DataImporter.DataRoot + "/ItemCatalog.asset";
 
-        // prototype H and how many of each the pool creates up front (M2 loop: logs, planks, chairs)
+        // prototype H and how many of each the pool creates up front: the peaks of a 16-minute end-game soak
+        // (Lv 983, all factories, 36 workers, 31 customers; M9) plus room — logs 66, planks 156, clay 26, iron 21,
+        // bills 17, chairs 43, sinks 16; the other products for full outputs / shelves / trucks
         static readonly (ItemType type, float height, int prewarm)[] Table =
         {
-            (ItemType.Log, 0.3f, 40), (ItemType.Plank, 0.11f, 70), (ItemType.Clay, 0.28f, 4), (ItemType.Iron, 0.24f, 4),
-            (ItemType.Material, 0.3f, 4), (ItemType.Bill, 0.055f, 4), (ItemType.Chair, 0.5f, 24), (ItemType.Sofa, 0.44f, 4),
-            (ItemType.Wardrobe, 0.84f, 4), (ItemType.Table, 0.5f, 4), (ItemType.Kitchen, 0.58f, 4), (ItemType.Sink, 0.56f, 4),
+            (ItemType.Log, 0.3f, 80), (ItemType.Plank, 0.11f, 180), (ItemType.Clay, 0.28f, 32), (ItemType.Iron, 0.24f, 32),
+            (ItemType.Material, 0.3f, 30), (ItemType.Bill, 0.055f, 40), (ItemType.Chair, 0.5f, 52), (ItemType.Sofa, 0.44f, 30),
+            (ItemType.Wardrobe, 0.84f, 30), (ItemType.Table, 0.5f, 30), (ItemType.Kitchen, 0.58f, 30), (ItemType.Sink, 0.56f, 30),
         };
 
         [MenuItem("FF/Build Item Prefabs", priority = 22)]
@@ -53,7 +55,7 @@ namespace FF.Editor.Items
                     type = type,
                     stackHeight = height,
                     prefab = prefab,
-                    prewarm = old != null ? old.prewarm : prewarm, // keep values tuned in the Inspector
+                    prewarm = old != null ? Mathf.Max(old.prewarm, prewarm) : prewarm, // keep values raised in the Inspector
                 });
             }
             catalog.entries = entries;

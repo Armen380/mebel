@@ -25,6 +25,8 @@ namespace FF.Gameplay.Characters
         public bool AlwaysShowAxe { get; set; }
         /// <summary>Target heading in degrees around Unity Y (0 = +Z).</summary>
         public float FacingYaw { get; set; }
+        /// <summary>Animate with real time (the player keeps breathing and turning while the menu pauses the game).</summary>
+        public bool UnscaledTime { get; set; }
 
         CharacterRig _rig;
         // Current limb angles (radians around local X). Kept here because Euler angles read back from a
@@ -43,7 +45,7 @@ namespace FF.Gameplay.Characters
 
         void LateUpdate()
         {
-            float dt = Time.deltaTime;
+            float dt = UnscaledTime ? Mathf.Min(Time.unscaledDeltaTime, 0.05f) : Time.deltaTime;
             float k = 1f - Mathf.Exp(-dt * PoseRate);
 
             float yaw = Mathf.LerpAngle(transform.eulerAngles.y, FacingYaw, 1f - Mathf.Exp(-dt * TurnRate));

@@ -4,6 +4,8 @@ namespace FF.Core
     public interface IProgressView
     {
         long Money { get; }
+        /// <summary>All money ever earned (prototype <c>S.total</c>; unlocks the Golden skin).</summary>
+        long TotalEarned { get; }
         int Level { get; }
         int Xp { get; }
         /// <summary>XP needed to reach the next level from the current one.</summary>

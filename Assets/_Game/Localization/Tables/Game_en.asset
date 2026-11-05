@@ -710,6 +710,54 @@ MonoBehaviour:
     m_Localized: "P \xB7 CUSTOMERS"
     m_Metadata:
       m_Items: []
+  - m_Id: 2122962089009152
+    m_Localized: Sounds
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2122962097397760
+    m_Localized: Music
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2122962097397761
+    m_Localized: Vibration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2122962097397762
+    m_Localized: Graphics
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2122962097397763
+    m_Localized: Low
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2122962097397764
+    m_Localized: Medium
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2122962097397765
+    m_Localized: High
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2133697825333248
+    m_Localized: Personalized ads
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2133697829527552
+    m_Localized: Rewards come from short videos you choose to watch. May we pick the ads for you? You can change this in the menu.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2133697829527553
+    m_Localized: Allow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2133697829527554
+    m_Localized: No, thanks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2133697829527555
+    m_Localized: Ad privacy
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

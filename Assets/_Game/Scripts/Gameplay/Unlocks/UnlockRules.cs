@@ -15,6 +15,8 @@ namespace FF.Gameplay.Unlocks
         FactoryWith,
         Mines,
         MaterialsShop,
+        /// <summary>A skin unlocked by total earnings (prototype <c>skin_gold</c>).</summary>
+        Skin,
     }
 
     /// <summary>One "NEW" card candidate; <see cref="Id"/> is what <c>S.seen</c> remembers.</summary>
@@ -22,7 +24,7 @@ namespace FF.Gameplay.Unlocks
     {
         public readonly string Id;
         public readonly UnlockKind Kind;
-        /// <summary>Product id for factory cards, upgrade id for staff cards.</summary>
+        /// <summary>Product id for factory cards, upgrade id for staff cards, skin id for skin cards.</summary>
         public readonly string ProductId;
 
         public UnlockCard(string id, UnlockKind kind, string productId = null)
@@ -36,16 +38,18 @@ namespace FF.Gameplay.Unlocks
     /// <summary>
     /// Prototype <c>checkUnlocks</c> (in its order): a factory the player can now buy or one that opened with another,
     /// staff that the shop level (or plumbing) opens, a new register slot, Sawmill 2, the mines and the materials shop with
-    /// plumbing, the dream plot after the tutorial. Skins join in M9.
+    /// plumbing, the dream plot after the tutorial, skins unlocked by total earnings.
     /// </summary>
     public static class UnlockRules
     {
         public const int MaxRegisterPads = 5;
 
+        public static string SkinCardId(string skinId) => "skin_" + skinId;
+
         /// <param name="hasBuyPad">Whether the factory's buy pad exists in the scene.</param>
         public static void Collect(IReadOnlyList<ProductDef> products, IReadOnlyList<UpgradeDef> upgrades, Func<string, bool> owns,
             Func<string, bool> hasBuyPad, int playerLevel, int registerLevel, int shopLevel, bool ownsPlumbing, bool tutorialDone,
-            List<UnlockCard> into)
+            List<UnlockCard> into, IReadOnlyList<SkinDef> skins = null, long totalEarned = 0)
         {
             into.Clear();
             foreach (ProductDef p in products)
@@ -69,6 +73,10 @@ namespace FF.Gameplay.Unlocks
             }
             if (tutorialDone)
                 into.Add(new UnlockCard("dream", UnlockKind.DreamPlot));
+            if (skins == null) return;
+            foreach (SkinDef s in skins)
+                if (s.unlockTotalEarned > 0 && totalEarned >= s.unlockTotalEarned)
+                    into.Add(new UnlockCard(SkinCardId(s.id), UnlockKind.Skin, s.id));
         }
     }
 }

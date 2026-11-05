@@ -99,6 +99,15 @@ MonoBehaviour:
     carrierSpawn: {x: -6, y: -1.5}
     shopStaffSpawn: {x: 20, y: 8}
     robotSpawn: {x: 2, y: 5}
+    sectionSpawn: {x: 44, y: -5}
+    sectionCashierSpawn: {x: 51.5, y: 8}
+    minerGapFront: {x: 44, y: -6.2}
+    minerGapBack: {x: 44, y: -14.6}
+    minesYardEdgeZ: -13.4
+    sectionCarrierRest: {x: 43.4, y: -3.4}
+    sectionCarrierRestStep: 1.2
+    sectionCashierIdle: {x: 47.6, y: 8.4}
+    sectionCashierIdleStep: 1.2
     carrierRest:
     - {x: -6, y: -1.2}
     - {x: -4.5, y: -1.2}
@@ -152,6 +161,7 @@ MonoBehaviour:
       origin: {x: 47, y: -15.8}
       step: {x: 2.4, y: -2.4}
       jitter: 0.5
+    cardTarget: {x: 47, y: -17}
   mainShop:
     floorMinX: 2.9
     floorZ:
@@ -211,6 +221,7 @@ MonoBehaviour:
     registersX:
     - 54.4
     - 58.2
+    cardTarget: {x: 51.5, y: 6}
   delivery:
     baysX:
     - -4

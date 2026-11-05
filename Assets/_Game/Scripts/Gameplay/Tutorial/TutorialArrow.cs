@@ -18,6 +18,7 @@ namespace FF.Gameplay.Tutorial
         [SerializeField] GameObject cone;
 
         float _spin;
+        FF.Core.GameMode _mode;
 
         /// <summary>Editor tools only.</summary>
         public void Setup(TutorialService service, UnlockService unlockService, GameObject coneObject)
@@ -29,7 +30,9 @@ namespace FF.Gameplay.Tutorial
 
         void LateUpdate()
         {
-            bool show = tutorial.TryGetTarget(out Vector3 target) || unlocks.TryGetGuide(out target);
+            _mode ??= FF.Core.Services.Get<FF.Core.GameMode>();
+            Vector3 target = default;
+            bool show = !_mode.InMenu && (tutorial.TryGetTarget(out target) || unlocks.TryGetGuide(out target));
             if (cone.activeSelf != show) cone.SetActive(show);
             if (!show) return;
             target.y += Mathf.Sin(Time.time * BobFrequency) * BobHeight;

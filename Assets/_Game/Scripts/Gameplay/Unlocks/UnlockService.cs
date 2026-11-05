@@ -32,6 +32,9 @@ namespace FF.Gameplay.Unlocks
         float _cardTimer = -1f, _guideUntil;
         Vector3 _guide;
         bool _hasGuide;
+        GameMode _mode;
+        // skins unlocked by earnings: card id and threshold, so the money check allocates nothing
+        readonly List<(string card, long threshold)> _skinCards = new List<(string, long)>();
 
         /// <summary>Editor tools only.</summary>
         public void Setup(Transform playerTransform) => player = playerTransform;
@@ -42,6 +45,9 @@ namespace FF.Gameplay.Unlocks
             _progress = Services.Get<GameProgress>();
             _state = Services.Get<WorldStateSnapshot>();
             _pads = Services.Get<PadSystem>();
+            _mode = Services.Get<GameMode>();
+            foreach (SkinDef s in _db.skins)
+                if (s.unlockTotalEarned > 0) _skinCards.Add((UnlockRules.SkinCardId(s.id), s.unlockTotalEarned));
             Check(true);
         }
 
@@ -50,6 +56,7 @@ namespace FF.Gameplay.Unlocks
             GameEvents.LevelUp += OnLevelUp;
             GameEvents.PadCompleted += OnPadCompleted;
             GameEvents.QuestChanged += OnQuestChanged;
+            GameEvents.MoneyChanged += OnMoneyChanged;
         }
 
         void OnDisable()
@@ -57,6 +64,19 @@ namespace FF.Gameplay.Unlocks
             GameEvents.LevelUp -= OnLevelUp;
             GameEvents.PadCompleted -= OnPadCompleted;
             GameEvents.QuestChanged -= OnQuestChanged;
+            GameEvents.MoneyChanged -= OnMoneyChanged;
+        }
+
+        /// <summary>Prototype <c>addMoney</c>: total ≥ 100K and skin_gold not seen → checkUnlocks.</summary>
+        void OnMoneyChanged(long money, bool bump)
+        {
+            if (_progress == null) return;
+            for (int i = 0; i < _skinCards.Count; i++)
+                if (_progress.TotalEarned >= _skinCards[i].threshold && !_progress.IsSeen(_skinCards[i].card))
+                {
+                    Check(false);
+                    return;
+                }
         }
 
         void OnLevelUp(int level) => Check(false);
@@ -76,7 +96,7 @@ namespace FF.Gameplay.Unlocks
         {
             UnlockRules.Collect(_db.products, _db.upgrades, _state.Owns, HasBuyPad, _progress.Level,
                 _progress.GetLevel(WorldStateSync.RegisterPadId), _progress.GetLevel(WorldStateSync.ShopPadId),
-                _state.OwnsPlumbing, _progress.QuestStep >= _db.tutorial.steps.Count, _candidates);
+                _state.OwnsPlumbing, _progress.QuestStep >= _db.tutorial.steps.Count, _candidates, _db.skins, _progress.TotalEarned);
             foreach (UnlockCard card in _candidates)
                 if (_progress.MarkSeen(card.Id) && !silent)
                     _queue.Enqueue(card);
@@ -86,6 +106,7 @@ namespace FF.Gameplay.Unlocks
 
         void Update()
         {
+            if (_mode != null && _mode.InMenu) return; // cards wait for play (prototype updUnlock)
             if (_cardTimer >= 0f)
             {
                 _cardTimer -= Time.deltaTime;
@@ -129,6 +150,11 @@ namespace FF.Gameplay.Unlocks
                     title = Text("un.matshop.t");
                     subtitle = Text("un.matshop.s");
                     target = ProtoCoords.ToUnity(_db.world.materialsShop.cardTarget);
+                    break;
+                case UnlockKind.Skin:
+                    icon = "skin";
+                    title = Text("un.skin.t", "name", Text(_db.Skin(card.ProductId).nameKey));
+                    subtitle = Text("un.skin.s");
                     break;
                 case UnlockKind.Register:
                     icon = "reg";

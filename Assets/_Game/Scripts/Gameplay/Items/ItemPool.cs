@@ -13,9 +13,13 @@ namespace FF.Gameplay.Items
     {
         readonly Dictionary<ItemType, Stack<Item>> _free = new Dictionary<ItemType, Stack<Item>>();
         readonly HashSet<ItemType> _warnedEmpty = new HashSet<ItemType>();
+        readonly Dictionary<ItemType, int> _created = new Dictionary<ItemType, int>();
         ItemCatalog _catalog;
 
         public ItemCatalog Catalog => _catalog;
+
+        /// <summary>Items of a type made so far (prewarm + growth): the peak number in use when the pool has grown.</summary>
+        public int Created(ItemType type) => _created.TryGetValue(type, out int n) ? n : 0;
 
         void Awake()
         {
@@ -66,6 +70,7 @@ namespace FF.Gameplay.Items
 
         Item Create(ItemCatalog.Entry entry)
         {
+            _created[entry.type] = Created(entry.type) + 1;
             GameObject go = Instantiate(entry.prefab, transform);
             go.name = entry.prefab.name;
             go.SetActive(false);

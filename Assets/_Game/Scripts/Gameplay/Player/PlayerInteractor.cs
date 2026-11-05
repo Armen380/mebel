@@ -27,6 +27,7 @@ namespace FF.Gameplay.Player
         readonly Chopper _chopper = new Chopper();
         EconomyConfig _economy;
         IUpgradeLevels _upgrades;
+        GameMode _mode;
         NodeRegistry _nodes;
         ZoneRegistry _zones;
         ItemPool _pool;
@@ -37,6 +38,7 @@ namespace FF.Gameplay.Player
         {
             _economy = Services.Get<GameDatabase>().economy;
             _upgrades = Services.Get<IUpgradeLevels>();
+            _mode = Services.Get<GameMode>();
             _nodes = Services.Get<NodeRegistry>();
             _zones = Services.Get<ZoneRegistry>();
             _pool = Services.Get<ItemPool>();
@@ -55,6 +57,11 @@ namespace FF.Gameplay.Player
 
         void Update()
         {
+            if (_mode != null && _mode.InMenu)
+            {
+                animator.Chopping = false;
+                return;
+            }
             float dt = Mathf.Min(Time.deltaTime, 0.05f);
             if (throwAction != null && throwAction.action.WasPressedThisFrame()) carrier.ThrowAll();
 
@@ -79,7 +86,7 @@ namespace FF.Gameplay.Player
                 Vector3 d = node.Position - p;
                 animator.FacingYaw = Mathf.Atan2(d.x, d.z) * Mathf.Rad2Deg;
             }
-            if (r.Hit) GameEvents.RaiseChopHit();
+            if (r.Hit) GameEvents.RaiseChopHit(node.State.IsRock);
             if (r.Yield > 0)
             {
                 Vector3 at = node.Position;

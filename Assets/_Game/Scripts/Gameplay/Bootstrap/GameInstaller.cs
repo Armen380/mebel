@@ -39,6 +39,7 @@ namespace FF.Gameplay.Bootstrap
             Services.Register(progress);
             Services.Register<IUpgradeLevels>(progress);
             Services.Register<IProgressView>(progress);
+            Services.Register<IWallet>(progress);
             Services.Register<IUpgradeShop>(new UpgradeShop(database, progress, state));
             Services.Register<IDevCheats>(new DevCheats(progress));
             Services.Register(state);
@@ -46,6 +47,9 @@ namespace FF.Gameplay.Bootstrap
             Services.Register(collision);
             Services.Register(new Ownership(state, collision, database.products));
             Services.Register(new WorldTagRegistry());
+            Services.Register(new GameMode());
+            Services.Register(new GameSettings(new PlayerPrefsSettingsStore(),
+                Application.isEditor ? QualityTier.High : QualityRules.DefaultTier(SystemInfo.systemMemorySize, SystemInfo.processorCount)));
             Services.Register(new DeliveryCargo());
             Services.Register(itemPool);
             Services.Register(itemFlights);

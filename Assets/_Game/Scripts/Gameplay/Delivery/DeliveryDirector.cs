@@ -154,6 +154,7 @@ namespace FF.Gameplay.Delivery
                         break;
                     case TruckEvent.LeftBay:
                         Free(bay);
+                        GameEvents.RaiseSound(SoundCue.TruckPass);
                         break;
                     case TruckEvent.Delivered:
                         Deliver(t);
@@ -166,6 +167,7 @@ namespace FF.Gameplay.Delivery
                     if (free >= 0)
                     {
                         m.Dispatch(free, _settings);
+                        GameEvents.RaiseSound(SoundCue.TruckPass);
                         Take(free, t);
                         t.gameObject.SetActive(true);
                     }

@@ -20,6 +20,7 @@ namespace FF.Save
                 level = progress.Level,
                 quest = progress.QuestStep,
                 lang = language,
+                skin = progress.Skin,
             };
             foreach (KeyValuePair<string, int> u in progress.Upgrades) data.lv[u.Key] = u.Value;
             foreach (KeyValuePair<string, GameProgress.PadState> p in progress.Pads)
@@ -42,6 +43,7 @@ namespace FF.Save
         public static void Apply(SaveData data, GameProgress progress, WorldStateSnapshot state, DeliveryCargo cargo)
         {
             progress.Restore(data.money, data.total, data.xp, data.level, data.quest);
+            if (!string.IsNullOrEmpty(data.skin)) progress.Skin = data.skin;
             foreach (KeyValuePair<string, int> u in data.lv) progress.SetUpgradeLevel(u.Key, u.Value);
             foreach (KeyValuePair<string, PadSave> p in data.pads)
             {

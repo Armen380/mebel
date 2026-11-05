@@ -15,8 +15,8 @@ namespace FF.Core
         public static event Action<string, int> PadCompleted;
         public static event Action<string> Unlocked;
 
-        /// <summary>The player's axe hit a node (every 0.3 s while chopping) — chop SFX / haptics hook.</summary>
-        public static event Action ChopHit;
+        /// <summary>The player's axe hit a node (every 0.3 s while chopping), true for a rock — chop SFX / haptics hook.</summary>
+        public static event Action<bool> ChopHit;
         /// <summary>The player felled a node (prototype <c>emit('chop')</c>).</summary>
         public static event Action Chopped;
         /// <summary>The player put one item into a zone (prototype <c>emit('drop', zoneId)</c>).</summary>
@@ -42,12 +42,14 @@ namespace FF.Core
         public static event Action UnlockCardHidden;
         /// <summary>A delivery truck left the world with its order: payout already added (HUD pop next to the balance).</summary>
         public static event Action<long> TruckDelivered;
+        /// <summary>A world or UI sound with no event of its own (car doors, the shop bell, trucks, clicks).</summary>
+        public static event Action<SoundCue> Sound;
 
         public static void RaiseMoneyChanged(long money, bool bump) => MoneyChanged?.Invoke(money, bump);
         public static void RaiseLevelUp(int level) => LevelUp?.Invoke(level);
         public static void RaisePadCompleted(string padId, int level) => PadCompleted?.Invoke(padId, level);
         public static void RaiseUnlocked(string unlockId) => Unlocked?.Invoke(unlockId);
-        public static void RaiseChopHit() => ChopHit?.Invoke();
+        public static void RaiseChopHit(bool rock) => ChopHit?.Invoke(rock);
         public static void RaiseChopped() => Chopped?.Invoke();
         public static void RaiseZoneDropped(string zoneId) => ZoneDropped?.Invoke(zoneId);
         public static void RaiseZonePicked(string zoneId) => ZonePicked?.Invoke(zoneId);
@@ -61,6 +63,7 @@ namespace FF.Core
         public static void RaiseUnlockCardShown(string icon, string title, string subtitle) => UnlockCardShown?.Invoke(icon, title, subtitle);
         public static void RaiseUnlockCardHidden() => UnlockCardHidden?.Invoke();
         public static void RaiseTruckDelivered(long payout) => TruckDelivered?.Invoke(payout);
+        public static void RaiseSound(SoundCue cue) => Sound?.Invoke(cue);
 
         /// <summary>Drops all subscribers (domain-reload-free Play Mode and tests).</summary>
         public static void Reset()
@@ -82,7 +85,17 @@ namespace FF.Core
             ProgressChanged = null;
             UnlockCardShown = null;
             UnlockCardHidden = null;
+            Sound = null;
             TruckDelivered = null;
         }
+    }
+
+    /// <summary>Sounds raised through <see cref="GameEvents.Sound"/>.</summary>
+    public enum SoundCue
+    {
+        Click,
+        CarDoor,
+        DoorBell,
+        TruckPass,
     }
 }

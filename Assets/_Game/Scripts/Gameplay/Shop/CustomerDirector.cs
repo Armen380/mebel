@@ -276,6 +276,7 @@ namespace FF.Gameplay.Shop
             }
             WorldLayout.MainShopSettings shop = _world.mainShop;
             Vector2 inside = doorIn + new Vector2((Random.value - 0.5f) * shop.doorJitter, shop.doorInsideOffset);
+            c.MarkDoorBell();
             c.AddWaypoint(ProtoCoords.ToUnity(doorOut));
             c.AddWaypoint(ProtoCoords.ToUnity(inside));
             _customers.Add(c);

@@ -117,6 +117,9 @@ namespace FF.Save
 
         void Load()
         {
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX
+            if (!File.Exists(_path)) MigrateLegacySave();
+#endif
             if (!File.Exists(_path)) return;
             try
             {
@@ -135,6 +138,30 @@ namespace FF.Save
                 catch (IOException) { }
             }
         }
+
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX
+        /// <summary>
+        /// M9 renamed the app (DefaultCompany / Mebel → Armen380 / Furniture Factory), which moved the desktop save folder:
+        /// copy a save from the old folder once (the old file stays). Phones are unaffected — the new bundle id is a new app.
+        /// </summary>
+        void MigrateLegacySave()
+        {
+            string root = Path.GetDirectoryName(Path.GetDirectoryName(Application.persistentDataPath));
+            if (string.IsNullOrEmpty(root)) return;
+            string legacy = Path.Combine(root, "DefaultCompany", "Mebel", FileName);
+            if (!File.Exists(legacy)) return;
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(_path));
+                File.Copy(legacy, _path, false);
+                Debug.Log($"[FF] Save copied from the old app folder: {legacy}");
+            }
+            catch (IOException e)
+            {
+                Debug.LogWarning($"[FF] Could not copy the old save: {e.Message}");
+            }
+        }
+#endif
 
         void ApplyLanguage(string code)
         {

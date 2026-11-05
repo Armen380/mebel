@@ -22,6 +22,7 @@ namespace FF.Gameplay.Player
         EconomyConfig _economy;
         WorldCollision _collision;
         IUpgradeLevels _upgrades;
+        GameMode _mode;
 
         public bool Moving { get; private set; }
         /// <summary>Seconds without moving; pads start charging after 0.3 s (M4).</summary>
@@ -32,10 +33,18 @@ namespace FF.Gameplay.Player
             _economy = Services.Get<GameDatabase>().economy;
             _collision = Services.Get<WorldCollision>();
             _upgrades = Services.Get<IUpgradeLevels>();
+            _mode = Services.Get<GameMode>();
+            animator.UnscaledTime = true;
         }
 
         void Update()
         {
+            if (_mode.InMenu)
+            {
+                Moving = false;
+                animator.Moving = false;
+                return;
+            }
             float dt = Mathf.Min(Time.deltaTime, MaxStep);
             Vector2 move = input.Value;
             Vector3 p = transform.position;

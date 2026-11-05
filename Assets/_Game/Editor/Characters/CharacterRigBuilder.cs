@@ -1,4 +1,5 @@
 using FF.Data;
+using FF.Editor.Art;
 using FF.Editor.World;
 using FF.Gameplay.Characters;
 using FF.Gameplay.Player;
@@ -20,7 +21,9 @@ namespace FF.Editor.Characters
         public static GameObject BuildPlayerPrefab()
         {
             var db = AssetDatabase.LoadAssetAtPath<GameDatabase>(DataImporter.DatabasePath);
-            GameObject go = Build("Player", db.DefaultSkin);
+            GameObject go = Build("Player", db.DefaultSkin, true);
+            AddLook(go, db);
+            go.AddComponent<PlayerSkin>();
             var animator = go.GetComponent<CharacterAnimator>();
             var mover = go.AddComponent<PlayerMover>();
             GameSceneBuilder.Wire(mover, "animator", animator);
@@ -37,7 +40,8 @@ namespace FF.Editor.Characters
             return prefab;
         }
 
-        public static GameObject Build(string name, SkinDef skin)
+        /// <param name="allHats">Player: every hat type under "Hat_{type}", only the skin's one active (skins switch at runtime).</param>
+        public static GameObject Build(string name, SkinDef skin, bool allHats = false)
         {
             var b = new Blockout(mirrorZ: false);
             var root = new GameObject(name);
@@ -57,7 +61,15 @@ namespace FF.Editor.Characters
             b.Box(body, 0.46f, 0.44f, 0.44f, skinTone, 0, 1.37f, 0, "Head");
             b.Box(body, 0.07f, 0.09f, 0.02f, Eye, -0.1f, 1.4f, 0.225f, "Eye");
             b.Box(body, 0.07f, 0.09f, 0.02f, Eye, 0.1f, 1.4f, 0.225f, "Eye");
-            BuildHat(b, body, skin.hatType, hat);
+            if (!allHats) BuildHat(b, body, skin.hatType, hat);
+            else
+                foreach (HatType type in System.Enum.GetValues(typeof(HatType)))
+                {
+                    if (type == HatType.None) continue;
+                    Transform group = b.Group("Hat_" + type, body);
+                    BuildHat(b, group, type, hat);
+                    group.gameObject.SetActive(type == skin.hatType);
+                }
 
             Transform shL = b.Group("ShoulderL", body, -0.41f, 0, 1.08f);
             Transform shR = b.Group("ShoulderR", body, 0.41f, 0, 1.08f);
@@ -85,6 +97,34 @@ namespace FF.Editor.Characters
             rig.carryAnchor = anchor;
             root.AddComponent<CharacterAnimator>();
             return root;
+        }
+
+        /// <summary>Shirt (torso, arms), trousers (legs), hats by type and one look per skin with its palette materials.</summary>
+        static void AddLook(GameObject go, GameDatabase db)
+        {
+            var shirt = new System.Collections.Generic.List<Renderer>();
+            var pants = new System.Collections.Generic.List<Renderer>();
+            foreach (Renderer r in go.GetComponentsInChildren<Renderer>(true))
+                if (r.name == "Torso" || r.name == "Arm") shirt.Add(r);
+                else if (r.name == "Leg") pants.Add(r);
+            var hats = new GameObject[System.Enum.GetValues(typeof(HatType)).Length];
+            Transform body = go.transform.Find("Body");
+            foreach (HatType type in System.Enum.GetValues(typeof(HatType)))
+            {
+                Transform h = body.Find("Hat_" + type);
+                if (h != null) hats[(int)type] = h.gameObject;
+            }
+            var looks = new System.Collections.Generic.List<PlayerLook.Look>();
+            foreach (SkinDef s in db.skins)
+                looks.Add(new PlayerLook.Look
+                {
+                    id = s.id,
+                    hat = s.hatType,
+                    shirt = MaterialPaletteEditor.Get((Color32)s.shirt),
+                    pants = MaterialPaletteEditor.Get((Color32)s.pants),
+                    hatMaterial = MaterialPaletteEditor.Get((Color32)s.hat),
+                });
+            go.AddComponent<PlayerLook>().Setup(shirt.ToArray(), pants.ToArray(), hats, looks);
         }
 
         static void BuildHat(Blockout b, Transform body, HatType type, int color)
