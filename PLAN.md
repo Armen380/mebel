@@ -5,8 +5,12 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
+_Nothing in progress. Next: M9 — plan to be posted for approval._
+
+## Done
+
 ### M8 — Plumbing & Building materials — 2026-11-05 (branch `m8-plumbing`)
-Status: **In progress** — implemented and checked; pushed, waiting for the user's play-test (step I).
+Result: Plumbing buy pad (Lv 150) also opens Building materials, the mines yard (16 clay + 20 iron rocks) and the materials shop (registers 6 / 7); Miner, Section carrier, Section cashier; unlock cards; 604 tests green, 16-min soak clean; play-test fix (section group in Upgrades); user play-test OK 2026-11-05; merged into main.
 Goal (04_IMPLEMENTATION_PLAN): mines yard (gate opens), clay / iron rocks, Plumbing + Materials factories, materials shop
 with its own door / shelves / registers, Miner, Section carrier, Section cashier, routing through the factory gap; Dream
 House placeholder. Done when the Lv 150 content works end-to-end.
@@ -33,7 +37,7 @@ prefabs clay / iron / sink / material, Dream House plot (fence, arch, road, lamp
 - [x] F. Unlock cards: Plumbing factory at Lv 150 (price), "Building materials" with-card, "Clay pit and iron mine" → (47, −17), "Building materials shop" → (51.5, 6), staff cards for the three section workers
 - [x] G. EditMode tests: ownership with `unlocksWith`, plumbing-derived state + blockers, register 6 / 7 activity, rock grid positions / hardness / regrow, miner resource choice and gap way-points, section carrier job filter, section cashier register order (6, 7 first), unlock cards, save round-trip
 - [x] H. Play Mode on a copy of the user's save (Lv 150 + money given in the session only): buy plumbing, mine by hand, hire the section workers, check the full chain and the Console; 15-minute soak at ×4 with all workers; restore the save → done 2026-11-05 on the user's save (already Lv 258; backed up and restored): Plumbing pad visible, bought → Materials owned, mines yard + materials shop shown, gate gone, 16 clay + 20 iron rocks, sink / material speed + qty pads and the 2nd-register pad shown; all 7 unlock cards shown; 4 miners, 3 section carriers, 2 section cashiers hired, register 7 bought; the player mined 2 iron by hand in ~6 s. Soak ×4, 199 → 1 152 s of game time: miners kept cycling yard ↔ inputs (clay and iron), both factories busy, materials-shop shelves full (23/23) so section carriers took the rest to the truck docks (prototype goodsTarget), section cashiers posted at registers 6 and 7, annex customers paid. Console: no errors from our code (only Unity IAP's token error and the known pool-prewarm warnings → M9).
-- [ ] I. Commit `M8: plumbing and building materials`, push, user play-test, PR → main
+- [x] I. Commit `M8: plumbing and building materials`, push, user play-test, PR → main
 
 Notes (implementation):
 - `WorldStateSnapshot.OwnsPlumbing` is now derived from owning "sink"; `Ownership` also owns products whose `unlocksWith` is the bought one; `PadRewards` shows "t.sinkOpened" and rebuilds blockers for `reg_annex`; `WorldStateSync` sets `AnnexSecondRegister`.
@@ -49,9 +53,6 @@ Play-test fixes (user, 2026-11-05):
 Prototype quirks / not ported (prototype wins):
 - The back "sales area" (BULK wholesale zones at (51.4, −30.4 / −33.6), register 8, contractor customers, "Sales area seller") is dead code in the prototype: `buildBulk()` is never called and the register list has 8 entries, so register 8 never exists. Not built (texts stay in the tables).
 - `routeVia` (gap at x 53) only served those bulk zones; only the miner's gap at x 44 is used.
-
-
-## Done
 
 ### More workers: +1 hire limit — 2026-11-05 (branch `workers-plus-one`)
 Result: lumber / carrier / robot 5, stocker 4, manager / consultant 3 (cashier 8 unchanged); own rest / stand spots for the extra carrier and manager; 589 tests green; user play-test OK 2026-11-05; merged into main.
