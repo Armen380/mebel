@@ -22,7 +22,6 @@ using FF.Gameplay.Tutorial;
 using FF.Gameplay.Unlocks;
 using FF.Save;
 using FF.Gameplay.Zones;
-using FF.UI.DevTools;
 using FF.UI.HUD;
 using FF.UI.Input;
 using FF.UI.Layout;
@@ -121,11 +120,15 @@ namespace FF.Editor
         static void SetupSystems(List<Zone> zones, ShopBuilder.Result shop, Transform player, BuildingKit kit)
         {
             Transform systems = Root("Systems");
-            foreach (string name in new[] { "Items", "Zones", "Nodes", "Customers", "Workers", "Delivery", "Cars", "Pads", "Tutorial", "Unlocks", "Save" })
+            foreach (string name in new[] { "Items", "Zones", "Nodes", "Customers", "Workers", "Delivery", "Cars", "Pads", "Tutorial", "Unlocks", "Save", "Menu" })
             {
                 Transform old = systems.Find(name);
                 if (old != null) Object.DestroyImmediate(old.gameObject);
             }
+
+            var menu = new GameObject("Menu");
+            menu.transform.SetParent(systems, false);
+            menu.AddComponent<FF.Gameplay.Bootstrap.MenuPause>();
 
             var items = new GameObject("Items");
             items.transform.SetParent(systems, false);
@@ -283,10 +286,9 @@ namespace FF.Editor
             HudBuilder.BuildToast(safe);
             BuildThrowButton(safe);
             RectTransform upgradesButton = HudBuilder.BuildUpgradesButton(safe, out GameObject badge);
-            BuildLocaleButton(safe);
-            HudBuilder.BuildDevPanel(safe);
             HudBuilder.BuildUnlockCard(safe);
             HudBuilder.BuildUpgradesPanel(hud, db, upgradesButton.GetComponent<Button>(), badge, joystick);
+            MenuBuilder.Build(ui, hud, safe);
             return joystick;
         }
 
@@ -410,32 +412,6 @@ namespace FF.Editor
             Wire(throwButton, "content", content.gameObject);
         }
 
-        static void BuildLocaleButton(Transform parent)
-        {
-            RectTransform button = Rect("DevLocaleButton", parent);
-            button.anchorMin = button.anchorMax = button.pivot = new Vector2(1, 1);
-            // dev button: under the Upgrades button until the real menu (M9)
-            button.anchoredPosition = new Vector2(-16 * Px, -(12 + 44 + 10) * Px);
-            button.sizeDelta = new Vector2(150, 96);
-            Image bg = button.gameObject.AddComponent<Image>();
-            bg.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd");
-            bg.type = Image.Type.Sliced;
-            bg.color = new Color32(0x2b, 0x1d, 0x14, 0xe0);
-            button.gameObject.AddComponent<Button>();
-
-            RectTransform labelRect = Rect("Label", button);
-            Stretch(labelRect);
-            var label = labelRect.gameObject.AddComponent<TextMeshProUGUI>();
-            label.text = "HY";
-            label.fontSize = 44;
-            label.alignment = TextAlignmentOptions.Center;
-            label.color = new Color32(0xfb, 0xf1, 0xde, 0xff);
-            label.raycastTarget = false;
-
-            var sw = button.gameObject.AddComponent<LocaleSwitchButton>();
-            Wire(sw, "label", label);
-        }
-
         // ---------- camera ----------
 
         static void SetupCamera(Transform player, WorldLayout w)
@@ -476,6 +452,17 @@ namespace FF.Editor
             Wire(cameraRig, "playCamera", vcam);
             Wire(cameraRig, "follow", follow);
             Wire(cameraRig, "composer", composer);
+
+            // menu: a plain Cinemachine camera placed by the orbit script; the brain blends to and from it in real time
+            var brain = camGo.GetComponent<CinemachineBrain>();
+            brain.IgnoreTimeScale = true;
+            brain.DefaultBlend = new CinemachineBlendDefinition(CinemachineBlendDefinition.Styles.EaseInOut, 1.1f);
+            var menuGo = new GameObject("MenuCamera");
+            menuGo.transform.SetParent(rig, false);
+            var menuCam = menuGo.AddComponent<CinemachineCamera>();
+            menuCam.Lens = vcam.Lens;
+            menuCam.Priority = 20;
+            menuGo.AddComponent<MenuCameraOrbit>().Setup(menuCam, player, player.GetComponent<FF.Gameplay.Characters.CharacterAnimator>());
         }
 
         // ---------- helpers ----------

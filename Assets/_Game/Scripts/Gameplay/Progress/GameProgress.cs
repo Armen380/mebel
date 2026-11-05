@@ -24,6 +24,8 @@ namespace FF.Gameplay.Progress
 
         public long Money { get; private set; }
         public long TotalEarned { get; private set; }
+        /// <summary>Player look (prototype <c>S.skin</c>); validated by the player skin component.</summary>
+        public string Skin { get; set; } = "lumber";
         public int Xp { get; private set; }
         public int Level { get; private set; } = 1;
         public int QuestStep { get; private set; }
@@ -92,6 +94,8 @@ namespace FF.Gameplay.Progress
         public IReadOnlyDictionary<string, int> Upgrades => _upgrades;
         /// <summary>Unlock-card ids already announced (prototype <c>S.seen</c>).</summary>
         public IReadOnlyCollection<string> Seen => _seen;
+
+        public bool IsSeen(string id) => _seen.Contains(id);
 
         /// <summary>Records an unlock card id; false when it was already seen.</summary>
         public bool MarkSeen(string id)

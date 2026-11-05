@@ -6,7 +6,7 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 ## In progress
 
 ### M9 — Polish & release prep — 2026-11-05 (branch `m9-polish`)
-Status: **In progress** — plan posted with the user's answers, waiting for approval.
+Status: **In progress** — approved by the user 2026-11-05.
 Goal (04_IMPLEMENTATION_PLAN): menu (language switch, skins with orbit camera), settings (sound, haptics, quality), SFX / music,
 haptics on pickups / purchases, app icon, splash; performance pass on a low-end Android; build AAB / IPA. Optional with
 approval: rewarded ads, IAP, analytics, cloud save.
@@ -17,10 +17,10 @@ Already in place: SkinDef ×5 (gold unlocks at 100K total earned), `skin` in the
 menu texts (ui.h1, ui.kicker, ui.intro, ui.skin, ui.play, ui.continue, ui.test, ui.new, ui.reset, ui.controls, skin.*, ui.earn,
 un.skin.*), dev HUD buttons (HY language, Test, New game) that the menu replaces.
 
-- [ ] 0. Branch `m9-polish` from main
-- [ ] A. Main menu = pause screen (prototype `#menu`): bottom sheet over the game — kicker with the app version, two-tone title, intro, language segmented control Հայ / EN / RU, "Choose a character" skin cards (colour swatch, name, gold locked with "Earn $100K"), Play (first launch) / Continue, row "Test: +25 Lv, +$250K" (development builds only) + New game (two-tap confirm), controls hint. The game opens in the menu; a Menu button in the HUD opens it; the HUD, joystick and input are off while it is open; the dev HUD buttons go away
-- [ ] B. Menu camera: Cinemachine orbit around the player (0.22 rad/s, radius 6.2 portrait / 5.4 landscape, height 1.7, look at y −0.55 / −0.05), blends to the follow camera on Play; the player faces the camera angle and stands still
-- [ ] C. Skins: picking a card swaps the player's look at once (prebuilt prefab per skin, carried items move over), saved in `skin`; card "New character: Golden" when total earned reaches $100K (prototype `skin_gold`)
+- [x] 0. Branch `m9-polish` from main
+- [x] A. Main menu = pause screen (prototype `#menu`): bottom sheet over the game — kicker with the app version, two-tone title, intro, language segmented control Հայ / EN / RU, "Choose a character" skin cards (colour swatch, name, gold locked with "Earn $100K"), Play (first launch) / Continue, row "Test: +25 Lv, +$250K" (development builds only) + New game (two-tap confirm), controls hint. The game opens in the menu; a Menu button in the HUD opens it; the HUD, joystick and input are off while it is open; the dev HUD buttons go away
+- [x] B. Menu camera: Cinemachine orbit around the player (0.22 rad/s, radius 6.2 portrait / 5.4 landscape, height 1.7, look at y −0.55 / −0.05), blends to the follow camera on Play; the player faces the camera angle and stands still
+- [x] C. Skins: picking a card swaps the player's look at once (prebuilt prefab per skin, carried items move over), saved in `skin`; card "New character: Golden" when total earned reaches $100K (prototype `skin_gold`)
 - [ ] D. Settings in the menu: sound on/off, music on/off, vibration on/off, graphics Low / Medium / High (Low: no shadows, no MSAA, render scale 0.8; Medium: shadows 35 m 1 cascade, MSAA 2×; High: soft shadows, render scale 1.0); default by device (low RAM / old GPU → Low); stored per device (PlayerPrefs). New texts in the three tables
 - [ ] E. Audio: `AudioService` (pooled 2D sources, Music / SFX mixer groups, per-sound cooldown like the prototype's coin 50 ms): coin, chop, quest step, purchase, level up, throw, truck pass, car door, shop door bell, ambient town loop, light music loop; triggered through GameEvents (no audio code in gameplay)
 - [ ] F. Haptics: light on pickup batches, medium on purchase / level up; Android vibrator with amplitude (AndroidJavaObject), iOS impact feedback via a tiny native plugin (.mm), nothing in the Editor; off in settings
@@ -30,6 +30,12 @@ un.skin.*), dev HUD buttons (HY language, Test, New game) that the menu replaces
 - [ ] L. Rewarded ads (user decision 2026-11-05): LevelPlay (Unity's ad mediation, includes Unity Ads) via its UPM package; two placements from the docs — "×2" on a delivery payout (button on the payout chip for a few seconds after a truck pays) and "instant cash" (HUD button when ads are ready, amount and cooldown to be agreed); test-mode ads in the Editor / development builds; consent (GDPR / UMP) and iOS ATT prompt; the user creates the LevelPlay account and gives the app keys. No ads ever interrupt play (rewarded only)
 - [ ] J. EditMode tests (menu state, skin unlock, settings → quality tier mapping, audio cooldowns, pool sizes) + Play Mode check (menu ↔ play, skins, settings, sounds) + device check
 - [ ] K. Commit `M9: polish and release prep`, push, user play-test, PR → main
+
+Notes (implementation):
+- A–C: `GameMode` (Core) — the game opens in the menu; `MenuPause` sets time scale 0 in the menu (the prototype runs no simulation there), the player's animator and the Cinemachine brain use real time; `MainMenu` (UI/Menu) on its own "Menu" canvas hides the HUD through a CanvasGroup; `MenuCameraOrbit` places a second Cinemachine camera (priority 20 in the menu), the brain blends 1.1 s. Player / interactor / unlock cards / tutorial arrow do nothing in the menu. The dev HUD buttons (HY, Test, New game) are gone — Test (development builds only) and New game live in the menu.
+- Kicker shows "v" + app version (the prototype's "Prototype · v0.3" text is not used).
+- Skins: the player prefab has every hat type ("Hat_{type}") and `PlayerLook` swaps palette materials of torso / arms / legs; `PlayerSkin` (ISkinSelection) keeps it in `GameProgress.Skin` → save `skin`; Golden unlock card "skin_gold" when total earned ≥ $100K (checked on money changes).
+- Gotchas: `GetComponent() ?? AddComponent()` does not work on Unity objects (fake null) — use TryGetComponent; synchronous `GetLocalizedString` inside `SelectedLocaleChanged` re-enters Addressables — refresh texts on the next frame.
 
 Decisions (user, 2026-11-05):
 1. Sounds: Kenney CC0 packs (+ a CC0 music loop); the exact files are listed to the user before downloading.

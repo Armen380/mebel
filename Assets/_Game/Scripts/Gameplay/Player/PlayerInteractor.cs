@@ -27,6 +27,7 @@ namespace FF.Gameplay.Player
         readonly Chopper _chopper = new Chopper();
         EconomyConfig _economy;
         IUpgradeLevels _upgrades;
+        GameMode _mode;
         NodeRegistry _nodes;
         ZoneRegistry _zones;
         ItemPool _pool;
@@ -37,6 +38,7 @@ namespace FF.Gameplay.Player
         {
             _economy = Services.Get<GameDatabase>().economy;
             _upgrades = Services.Get<IUpgradeLevels>();
+            _mode = Services.Get<GameMode>();
             _nodes = Services.Get<NodeRegistry>();
             _zones = Services.Get<ZoneRegistry>();
             _pool = Services.Get<ItemPool>();
@@ -55,6 +57,11 @@ namespace FF.Gameplay.Player
 
         void Update()
         {
+            if (_mode != null && _mode.InMenu)
+            {
+                animator.Chopping = false;
+                return;
+            }
             float dt = Mathf.Min(Time.deltaTime, 0.05f);
             if (throwAction != null && throwAction.action.WasPressedThisFrame()) carrier.ThrowAll();
 

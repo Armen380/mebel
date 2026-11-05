@@ -11,13 +11,16 @@ namespace FF.UI.Localization
         public const string DefaultTable = "Game";
 
         [SerializeField] LocalizedString text = new LocalizedString();
+        [Tooltip("Prototype HTML in the text: <em>…</em> in honey (menu title), <br> as a line break.")]
+        [SerializeField] bool html;
 
         TMP_Text _label;
 
         /// <summary>Editor/tools: point this text at a key of the game table.</summary>
-        public void SetKey(string key, string table = DefaultTable)
+        public void SetKey(string key, string table = DefaultTable, bool convertHtml = false)
         {
             text = new LocalizedString(table, key);
+            html = convertHtml;
         }
 
         void Awake() => _label = GetComponent<TMP_Text>();
@@ -30,6 +33,9 @@ namespace FF.UI.Localization
 
         void OnDisable() => text.StringChanged -= OnStringChanged;
 
-        void OnStringChanged(string value) => _label.text = value;
+        void OnStringChanged(string value) => _label.text = html ? FromHtml(value) : value;
+
+        public static string FromHtml(string value) =>
+            value.Replace("<em>", "<color=#F3B33D>").Replace("</em>", "</color>").Replace("<br>", "\n");
     }
 }

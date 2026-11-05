@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using FF.Core;
 using FF.Data;
 using FF.Editor.Art;
-using FF.UI.DevTools;
 using FF.UI.HUD;
 using FF.UI.Input;
 using FF.UI.Layout;
@@ -172,7 +171,8 @@ namespace FF.Editor
         {
             RectTransform root = Rect("UpgradesButton", safe);
             root.anchorMin = root.anchorMax = root.pivot = new Vector2(1, 1);
-            root.anchoredPosition = new Vector2(-16 * Px, -12 * Px);
+            // left of the menu button (prototype .hud-right: Upgrades, Home, Menu; gap 10 px)
+            root.anchoredPosition = new Vector2(-(16 + 44 + 10) * Px, -12 * Px);
             Image bg = root.gameObject.AddComponent<Image>();
             bg.sprite = TextureFactory.Rounded();
             bg.type = Image.Type.Sliced;
@@ -422,7 +422,7 @@ namespace FF.Editor
             return upgradeRow;
         }
 
-        static RectTransform Card(string name, Transform parent, Color color, float radius)
+        internal static RectTransform Card(string name, Transform parent, Color color, float radius)
         {
             RectTransform r = Rect(name, parent);
             Image bg = r.gameObject.AddComponent<Image>();
@@ -478,35 +478,6 @@ namespace FF.Editor
                 chips[i].group.interactable = false;
             }
             root.gameObject.AddComponent<PayoutPopView>().Setup(chips, 8 * Px);
-        }
-
-        /// <summary>Dev buttons under the language button (Editor / development builds only, see DevPanel).</summary>
-        public static void BuildDevPanel(Transform safe)
-        {
-            RectTransform column = Rect("DevPanel", safe);
-            column.anchorMin = column.anchorMax = column.pivot = new Vector2(1, 1);
-            column.anchoredPosition = new Vector2(-16 * Px, -(12 + 44 + 10 + 10) * Px - 96);
-            var v = column.gameObject.AddComponent<VerticalLayoutGroup>();
-            v.spacing = 6 * Px;
-            v.childAlignment = TextAnchor.UpperRight;
-            v.childControlWidth = v.childControlHeight = true;
-            v.childForceExpandWidth = v.childForceExpandHeight = false;
-            Fit(column.gameObject);
-
-            Button test = DevButton(column, "Test", "ui.test", out _);
-            Button newGame = DevButton(column, "NewGame", "ui.new", out TMP_Text newGameLabel);
-            column.gameObject.AddComponent<DevPanel>().Setup(test, newGame, newGameLabel);
-        }
-
-        static Button DevButton(Transform parent, string name, string key, out TMP_Text label)
-        {
-            RectTransform r = Pill(name, parent, new Color32(0x2b, 0x1d, 0x14, 0xd0), new RectOffset(10, 10, 5, 5), 0, false);
-            r.GetComponent<Image>().raycastTarget = true;
-            var button = r.gameObject.AddComponent<Button>();
-            button.targetGraphic = r.GetComponent<Image>();
-            label = Text("Label", r, key, 12, UiPalette.Cream, "ExtraBold");
-            label.gameObject.AddComponent<LocalizedTmpText>().SetKey(key);
-            return button;
         }
 
         /// <summary>
@@ -666,7 +637,7 @@ namespace FF.Editor
 
         // ---------- helpers ----------
 
-        static RectTransform Pill(string name, Transform parent, Color color, RectOffset padding, float spacing, bool shadow = true)
+        internal static RectTransform Pill(string name, Transform parent, Color color, RectOffset padding, float spacing, bool shadow = true)
         {
             RectTransform r = Rect(name, parent);
             Image bg = r.gameObject.AddComponent<Image>();
@@ -691,7 +662,7 @@ namespace FF.Editor
             text.gameObject.AddComponent<WrapToWidth>().Setup((RectTransform)bounds, reserved, sibling);
         }
 
-        static void Row(GameObject go, RectOffset padding, float spacing)
+        internal static void Row(GameObject go, RectOffset padding, float spacing)
         {
             var h = go.AddComponent<HorizontalLayoutGroup>();
             h.padding = Scaled(padding);
@@ -701,23 +672,23 @@ namespace FF.Editor
             h.childForceExpandWidth = h.childForceExpandHeight = false;
         }
 
-        static void Fit(GameObject go)
+        internal static void Fit(GameObject go)
         {
             var f = go.AddComponent<ContentSizeFitter>();
             f.horizontalFit = f.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
         }
 
-        static void Size(GameObject go, float w, float h)
+        internal static void Size(GameObject go, float w, float h)
         {
             var e = go.AddComponent<LayoutElement>();
             e.preferredWidth = e.minWidth = w * Px;
             e.preferredHeight = e.minHeight = h * Px;
         }
 
-        static RectOffset Scaled(RectOffset p) =>
+        internal static RectOffset Scaled(RectOffset p) =>
             new RectOffset(Mathf.RoundToInt(p.left * Px), Mathf.RoundToInt(p.right * Px), Mathf.RoundToInt(p.top * Px), Mathf.RoundToInt(p.bottom * Px));
 
-        static TMP_Text Text(string name, Transform parent, string text, float cssPx, Color color, string weight)
+        internal static TMP_Text Text(string name, Transform parent, string text, float cssPx, Color color, string weight)
         {
             RectTransform r = Rect(name, parent);
             var t = r.gameObject.AddComponent<TextMeshProUGUI>();

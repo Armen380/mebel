@@ -20,6 +20,21 @@ namespace FF.Editor.Art
             return new Color(1, 1, 1, Mathf.Clamp01(r - d));
         });
 
+        /// <summary>Prototype <c>.menu</c> backdrop: transparent down to 35 % of the height, then to 50 % black (tinted by the Image).</summary>
+        public static Sprite VerticalFade() => Sprite($"{UiFolder}/VerticalFade.png", 64, Vector4.zero, (x, y, s) =>
+        {
+            float fromTop = 1f - (y + 0.5f) / s;
+            return new Color(1, 1, 1, fromTop < 0.35f ? 0f : (fromTop - 0.35f) / 0.65f * 0.5f);
+        });
+
+        /// <summary>Inner ring of the skin swatch (CSS inset 3 px on a 46 px circle).</summary>
+        public static Sprite Ring() => Sprite($"{UiFolder}/Ring.png", 256, Vector4.zero, (x, y, s) =>
+        {
+            float r = s / 2f, d = Vector2.Distance(new Vector2(x + 0.5f, y + 0.5f), new Vector2(r, r));
+            float width = s * 3f / 46f;
+            return new Color(1, 1, 1, Mathf.Clamp01(r - d) * Mathf.Clamp01(d - (r - width)));
+        });
+
         /// <summary>Fully rounded 9-sliced pill (prototype <c>.chip</c>, border-radius 999px).</summary>
         public static Sprite Pill() => Sprite($"{UiFolder}/Pill.png", 64, new Vector4(31, 31, 31, 31),
             (x, y, s) => new Color(1, 1, 1, Mathf.Clamp01(-RoundedRectSdf(x + 0.5f, y + 0.5f, s, s, 0, s / 2f) + 0.5f)));
