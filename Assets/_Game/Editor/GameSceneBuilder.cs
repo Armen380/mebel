@@ -8,6 +8,8 @@ using FF.Editor.Items;
 using FF.Editor.World;
 using FF.Gameplay.Bootstrap;
 using FF.Gameplay.CameraRig;
+using FF.Gameplay.CarPark;
+using FF.Gameplay.Delivery;
 using FF.Gameplay.Effects;
 using FF.Gameplay.Production;
 using FF.Gameplay.Input;
@@ -119,7 +121,7 @@ namespace FF.Editor
         static void SetupSystems(List<Zone> zones, ShopBuilder.Result shop, Transform player, BuildingKit kit)
         {
             Transform systems = Root("Systems");
-            foreach (string name in new[] { "Items", "Zones", "Nodes", "Customers", "Workers", "Pads", "Tutorial", "Unlocks", "Save" })
+            foreach (string name in new[] { "Items", "Zones", "Nodes", "Customers", "Workers", "Delivery", "Cars", "Pads", "Tutorial", "Unlocks", "Save" })
             {
                 Transform old = systems.Find(name);
                 if (old != null) Object.DestroyImmediate(old.gameObject);
@@ -148,7 +150,15 @@ namespace FF.Editor
             var workersGo = new GameObject("Workers");
             workersGo.transform.SetParent(systems, false);
             workersGo.AddComponent<WorkerDirector>().Setup(WorkerPrefabBuilder.Build(false),
-                new List<Machine>(Root("World").GetComponentsInChildren<Machine>(true)), shop.Shelves, shop.Registers, director, player);
+                new List<Machine>(Root("World").GetComponentsInChildren<Machine>(true)), shop.Shelves, shop.Registers, director, player, shop.Docks);
+
+            var deliveryGo = new GameObject("Delivery");
+            deliveryGo.transform.SetParent(systems, false);
+            deliveryGo.AddComponent<DeliveryDirector>().Setup(VehiclePrefabBuilder.BuildTruck(false), shop.Bays);
+
+            var carsGo = new GameObject("Cars");
+            carsGo.transform.SetParent(systems, false);
+            carsGo.AddComponent<CarDirector>().Setup(VehiclePrefabBuilder.BuildCars(false), director);
 
             var padGo = new GameObject("Pads");
             padGo.transform.SetParent(systems, false);

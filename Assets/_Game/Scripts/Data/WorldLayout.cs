@@ -264,6 +264,15 @@ namespace FF.Data
             public float dockZoneZ = 10.1f;
             public Vector2 truckPad = new Vector2(1.2f, 10.4f);
             public Vector2 parkingPad = new Vector2(-1.4f, 7.6f);
+            [Tooltip("Trucks appear here (off-screen west) and vanish past truckDespawnX (prototype constants).")]
+            public float truckStartX = -80f;
+            public float truckDespawnX = 80f;
+            [Tooltip("Truck bed: prototype pileLayout(2, 4, .66, .64) on the anchor at (0, .84, −.62) of the truck model.")]
+            public PileSettings truckBed = new PileSettings(2, 4, 0.66f, 0.64f, new Vector3(0f, 0.84f, -0.62f));
+            [Tooltip("Height of the bay chip (prototype dock label y 1.4).")]
+            public float bayTagHeight = 1.4f;
+            [Tooltip("Dock marker opacity without a parked truck (prototype .4).")]
+            public float idleDockOpacity = 0.4f;
         }
 
         [Serializable]
@@ -288,6 +297,14 @@ namespace FF.Data
             public float aisleZ = 19.6f;
             public float slotZ = 22.6f;
             public float drivewayX = 33f;
+            [Tooltip("Cars appear / vanish this far east on the road (prototype constant).")]
+            public float carSpawnX = 140f;
+            [Tooltip("A car drives at road speed while it and its next way-point are north of this z (prototype 16.4).")]
+            public float roadSpeedMaxZ = 16.4f;
+            [Tooltip("The driver gets out this far east of the slot centre.")]
+            public float driverSideOffset = 1.15f;
+            [Tooltip("Car customers step onto the sidewalk here, in line with the shop door (prototype z 18).")]
+            public float sidewalkZ = 18f;
         }
 
         [Serializable]

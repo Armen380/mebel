@@ -159,7 +159,7 @@ namespace FF.UI.WorldTags
                 pill.Background.pixelsPerUnitMultiplier = locked ? LockedRadiusScale : 1f;
                 pill.Label.textWrappingMode = locked ? TMPro.TextWrappingModes.Normal : TMPro.TextWrappingModes.NoWrap;
                 pill.Text = null;
-                pill.Label.color = style == WorldTagStyle.Counter ? counterText : level ? levelText : bot ? botText : fullText;
+                pill.Label.color = style == WorldTagStyle.Counter || style == WorldTagStyle.Note ? counterText : level ? levelText : bot ? botText : fullText;
                 pill.Label.characterSpacing = full ? 6f : 0f;
                 pill.Label.gameObject.SetActive(!bubble);
                 pill.Icon.gameObject.SetActive(bubble);
@@ -193,7 +193,7 @@ namespace FF.UI.WorldTags
                     else pill.Label.SetText("Lv {0} · ×{1}", (float)(combined + 1), (float)multiplier);
                 }
             }
-            else if (style == WorldTagStyle.Locked || style == WorldTagStyle.Bot)
+            else if (style == WorldTagStyle.Locked || style == WorldTagStyle.Bot || style == WorldTagStyle.Note)
             {
                 string text = s.TagText;
                 if (!ReferenceEquals(text, pill.Text))

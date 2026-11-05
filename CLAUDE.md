@@ -94,4 +94,4 @@ in Unity coordinates only. 1 unit = 1 m.
 
 ## Communication
 
-- The user writes in Armenian (often in Latin letters). Reply in Armenian.
+- Reply in the language of the user's message (user decision 2026-11-02): Russian → Russian, Armenian (also in Latin letters) → Armenian.

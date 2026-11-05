@@ -40,6 +40,8 @@ namespace FF.Core
         /// <summary>An unlock card appears: icon id, title, subtitle (prototype <c>updUnlock</c>).</summary>
         public static event Action<string, string, string> UnlockCardShown;
         public static event Action UnlockCardHidden;
+        /// <summary>A delivery truck left the world with its order: payout already added (HUD pop next to the balance).</summary>
+        public static event Action<long> TruckDelivered;
 
         public static void RaiseMoneyChanged(long money, bool bump) => MoneyChanged?.Invoke(money, bump);
         public static void RaiseLevelUp(int level) => LevelUp?.Invoke(level);
@@ -58,6 +60,7 @@ namespace FF.Core
         public static void RaiseProgressChanged() => ProgressChanged?.Invoke();
         public static void RaiseUnlockCardShown(string icon, string title, string subtitle) => UnlockCardShown?.Invoke(icon, title, subtitle);
         public static void RaiseUnlockCardHidden() => UnlockCardHidden?.Invoke();
+        public static void RaiseTruckDelivered(long payout) => TruckDelivered?.Invoke(payout);
 
         /// <summary>Drops all subscribers (domain-reload-free Play Mode and tests).</summary>
         public static void Reset()
@@ -79,6 +82,7 @@ namespace FF.Core
             ProgressChanged = null;
             UnlockCardShown = null;
             UnlockCardHidden = null;
+            TruckDelivered = null;
         }
     }
 }

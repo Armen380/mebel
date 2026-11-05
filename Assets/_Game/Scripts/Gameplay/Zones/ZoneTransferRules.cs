@@ -20,6 +20,10 @@ namespace FF.Gameplay.Zones
         public static bool CanDrop(ItemStack carrier, ItemType zoneAccepts, ItemStack zone) =>
             carrier.Settled > 0 && carrier.Type == zoneAccepts && zone.HasRoom;
 
+        /// <summary>Drop onto <paramref name="zone"/>: as above, with the zone's own accept rule (one type or any product).</summary>
+        public static bool CanDrop(ItemStack carrier, Zone zone) =>
+            carrier.Settled > 0 && zone.Accepts(carrier.Type) && zone.Stack.HasRoom;
+
         /// <summary>Pickup: the zone holds items, the carrier is empty-typed or the same type and has room.</summary>
         public static bool CanPickup(ItemStack zone, ItemStack carrier) =>
             zone.Settled > 0 && (carrier.Type == ItemType.None || carrier.Type == zone.Type) && carrier.HasRoom;

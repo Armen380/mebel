@@ -29,12 +29,15 @@ namespace FF.AI
         [SerializeField] List<Register> registers = new List<Register>();
         [SerializeField] CustomerDirector customers;
         [SerializeField] Transform player;
+        [Tooltip("Truck dock zones in bay order (prototype freeDock takes the first with room).")]
+        [SerializeField] List<Zone> docks = new List<Zone>();
 
         readonly List<Worker> _workers = new List<Worker>(32);
         readonly List<ProductionLine> _lines = new List<ProductionLine>();
         readonly List<IPile> _sawInputs = new List<IPile>();
         readonly List<IPile> _sawOutputs = new List<IPile>();
         readonly List<ProductionLine> _scratch = new List<ProductionLine>();
+        readonly List<IPile> _docks = new List<IPile>(3);
         readonly List<bool> _registerActive = new List<bool>();
         readonly int[] _cashierRegister = new int[16];
         readonly int[] _countPerKind = new int[WorkerKinds.All.Length];
@@ -51,8 +54,9 @@ namespace FF.AI
 
         /// <summary>Editor tools only.</summary>
         public void Setup(List<Worker> workerPrefabs, List<Machine> machineList, List<Shelf> shelfList, List<Register> registerList,
-            CustomerDirector customerDirector, Transform playerTransform)
+            CustomerDirector customerDirector, Transform playerTransform, List<Zone> dockZones)
         {
+            docks = dockZones;
             prefabs = workerPrefabs;
             machines = machineList;
             shelves = shelfList;
@@ -71,6 +75,7 @@ namespace FF.AI
             _flights = Services.Get<ItemFlights>();
             _nodes = Services.Get<NodeRegistry>();
             BuildLines();
+            foreach (Zone d in docks) _docks.Add(d);
             foreach (WorkerKind kind in WorkerKinds.All)
                 for (int i = 0; i < _levels.GetLevel(WorkerKinds.UpgradeId(kind)); i++) Spawn(kind);
         }
@@ -236,7 +241,7 @@ namespace FF.AI
             {
                 if (hands.Count > 0)
                 {
-                    IPile leftover = CarrierJobs.LeftoverTarget(hands.Type, _lines, _sawInputs);
+                    IPile leftover = CarrierJobs.LeftoverTarget(hands.Type, _lines, _sawInputs, stocker, robot, _docks);
                     if (leftover == null)
                     {
                         Rest(w, dt);
@@ -248,8 +253,8 @@ namespace FF.AI
                 else
                 {
                     w.Job = robot
-                        ? RobotScoring.Best(w.transform.position, _lines, _sawOutputs, WaitingCustomers, p => RobotsHeadingTo(p, w), _economy)
-                        : CarrierJobs.Pick(_lines, _sawOutputs, stocker, _scratch);
+                        ? RobotScoring.Best(w.transform.position, _lines, _sawOutputs, _docks, WaitingCustomers, p => RobotsHeadingTo(p, w), _economy)
+                        : CarrierJobs.Pick(_lines, _sawOutputs, stocker, _docks, _scratch);
                     w.Putting = false;
                     if (w.Job == null)
                     {

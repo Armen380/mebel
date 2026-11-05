@@ -16,6 +16,8 @@ namespace FF.Gameplay.Zones
         [SerializeField] ZoneKind kind;
         [Tooltip("Item type this zone accepts (drop) or holds (pickup).")]
         [SerializeField] ItemType itemType;
+        [Tooltip("Drop zone that takes any product (truck dock, prototype accepts: isProduct) instead of one item type.")]
+        [SerializeField] bool anyProduct;
         [SerializeField] Transform pileAnchor;
         [SerializeField] GameObject marker;
         [SerializeField] bool showCounter = true;
@@ -23,6 +25,7 @@ namespace FF.Gameplay.Zones
         [SerializeField] WorldTagStyle tagStyle = WorldTagStyle.Counter;
 
         Func<bool> _active;
+        ItemStack _ownStack;
         bool _markerShown = true;
         float _counterHeight;
 
@@ -36,6 +39,10 @@ namespace FF.Gameplay.Zones
         public float Radius { get; private set; } = 1.3f;
         public bool IsActive => Stack != null && (_active == null || _active());
         public Vector3 Position => transform.position;
+        public GameObject Marker => marker;
+
+        /// <summary>Can items of <paramref name="type"/> be dropped here?</summary>
+        public bool Accepts(ItemType type) => anyProduct ? ItemTypes.IsProduct(type) : type == itemType;
 
         /// <summary>Editor tools only.</summary>
         public void Setup(string zoneId, ZoneKind zoneKind, ItemType type, Transform anchor, GameObject markerObject)
@@ -48,14 +55,24 @@ namespace FF.Gameplay.Zones
             tagStyle = zoneKind == ZoneKind.Cash ? WorldTagStyle.Cash : WorldTagStyle.Counter;
         }
 
+        /// <summary>Editor tools only: a drop zone for any product whose pile is lent by its owner (no own counter).</summary>
+        public void SetupAnyProduct()
+        {
+            anyProduct = true;
+            showCounter = false;
+        }
+
         public void Configure(IStackLayout layout, Func<int> capacity, Func<bool> active, ItemCatalog catalog, float radius, float counterHeight)
         {
-            Stack = new ItemStack(pileAnchor, layout, catalog, capacity, itemType);
+            Stack = _ownStack = new ItemStack(pileAnchor, layout, catalog, capacity, itemType);
             _active = active;
             Radius = radius;
             _counterHeight = counterHeight;
             if (showCounter && Services.TryGet(out WorldTagRegistry tags)) tags.Register(this);
         }
+
+        /// <summary>Lends another pile to the zone (a docked truck's bed); null gives the zone its own pile back.</summary>
+        public void UsePile(ItemStack pile) => Stack = pile ?? _ownStack;
 
         void LateUpdate()
         {

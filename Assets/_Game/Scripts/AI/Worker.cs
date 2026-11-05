@@ -130,6 +130,7 @@ namespace FF.AI
         string BuildTag()
         {
             if (_job == null) return null;
+            if (_job.Label == JobLabel.Truck) return LocalizationSettings.StringDatabase.GetLocalizedString(Table, "job.truck");
             _args.Clear();
             _args["name"] = LocalizationSettings.StringDatabase.GetLocalizedString(Table, _job.ProductNameKey);
             string text = LocalizationSettings.StringDatabase.GetLocalizedString(Table, _job.Label == JobLabel.Shelf ? "job.shelf" : "job.planks",

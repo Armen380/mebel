@@ -4,12 +4,12 @@ namespace FF.Save
 {
     /// <summary>
     /// The save file (02_SYSTEMS_SPEC §16, prototype <c>S</c>): money, XP, level, tutorial step, panel upgrade levels,
-    /// pad levels with partial payments, owned buildings, announced unlock cards, language and skin. Item piles and
-    /// character positions are not saved (as in the prototype).
+    /// pad levels with partial payments, owned buildings, announced unlock cards, language and skin, and what lies on each
+    /// delivery truck (v4, user decision; the prototype loses it). Other item piles and character positions are not saved.
     /// </summary>
     public sealed class SaveData
     {
-        public const int CurrentVersion = 3;
+        public const int CurrentVersion = 4;
 
         public int version = CurrentVersion;
         public long money;
@@ -23,6 +23,8 @@ namespace FF.Save
         public Dictionary<string, int> seen = new Dictionary<string, int>();
         public string lang;
         public string skin = "lumber";
+        /// <summary>Item types on each truck's bed, by truck index (v4; older saves: empty trucks).</summary>
+        public List<List<string>> trucks = new List<List<string>>();
     }
 
     public sealed class PadSave

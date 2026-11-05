@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using FF.Core;
+using FF.Gameplay.Delivery;
 using FF.Gameplay.Progress;
 using FF.Gameplay.World;
 using UnityEngine;
@@ -24,6 +25,7 @@ namespace FF.Save
 
         GameProgress _progress;
         WorldStateSnapshot _state;
+        DeliveryCargo _cargo;
         string _path;
         string _language;
         float _timer;
@@ -36,6 +38,7 @@ namespace FF.Save
             _path = DefaultPath;
             _progress = Services.Get<GameProgress>();
             _state = Services.Get<WorldStateSnapshot>();
+            Services.TryGet(out _cargo);
             Services.Register<ISaveService>(this);
             Load();
             Services.Get<WorldCollision>().Rebuild(_state);
@@ -102,7 +105,7 @@ namespace FF.Save
         {
             if (_deleted || _progress == null) return;
             _dirty = false;
-            Write(_path, SaveSerializer.ToJson(SaveMapper.Capture(_progress, _state, _language ?? CurrentLanguage())));
+            Write(_path, SaveSerializer.ToJson(SaveMapper.Capture(_progress, _state, _cargo, _language ?? CurrentLanguage())));
         }
 
         public void DeleteAndRestart()
@@ -118,7 +121,7 @@ namespace FF.Save
             try
             {
                 SaveData data = SaveSerializer.FromJson(File.ReadAllText(_path));
-                SaveMapper.Apply(data, _progress, _state);
+                SaveMapper.Apply(data, _progress, _state, _cargo);
                 ApplyLanguage(data.lang);
             }
             catch (Exception e) when (e is FormatException || e is IOException || e is Newtonsoft.Json.JsonException)

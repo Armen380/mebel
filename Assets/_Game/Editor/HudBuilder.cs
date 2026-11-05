@@ -56,6 +56,7 @@ namespace FF.Editor
             var moneyView = money.gameObject.AddComponent<MoneyView>();
             Wire(moneyView, "amount", amount);
             Wire(moneyView, "bumpTarget", money);
+            BuildPayoutPops(money);
 
             // level: walnut pill, padding 4 12 4 4, green "Lv 1" chip + 74×7 bar
             RectTransform level = Pill("Level", column, UiPalette.Walnut, new RectOffset(4, 12, 4, 4), 8);
@@ -441,6 +442,42 @@ namespace FF.Editor
             var shoulders1 = TextureFactory.Cubic(new Vector2(3.5f, 19), new Vector2(4.1f, 15.8f), new Vector2(6.3f, 14), new Vector2(9, 14));
             var shoulders2 = TextureFactory.Cubic(new Vector2(9, 14), new Vector2(11.7f, 14), new Vector2(13.9f, 15.8f), new Vector2(14.5f, 19));
             return TextureFactory.LineIcon("upgrade", 2.4f, head, shoulders1, shoulders2, TextureFactory.Poly(17, 8, 17, 14), TextureFactory.Poly(14, 11, 20, 11));
+        }
+
+        /// <summary>
+        /// Prototype <c>.mpop</c>: green chips (padding 3 10 3 7, gap 5, 16 px truck icon, 13 px black text) 8 px right of
+        /// the balance pill, outside its layout.
+        /// </summary>
+        static void BuildPayoutPops(RectTransform money)
+        {
+            RectTransform root = Rect("PayoutPops", money);
+            root.gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
+            root.anchorMin = root.anchorMax = new Vector2(1, 0.5f);
+            root.pivot = new Vector2(0, 0.5f);
+            root.anchoredPosition = new Vector2(8 * Px, 0);
+            root.sizeDelta = Vector2.zero;
+
+            Sprite truck = TextureFactory.LineIcon("truck", 2.2f,
+                TextureFactory.Closed(2, 7, 13, 7, 13, 16, 2, 16), TextureFactory.Poly(13, 10, 17, 10, 20, 13, 20, 16, 13, 16),
+                TextureFactory.Circle(6, 17.5f, 1.6f), TextureFactory.Circle(16.5f, 17.5f, 1.6f));
+            var chips = new PayoutPopView.Chip[3];
+            for (int i = 0; i < chips.Length; i++)
+            {
+                RectTransform chip = Pill("Pop" + i, root, UiPalette.LeafDark, new RectOffset(7, 10, 3, 3), 5);
+                chip.anchorMin = chip.anchorMax = new Vector2(0, 0.5f);
+                chip.pivot = new Vector2(0, 0.5f);
+                RectTransform icon = Rect("Truck", chip);
+                Image image = icon.gameObject.AddComponent<Image>();
+                image.sprite = truck;
+                image.color = Color.white;
+                image.raycastTarget = false;
+                Size(icon.gameObject, 16, 16);
+                TMP_Text label = Text("Amount", chip, "+$0", 13, Color.white, "Black");
+                chips[i] = new PayoutPopView.Chip { rect = chip, group = chip.gameObject.AddComponent<CanvasGroup>(), label = label };
+                chips[i].group.blocksRaycasts = false;
+                chips[i].group.interactable = false;
+            }
+            root.gameObject.AddComponent<PayoutPopView>().Setup(chips, 8 * Px);
         }
 
         /// <summary>Dev buttons under the language button (Editor / development builds only, see DevPanel).</summary>

@@ -121,8 +121,27 @@ MonoBehaviour:
   robotStarvingBonus: 1.6
   robotDistanceDivisor: 60
   robotMinScore: 0.15
+  robotTruckBase: 1.1
+  robotTruckFillWeight: 0.8
   truckOrderSize: 8
   truckAwaySeconds: 10
+  truckArriveSpeedFactor: 1.6
+  truckArriveMinSpeed: 3
+  truckMaxSpeed: 18
+  truckParkSpeed: 3
+  truckAcceleration: 9
+  truckFullWaitSeconds: 0.6
+  truckWheelSpin: 2.6
+  carFirstSpawnSeconds: 3
+  carSpawnMinSeconds: 6
+  carSpawnMaxSeconds: 11
+  carSlotsBase: 4
+  carSlotsPerShopLevel: 1
+  carSlotsMax: 8
+  carRoadSpeed: 10
+  carLotSpeed: 3.4
+  carTurnRate: 8
+  carWheelSpin: 3
   treeRegrowSeconds: 9
   clayRegrowSeconds: 12
   ironRegrowSeconds: 12

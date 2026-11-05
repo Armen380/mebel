@@ -5,12 +5,56 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
-Nothing in progress. Next: M7 (delivery & car park) — post the plan and wait for the user's approval.
+### More workers: +1 hire limit — 2026-11-05 (branch `workers-plus-one`)
+Status: **In progress**
+User request (2026-11-05, after the M7 play-test): workers are too few, add one more of each.
+Decision (user): every hired worker except the cashier gets +1 max level — lumber, carrier, robot 4→5; stocker 3→4;
+manager, consultant 2→3. Cashier stays at 8 (only 6 main registers + 1 annex, a 9th would idle). The extra level costs
+the same formula round(base·1.25·mul^lv/50)·50: lumber $109,800, carrier $161,050, robot $1,658,900, stocker $119,800,
+manager $156,250, consultant $312,500. Deviation from the prototype (`UPG` max values) — on purpose.
 
-Notes:
-- Open question to user: change "Communication" rule to "reply in the language of the user's message (Armenian or Russian)"? The user writes Russian; replies are in Russian until decided.
+- [ ] 0. Branch `workers-plus-one` from main (after the M7 merge)
+- [ ] A. Design/data/upgrades.json: `max` +1 and `costPerLevel_beforeECON` extended for the six ids; FF/Import Design Data
+- [ ] B. Check the code has no hidden 4/3/2 caps (rest spots, manager stands, consultant spots, robot tag, upgrade pips) and the 5th / 4th / 3rd worker gets a sane spot
+- [ ] C. Tests: upgrade max levels and new-level prices; full EditMode run
+- [ ] D. Play Mode: hire the extra workers on a copy of the save, check spots and Console; restore the save
+- [ ] E. Commit, push, PR; merge after the user's play-test
 
 ## Done
+
+### M7 — Delivery & car park — 2026-11-02 (branch `m7-delivery`)
+Result: trucks with bays, docks and payout pop; cars with car-park customers over the zebra; truck loads kept in save v4; 580 tests green, 30-min soak with 0 stuck vehicles; user play-test OK 2026-11-05; merged into main.
+Goal (04_IMPLEMENTATION_PLAN): truck bays, truck state machine, dock zones, payout pop next to the balance; car park, cars,
+car customers crossing the zebra. Done when trucks and cars loop indefinitely without getting stuck (soak test 30 min).
+Prototype refs: `LANE/PARK/ORDER/BAYZ` (645), bays + truck/parking pads (987–1000), `makeTruck / updTrucks` (1405–1432),
+bay chip (1506–1511), `moneyPop` + `.mpop` (1457, css 32–34), `LOT / buildLot / makeCar / spawnCar / carLeave / updCars` (824–866),
+car customer path in `spawnCustomer / leave` (1357–1365), car spawn timer (1376), `freeDock / goodsTarget` (1267–1269),
+robot truck job (1285–1286); spec §9 (car customers), §10; data: economy.json `truckOrderSize/truckAwaySeconds/carPark`,
+world_layout.json `delivery / road / carPark`, pads.json `truck / parking`.
+
+- [x] 0. Branch `m7-delivery` from main
+- [x] A. Data: `DeliveryConfig` numbers (order 8, away 10 s, start x −80, despawn x > 80, in-speed clamp((bayX − x)·1.6, 3, 18), park/unpark 3 m/s, out accel 9 → 18 m/s, full-wait 0.6 s, bed pile 2×4 at 0.66 × 0.64) and car numbers (spawn 6–11 s, slots min(8, 4 + shopLv), road 10 / lot 3.4 m/s, heading lerp 8, spawn x 140, 8 colours) — from the JSON where it has them, prototype constants otherwise (noted as such)
+- [x] B. Prefabs (low-poly like the prototype, pooled): Truck (`makeTruck`: dark chassis, red cab, windshield, wooden bed with sides, 4 rolling wheels, load anchor) and Car (`makeCar`: body, glass, roof, bumpers, glowing head / tail lights, 4 wheels; colour per spawn)
+- [x] C. Bays and docks: 3 bays at x −4 / −9.2 / −14.4, bay i active when i < 1 + parking level (inactive bays hidden); dock zone "TRUCK" accepts any furniture and its pile is the parked truck's bed, open only while a truck is at the bay and has < 8; marker bright with a truck, dim without. `Zone` gets an "any product" accept mode and a swappable pile
+- [x] D. Trucks (pure `TruckStateMachine`, tested): away (10 s) → in (lane 14.6 from x −80, slowing to the bay) → park (to z 12.3) → bay (load until 8, then 0.6 s) → unpark → out (accelerate east) → past x 80: payout Σ round(salePrice·1.4) + Σ XP, then away. One truck per bay; extra trucks wait. Truck pad (+1 truck, max 4) and Parking pad (+1 bay, max 2) work; trucks spawn from the pad level on load
+- [x] E. Bay tag (prototype chip): "No truck" (bay 0, no trucks bought) / "Arriving…" / "n/8" / "Free · N s" / "Free"
+- [x] F. Payout pop: small green chip with a truck icon to the right of the balance, "+$12K", slides in, holds, rises and fades in 2.2 s; several can overlap (pooled)
+- [x] G. Workers: carriers send furniture to a free dock when its shelf is full (prototype `goodsTarget`); robots get the truck job (score 1.1 + 0.8·n/8 + (output > 80 % ? 1) − 0.9·other robots, tag "Truck") and drop leftovers dock-first; the M6 notes "truck jobs in M7" are closed
+- [x] H. Cars (`CarDirector`): every 6–11 s, if a slot below min(8, 4 + shopLv) is free and a product is owned, a car comes from x 140 on the west lane (z 12.3) → driveway (33, 12.3) → aisle (33, 19.6) → (slotX, 19.6) → nose-in (slotX, 22.6); 10 m/s on the road, 3.4 in the lot. Parked → its driver walks (slotX + 1.15, 19.6) → (20, 18) → over the zebra to the shop door and shops as usual; leaving, walks back, gets in, the car reverses to the aisle, drives to (33, 14.6) and east off-screen, the slot frees. Car customers don't count toward the walk-in limit
+- [x] I. EditMode tests (580/580 green): truck states and timings, payout with ×1.4 and XP, bay assignment / waiting trucks, dock accept rules, bay tag state, carrier and robot dock jobs, car-park slot count, car path points and speed rule, car customer way-points
+- [x] J. Play Mode + soak: 30 min of game time (time scale ×4) with 4 trucks, 3 bays, robots, carriers and cars: a watchdog reports any truck or car stuck in one state (> 60 s, parked cars > patience + shopping time); Console without errors → done 2026-11-04: 2 046 s of game time at ×4 on the user's save (4 trucks, 3 bays, 3 robots, 4 carriers): 50 deliveries, every truck kept cycling (the 4th waits for a free bay), cars parked / shopped / left with max 18 s arriving and 92 s parked, 0 stuck vehicles, no errors (the user's save was backed up before and restored after)
+- [x] K. Commit `M7: delivery and car park`, push, user play-test, PR → main
+
+Notes (implementation):
+- New code: `FF.Gameplay.Delivery` (TruckMotion pure state machine, DeliveryRules: free bay / bay chip / payout, Truck, TruckBay, DeliveryDirector, DeliveryCargo) and `FF.Gameplay.CarPark` (CarRoute + CarMotion pure, Car, CarDirector); `Zone` got an "any product" mode and a lent pile (`UsePile`); `WorldTagStyle.Note` for the bay chip; `GameEvents.TruckDelivered` → `PayoutPopView` (HUD). Editor: `VehiclePrefabBuilder` (menu FF/Build Vehicle Prefabs, Prefabs/Vehicles), bays + truck / parking pads in `ShopBuilder`.
+- Prototype quirks kept: trucks slide sideways between the lane and the bay; the bay chip says "Arriving…" while a full truck pulls out.
+- Save v4: `trucks` = item types per truck index; restored trucks stand at the first free open bay with their load; a truck keeps its entry until it has delivered, so quitting while it drives away pays later instead of losing the load.
+- Play Mode (user save, 4 trucks / 3 bays given in the session only): carriers and robots load trucks, the player can drop furniture on a dock, trucks cycle and pay ("+$4.8K" chip next to the balance), the 4th truck waits for a free bay; cars park, drivers shop and walk back over the zebra; save → restart restores each bed exactly.
+
+Follow-up (M9 performance): item pools of furniture are prewarmed with 4 each (M2 value; the builder keeps tuned values), so with all factories and trucks they grow at runtime ("Item pool 'Chair' ran dry" warnings) — size them for the full game.
+
+Decisions (user, 2026-11-02):
+1. Truck loads on restart [save them — deviation from the prototype, which loses them]: the save gets the furniture on each docked truck (types in order); on load the truck stands at its bay with that load. Save version +1 with migration (older saves → empty trucks). Covered by a save round-trip test.
 
 ### M6 — Workers & robots — 2026-11-02 (branch `m6-workers`)
 Result: lumberjacks, carriers, stockers, robots (scored jobs + task tag), cashiers, manager, consultant; back-row trips through the gaps; Upgrades sheet tap/scroll fixes; 557 tests green; user play-test OK 2026-11-02; merged into main.

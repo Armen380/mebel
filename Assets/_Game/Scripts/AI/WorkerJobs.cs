@@ -25,6 +25,7 @@ namespace FF.AI
         None,
         Shelf,
         Planks,
+        Truck,
     }
 
     /// <summary>Carry job: take from <see cref="From"/> (until <see cref="Want"/> or full), unload at <see cref="To"/>.</summary>
@@ -82,16 +83,37 @@ namespace FF.AI
             return best;
         }
 
-        /// <summary>Prototype <c>goodsTarget</c> without docks (M7): the product's shelf when it has room.</summary>
-        public static IPile GoodsTarget(ProductionLine line) =>
-            line.Shelf != null && line.Shelf.IsActive && line.Shelf.Count < line.Shelf.Capacity ? line.Shelf : null;
+        static bool HasRoom(IPile p) => p != null && p.IsActive && p.Count < p.Capacity;
+
+        /// <summary>The product's shelf when it has room (stockers, prototype <c>only</c>).</summary>
+        public static IPile ShelfTarget(ProductionLine line) => HasRoom(line.Shelf) ? line.Shelf : null;
+
+        /// <summary>First open dock with a parked truck that still has room (prototype <c>freeDock</c>).</summary>
+        public static IPile FreeDock(IReadOnlyList<IPile> docks)
+        {
+            if (docks == null) return null;
+            for (int i = 0; i < docks.Count; i++)
+                if (HasRoom(docks[i])) return docks[i];
+            return null;
+        }
 
         /// <summary>
-        /// Prototype <c>pickJob(only)</c>: goods from the fullest factory output to its shelf; otherwise (carriers only)
-        /// planks from the fullest sawmill output to the emptiest plank-factory input.
+        /// Prototype <c>goodsTarget(type, dockFirst)</c>: the shelf when it has room, else a free truck dock; robots
+        /// (<paramref name="dockFirst"/>) try the dock first.
+        /// </summary>
+        public static IPile GoodsTarget(ProductionLine line, IReadOnlyList<IPile> docks, bool dockFirst)
+        {
+            IPile shelf = ShelfTarget(line);
+            if (dockFirst) return FreeDock(docks) ?? shelf;
+            return shelf ?? FreeDock(docks);
+        }
+
+        /// <summary>
+        /// Prototype <c>pickJob(only)</c>: goods from the fullest factory output to its shelf (carriers: else a free truck
+        /// dock); otherwise (carriers only) planks from the fullest sawmill output to the emptiest plank-factory input.
         /// </summary>
         public static WorkerJob Pick(IReadOnlyList<ProductionLine> lines, IReadOnlyList<IPile> sawOutputs, bool shelvesOnly,
-            List<ProductionLine> scratch)
+            IReadOnlyList<IPile> docks, List<ProductionLine> scratch)
         {
             scratch.Clear();
             foreach (ProductionLine l in lines)
@@ -110,7 +132,7 @@ namespace FF.AI
             }
             foreach (ProductionLine l in scratch)
             {
-                IPile to = GoodsTarget(l);
+                IPile to = shelvesOnly ? ShelfTarget(l) : GoodsTarget(l, docks, false);
                 if (to != null) return new WorkerJob { From = l.Output, To = to };
             }
             if (shelvesOnly) return null;
@@ -119,26 +141,30 @@ namespace FF.AI
             return target != null ? new WorkerJob { From = planks, To = target } : null;
         }
 
-        /// <summary>Where items already in hand go when there is no job (prototype <c>updCarrier</c> leftover rule).</summary>
-        public static IPile LeftoverTarget(ItemType type, IReadOnlyList<ProductionLine> lines, IReadOnlyList<IPile> sawInputs)
+        /// <summary>
+        /// Where items already in hand go when there is no job (prototype <c>updCarrier</c> leftover rule): stockers only
+        /// to the shelf, robots dock first, carriers shelf first.
+        /// </summary>
+        public static IPile LeftoverTarget(ItemType type, IReadOnlyList<ProductionLine> lines, IReadOnlyList<IPile> sawInputs,
+            bool shelvesOnly, bool dockFirst, IReadOnlyList<IPile> docks)
         {
             if (type == ItemType.Plank) return PlankTarget(lines);
             if (type == ItemType.Log) return SawInput(sawInputs);
             foreach (ProductionLine l in lines)
-                if (l.Output.ItemType == type) return GoodsTarget(l);
+                if (l.Output.ItemType == type) return shelvesOnly ? ShelfTarget(l) : GoodsTarget(l, docks, dockFirst);
             return null;
         }
     }
 
     /// <summary>
     /// Prototype <c>robotJob</c>: scores every delivery and takes the most urgent one above the threshold —
-    /// customers waiting at an empty shelf &gt; a factory idle without planks &gt; a nearly full factory output.
-    /// Truck jobs join with the docks in M7.
+    /// customers waiting at an empty shelf &gt; a factory idle without planks &gt; a truck waiting at the dock &gt; a nearly
+    /// full factory output.
     /// </summary>
     public static class RobotScoring
     {
         public static WorkerJob Best(Vector3 robot, IReadOnlyList<ProductionLine> lines, IReadOnlyList<IPile> sawOutputs,
-            Func<IPile, int> waitingCustomers, Func<IPile, int> otherRobotsHeadingTo, EconomyConfig e)
+            IReadOnlyList<IPile> docks, Func<IPile, int> waitingCustomers, Func<IPile, int> otherRobotsHeadingTo, EconomyConfig e)
         {
             WorkerJob best = null;
             foreach (ProductionLine l in lines)
@@ -147,14 +173,24 @@ namespace FF.AI
                 if (!output.IsActive || output.Settled == 0) continue;
                 float full = (float)output.Count / output.Capacity > e.robotFullOutputRatio ? e.robotFullOutputBonus : 0f;
                 IPile shelf = l.Shelf;
-                if (shelf == null || !shelf.IsActive) continue;
-                int room = shelf.Capacity - shelf.Count;
-                if (room <= 0) continue;
-                int waiting = waitingCustomers(shelf);
-                bool empty = shelf.Count == 0;
-                float score = (1f - (float)shelf.Count / shelf.Capacity) + waiting * e.robotWaitingWeight + (empty ? e.robotEmptyBonus : 0f)
-                              + full - otherRobotsHeadingTo(shelf) * e.robotBusyPenalty;
-                Consider(ref best, robot, output, shelf, room, score, JobLabel.Shelf, l.ProductNameKey, waiting > 0 || empty, e);
+                if (shelf != null && shelf.IsActive && shelf.Capacity - shelf.Count > 0)
+                {
+                    int room = shelf.Capacity - shelf.Count;
+                    int waiting = waitingCustomers(shelf);
+                    bool empty = shelf.Count == 0;
+                    float score = (1f - (float)shelf.Count / shelf.Capacity) + waiting * e.robotWaitingWeight + (empty ? e.robotEmptyBonus : 0f)
+                                  + full - otherRobotsHeadingTo(shelf) * e.robotBusyPenalty;
+                    Consider(ref best, robot, output, shelf, room, score, JobLabel.Shelf, l.ProductNameKey, waiting > 0 || empty, e);
+                }
+
+                // prototype: a parked truck with room takes any furniture
+                IPile dock = CarrierJobs.FreeDock(docks);
+                if (dock != null)
+                {
+                    int n = dock.Count, order = e.truckOrderSize;
+                    float score = e.robotTruckBase + (float)n / order * e.robotTruckFillWeight + full - otherRobotsHeadingTo(dock) * e.robotBusyPenalty;
+                    Consider(ref best, robot, output, dock, order - n, score, JobLabel.Truck, null, false, e);
+                }
             }
 
             IPile planks = CarrierJobs.SawOutput(sawOutputs);

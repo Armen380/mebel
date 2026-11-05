@@ -67,7 +67,7 @@ namespace FF.Tests
                 Line("chair", ItemType.Chair, chairOut, chairShelf, new Pile(ItemType.Plank, 0, 24)),
                 Line("sofa", ItemType.Sofa, sofaOut, sofaShelf, new Pile(ItemType.Plank, 0, 24)),
             };
-            WorkerJob job = CarrierJobs.Pick(lines, new List<IPile>(), false, new List<ProductionLine>());
+            WorkerJob job = CarrierJobs.Pick(lines, new List<IPile>(), false, null, new List<ProductionLine>());
             Assert.AreSame(sofaOut, job.From);
             Assert.AreSame(sofaShelf, job.To);
         }
@@ -85,7 +85,7 @@ namespace FF.Tests
                 Line("sofa", ItemType.Sofa, new Pile(ItemType.Sofa, 0), new Pile(ItemType.Sofa, 0, 8), sofaIn),
             };
             var sawOut = new Pile(ItemType.Plank, 6, 30);
-            WorkerJob job = CarrierJobs.Pick(lines, new List<IPile> { new Pile(ItemType.Plank, 2, 30), sawOut }, false, new List<ProductionLine>());
+            WorkerJob job = CarrierJobs.Pick(lines, new List<IPile> { new Pile(ItemType.Plank, 2, 30), sawOut }, false, null, new List<ProductionLine>());
             Assert.AreSame(sawOut, job.From, "fullest sawmill output");
             Assert.AreSame(sofaIn, job.To, "emptiest plank input");
         }
@@ -97,7 +97,7 @@ namespace FF.Tests
             {
                 Line("chair", ItemType.Chair, new Pile(ItemType.Chair, 0), new Pile(ItemType.Chair, 0, 8), new Pile(ItemType.Plank, 0, 24)),
             };
-            Assert.IsNull(CarrierJobs.Pick(lines, new List<IPile> { new Pile(ItemType.Plank, 6, 30) }, true, new List<ProductionLine>()));
+            Assert.IsNull(CarrierJobs.Pick(lines, new List<IPile> { new Pile(ItemType.Plank, 6, 30) }, true, null, new List<ProductionLine>()));
         }
 
         [Test]
@@ -134,7 +134,7 @@ namespace FF.Tests
                 Line("chair", ItemType.Chair, chairOut, chairShelf, new Pile(ItemType.Plank, 20, 24)),
                 Line("sofa", ItemType.Sofa, sofaOut, sofaShelf, new Pile(ItemType.Plank, 20, 24)),
             };
-            WorkerJob job = RobotScoring.Best(Vector3.zero, lines, new List<IPile>(), p => p == sofaShelf ? 2 : 0, p => 0, _economy);
+            WorkerJob job = RobotScoring.Best(Vector3.zero, lines, new List<IPile>(), null, p => p == sofaShelf ? 2 : 0, p => 0, _economy);
             Assert.AreSame(sofaShelf, job.To);
             Assert.AreEqual(JobLabel.Shelf, job.Label);
             Assert.IsTrue(job.Urgent);
@@ -152,12 +152,12 @@ namespace FF.Tests
                 Line("chair", ItemType.Chair, new Pile(ItemType.Chair, 0, 12), new Pile(ItemType.Chair, 0, 8), chairIn),
             };
             var sawOut = new Pile(ItemType.Plank, 10, 30);
-            WorkerJob job = RobotScoring.Best(Vector3.zero, lines, new List<IPile> { sawOut }, p => 0, p => 0, _economy);
+            WorkerJob job = RobotScoring.Best(Vector3.zero, lines, new List<IPile> { sawOut }, null, p => 0, p => 0, _economy);
             Assert.AreSame(chairIn, job.To);
             Assert.AreEqual(JobLabel.Planks, job.Label);
             Assert.AreEqual(1.2f + 1.6f, job.Score, 1e-4f, "(1 − 0)·1.2 + starving 1.6");
 
-            WorkerJob shared = RobotScoring.Best(Vector3.zero, lines, new List<IPile> { sawOut }, p => 0, p => 1, _economy);
+            WorkerJob shared = RobotScoring.Best(Vector3.zero, lines, new List<IPile> { sawOut }, null, p => 0, p => 1, _economy);
             Assert.AreEqual(1.2f + 1.6f - 0.9f, shared.Score, 1e-4f);
         }
 
@@ -170,7 +170,79 @@ namespace FF.Tests
                 Line("chair", ItemType.Chair, new Pile(ItemType.Chair, 1, 12, new Vector3(60, 0, 0)), chairShelf, new Pile(ItemType.Plank, 24, 24)),
             };
             // (1 − 7/8) = 0.125, − 60/60 → below 0.15
-            Assert.IsNull(RobotScoring.Best(Vector3.zero, lines, new List<IPile>(), p => 0, p => 0, _economy));
+            Assert.IsNull(RobotScoring.Best(Vector3.zero, lines, new List<IPile>(), null, p => 0, p => 0, _economy));
+        }
+
+        // ---------- truck docks (freeDock / goodsTarget / robot truck job) ----------
+
+        [Test]
+        public void Carrier_SendsFurnitureToAParkedTruckWhenTheShelfIsFull()
+        {
+            var chairOut = new Pile(ItemType.Chair, 4);
+            var lines = new List<ProductionLine>
+            {
+                Line("chair", ItemType.Chair, chairOut, new Pile(ItemType.Chair, 8, 8), new Pile(ItemType.Plank, 24, 24)),
+            };
+            var closed = new Pile(ItemType.None, 0, 0); // no truck parked: no room
+            var dock = new Pile(ItemType.None, 3, 8);
+            WorkerJob job = CarrierJobs.Pick(lines, new List<IPile>(), false, new List<IPile> { closed, dock }, new List<ProductionLine>());
+            Assert.AreSame(chairOut, job.From);
+            Assert.AreSame(dock, job.To, "first dock with room");
+
+            Assert.IsNull(CarrierJobs.Pick(lines, new List<IPile>(), true, new List<IPile> { dock }, new List<ProductionLine>()),
+                "stockers never load trucks");
+            dock.IsActive = false;
+            Assert.IsNull(CarrierJobs.Pick(lines, new List<IPile>(), false, new List<IPile> { dock }, new List<ProductionLine>()),
+                "closed bay");
+        }
+
+        [Test]
+        public void Leftovers_RobotsTryTheDockFirst()
+        {
+            var shelf = new Pile(ItemType.Chair, 2, 8);
+            var lines = new List<ProductionLine>
+            {
+                Line("chair", ItemType.Chair, new Pile(ItemType.Chair, 0), shelf, new Pile(ItemType.Plank, 24, 24)),
+            };
+            var dock = new Pile(ItemType.None, 0, 8);
+            var docks = new List<IPile> { dock };
+            Assert.AreSame(shelf, CarrierJobs.LeftoverTarget(ItemType.Chair, lines, new List<IPile>(), false, false, docks));
+            Assert.AreSame(dock, CarrierJobs.LeftoverTarget(ItemType.Chair, lines, new List<IPile>(), false, true, docks));
+            Assert.AreSame(shelf, CarrierJobs.LeftoverTarget(ItemType.Chair, lines, new List<IPile>(), true, true, docks), "stocker");
+        }
+
+        [Test]
+        public void Robot_TruckJobScore()
+        {
+            var chairOut = new Pile(ItemType.Chair, 11, 12, new Vector3(0, 0, 0));
+            var lines = new List<ProductionLine>
+            {
+                Line("chair", ItemType.Chair, chairOut, new Pile(ItemType.Chair, 8, 8), new Pile(ItemType.Plank, 24, 24)),
+            };
+            var dock = new Pile(ItemType.None, 4, 8);
+            WorkerJob job = RobotScoring.Best(Vector3.zero, lines, new List<IPile>(), new List<IPile> { dock }, p => 0, p => 0, _economy);
+            Assert.AreSame(dock, job.To);
+            Assert.AreEqual(JobLabel.Truck, job.Label);
+            Assert.IsFalse(job.Urgent);
+            Assert.AreEqual(4, job.Want, "room left in the order");
+            // 1.1 + 0.8·4/8 + 1 (output 11/12 > 80 %) = 2.5
+            Assert.AreEqual(2.5f, job.Score, 1e-4f);
+            WorkerJob shared = RobotScoring.Best(Vector3.zero, lines, new List<IPile>(), new List<IPile> { dock }, p => 0, p => 1, _economy);
+            Assert.AreEqual(1.6f, shared.Score, 1e-4f, "−0.9 per robot already heading there");
+        }
+
+        [Test]
+        public void Robot_EmptyShelfWithCustomersBeatsTheTruck()
+        {
+            var chairOut = new Pile(ItemType.Chair, 3, 12);
+            var shelf = new Pile(ItemType.Chair, 0, 8);
+            var lines = new List<ProductionLine>
+            {
+                Line("chair", ItemType.Chair, chairOut, shelf, new Pile(ItemType.Plank, 24, 24)),
+            };
+            WorkerJob job = RobotScoring.Best(Vector3.zero, lines, new List<IPile>(), new List<IPile> { new Pile(ItemType.None, 7, 8) },
+                p => p == shelf ? 1 : 0, p => 0, _economy);
+            Assert.AreSame(shelf, job.To);
         }
 
         // ---------- cashiers (assignStaff) ----------

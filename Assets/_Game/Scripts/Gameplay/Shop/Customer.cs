@@ -42,6 +42,8 @@ namespace FF.Gameplay.Shop
         public float TakeTimer = -1f;
         public int QueueIndex;
         public bool Angry;
+        /// <summary>The car this customer came in (prototype <c>c.car</c>); null for walk-ins.</summary>
+        public ICarRide Ride;
 
         float _cashBubbleDelay, _shelfBubbleDelay;
 
@@ -67,6 +69,7 @@ namespace FF.Gameplay.Shop
             TakeTimer = -1f;
             QueueIndex = 0;
             Angry = false;
+            Ride = null;
             Patience = patience;
             ClearWay();
         }

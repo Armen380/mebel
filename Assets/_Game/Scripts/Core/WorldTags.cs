@@ -19,6 +19,8 @@ namespace FF.Core
         Locked,
         /// <summary>Teal robot task chip (TagText, "!" in honey when urgent).</summary>
         Bot,
+        /// <summary>Dark pill like <see cref="Counter"/> with a short text (TagText), e.g. a truck bay's "Arriving…".</summary>
+        Note,
     }
 
     /// <summary>Anything that shows a screen-space tag above a world position. Read once per frame by the UI.</summary>
