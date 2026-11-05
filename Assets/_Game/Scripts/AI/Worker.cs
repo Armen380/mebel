@@ -42,6 +42,9 @@ namespace FF.AI
         public bool Delivering;
         public ResourceNode Tree;
         public IPile Destination;
+        // miner: resource being dug, way-points through the factory gap
+        public ItemType Resource;
+        public readonly List<Vector3> Way = new List<Vector3>(2);
         // carrier / stocker / robot
         public bool Putting;
         public float Cooldown;

@@ -10,6 +10,12 @@ namespace FF.AI
         Stocker,
         Manager,
         Consultant,
+        /// <summary>Digs clay / iron for the Plumbing and Building materials factories (M8).</summary>
+        Miner,
+        /// <summary>Carries only plumbing and building materials (M8).</summary>
+        SectionCarrier,
+        /// <summary>Works only the materials-shop registers (M8).</summary>
+        SectionCashier,
     }
 
     public static class WorkerKinds
@@ -17,7 +23,7 @@ namespace FF.AI
         public static readonly WorkerKind[] All =
         {
             WorkerKind.Lumber, WorkerKind.Carrier, WorkerKind.Robot, WorkerKind.Cashier, WorkerKind.Stocker,
-            WorkerKind.Manager, WorkerKind.Consultant,
+            WorkerKind.Manager, WorkerKind.Consultant, WorkerKind.Miner, WorkerKind.SectionCarrier, WorkerKind.SectionCashier,
         };
 
         /// <summary>Upgrade id in upgrades.json; one worker per level.</summary>
@@ -31,6 +37,9 @@ namespace FF.AI
                 case WorkerKind.Cashier: return "cashier";
                 case WorkerKind.Stocker: return "stocker";
                 case WorkerKind.Manager: return "manager";
+                case WorkerKind.Miner: return "miner";
+                case WorkerKind.SectionCarrier: return "secCarrier";
+                case WorkerKind.SectionCashier: return "secCashier";
                 default: return "consult";
             }
         }

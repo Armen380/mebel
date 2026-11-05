@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FF.Core;
 using FF.Data;
 using FF.Gameplay.Zones;
 using UnityEngine;
@@ -16,6 +17,8 @@ namespace FF.AI
         public IPile Input;
         public IPile Output;
         public IPile Shelf;
+        /// <summary>Plumbing / Building materials (prototype <c>p.annex</c>): the only lines section carriers serve.</summary>
+        public bool Section;
         /// <summary>Is the factory's machine running a batch right now?</summary>
         public Func<bool> MachineBusy;
     }
@@ -109,15 +112,16 @@ namespace FF.AI
         }
 
         /// <summary>
-        /// Prototype <c>pickJob(only)</c>: goods from the fullest factory output to its shelf (carriers: else a free truck
-        /// dock); otherwise (carriers only) planks from the fullest sawmill output to the emptiest plank-factory input.
+        /// Prototype <c>pickJob(only, dockFirst, sec)</c>: goods from the fullest factory output to its shelf (carriers: else
+        /// a free truck dock); otherwise (carriers only) planks from the fullest sawmill output to the emptiest plank-factory
+        /// input. Section carriers (<paramref name="sectionOnly"/>) take only Plumbing / Building materials and no planks.
         /// </summary>
         public static WorkerJob Pick(IReadOnlyList<ProductionLine> lines, IReadOnlyList<IPile> sawOutputs, bool shelvesOnly,
-            IReadOnlyList<IPile> docks, List<ProductionLine> scratch)
+            IReadOnlyList<IPile> docks, List<ProductionLine> scratch, bool sectionOnly = false)
         {
             scratch.Clear();
             foreach (ProductionLine l in lines)
-                if (l.Output.IsActive && l.Output.Settled > 0) scratch.Add(l);
+                if ((!sectionOnly || l.Section) && l.Output.IsActive && l.Output.Settled > 0) scratch.Add(l);
             // stable: most items first
             for (int i = 1; i < scratch.Count; i++)
             {
@@ -135,7 +139,7 @@ namespace FF.AI
                 IPile to = shelvesOnly ? ShelfTarget(l) : GoodsTarget(l, docks, false);
                 if (to != null) return new WorkerJob { From = l.Output, To = to };
             }
-            if (shelvesOnly) return null;
+            if (shelvesOnly || sectionOnly) return null;
             IPile planks = SawOutput(sawOutputs);
             IPile target = planks != null ? PlankTarget(lines) : null;
             return target != null ? new WorkerJob { From = planks, To = target } : null;
@@ -150,6 +154,9 @@ namespace FF.AI
         {
             if (type == ItemType.Plank) return PlankTarget(lines);
             if (type == ItemType.Log) return SawInput(sawInputs);
+            // clay / iron: the factory that uses it (prototype in_sink / in_material)
+            foreach (ProductionLine l in lines)
+                if (l.InputType == type && l.InputType != ItemType.Plank) return l.Input;
             foreach (ProductionLine l in lines)
                 if (l.Output.ItemType == type) return shelvesOnly ? ShelfTarget(l) : GoodsTarget(l, docks, dockFirst);
             return null;
@@ -227,24 +234,86 @@ namespace FF.AI
         /// <summary>Main and materials-shop registers interleave: 0, 6, 1, 2, 7, 3, 4, 5.</summary>
         public static readonly int[] RegisterOrder = { 0, 6, 1, 2, 7, 3, 4, 5 };
 
+        /// <summary>Materials-shop registers section cashiers take, in order.</summary>
+        public static readonly int[] SectionOrder = { 6, 7 };
+
+        /// <summary>
+        /// Prototype <c>assignStaff</c>: section cashiers take the active materials-shop registers first, then cashiers take
+        /// the remaining active registers in <see cref="RegisterOrder"/>.
+        /// </summary>
         /// <param name="registerActive">Index = register number.</param>
+        /// <param name="sectionAssigned">Receives the register number per section cashier (−1 = none).</param>
         /// <param name="assigned">Receives the register number per cashier (−1 = none).</param>
-        public static void AssignCashiers(IReadOnlyList<bool> registerActive, int cashiers, int[] assigned)
+        public static void AssignStaff(IReadOnlyList<bool> registerActive, int sectionCashiers, int[] sectionAssigned,
+            int cashiers, int[] assigned)
         {
             int next = 0;
+            for (int c = 0; c < sectionCashiers; c++)
+            {
+                sectionAssigned[c] = -1;
+                while (next < SectionOrder.Length)
+                {
+                    int r = SectionOrder[next++];
+                    if (IsActive(registerActive, r))
+                    {
+                        sectionAssigned[c] = r;
+                        break;
+                    }
+                }
+            }
+            next = 0;
             for (int c = 0; c < cashiers; c++)
             {
                 assigned[c] = -1;
                 while (next < RegisterOrder.Length)
                 {
                     int r = RegisterOrder[next++];
-                    if (r < registerActive.Count && registerActive[r])
+                    if (IsActive(registerActive, r) && !Taken(sectionAssigned, sectionCashiers, r))
                     {
                         assigned[c] = r;
                         break;
                     }
                 }
             }
+        }
+
+        /// <summary>Cashiers only (no section cashiers).</summary>
+        public static void AssignCashiers(IReadOnlyList<bool> registerActive, int cashiers, int[] assigned) =>
+            AssignStaff(registerActive, 0, Array.Empty<int>(), cashiers, assigned);
+
+        static bool IsActive(IReadOnlyList<bool> registerActive, int r) => r < registerActive.Count && registerActive[r];
+
+        static bool Taken(int[] assigned, int count, int r)
+        {
+            for (int i = 0; i < count; i++)
+                if (assigned[i] == r) return true;
+            return false;
+        }
+    }
+
+    /// <summary>Prototype <c>updMiner</c> decisions: which rock to dig and the way through the factory gap.</summary>
+    public static class MinerRules
+    {
+        /// <summary>Clay when the Plumbing input is no fuller (by ratio) than the Materials input, else iron.</summary>
+        public static ItemType ChooseResource(IPile clayInput, IPile ironInput)
+        {
+            if (clayInput == null) return ItemType.Iron;
+            if (ironInput == null) return ItemType.Clay;
+            return Fill(clayInput) <= Fill(ironInput) ? ItemType.Clay : ItemType.Iron;
+        }
+
+        static float Fill(IPile p) => p.Capacity > 0 ? (float)p.Settled / p.Capacity : 1f;
+
+        /// <summary>Is a proto z inside the mines yard (north of the yard edge)?</summary>
+        public static bool InYard(float protoZ, WorldLayout.WorkerLayoutSettings s) => protoZ <= s.minesYardEdgeZ;
+
+        /// <summary>Way-points (Unity space) into the yard (front → back) or out of it (back → front).</summary>
+        public static void GapWay(bool intoYard, WorldLayout.WorkerLayoutSettings s, List<Vector3> into)
+        {
+            into.Clear();
+            Vector3 front = ProtoCoords.ToUnity(s.minerGapFront), back = ProtoCoords.ToUnity(s.minerGapBack);
+            into.Add(intoYard ? front : back);
+            into.Add(intoYard ? back : front);
         }
     }
 

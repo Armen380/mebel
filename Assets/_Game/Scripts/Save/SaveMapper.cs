@@ -55,7 +55,6 @@ namespace FF.Save
                 else if (o.Value) state.OwnedProducts.Add(o.Key);
                 else state.OwnedProducts.Remove(o.Key);
             }
-            state.OwnsPlumbing = state.OwnedProducts.Contains("sink");
             foreach (string id in data.seen.Keys) progress.MarkSeen(id);
             if (cargo != null && data.trucks != null)
             {

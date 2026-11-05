@@ -11,7 +11,17 @@ namespace FF.Gameplay.World
     {
         public int ShopLevel;
         public bool OwnsSawmill2;
-        public bool OwnsPlumbing;
+
+        /// <summary>The Plumbing factory is owned: opens the mines yard, the materials shop and the section staff.</summary>
+        public bool OwnsPlumbing
+        {
+            get => OwnedProducts.Contains(PlumbingId);
+            set
+            {
+                if (value) OwnedProducts.Add(PlumbingId);
+                else OwnedProducts.Remove(PlumbingId);
+            }
+        }
         /// <summary>Main-shop registers in use: 1 + min(register pad level, shop level).</summary>
         public int MainRegisters = 1;
         /// <summary>Second materials-shop register bought (pad reg_annex).</summary>
@@ -22,6 +32,8 @@ namespace FF.Gameplay.World
 
         public const string Sawmill1Id = "saw";
         public const string Sawmill2Id = "saw2";
+        /// <summary>Product id of the Plumbing factory (prototype <c>S.owned.sink</c>).</summary>
+        public const string PlumbingId = "sink";
 
         /// <summary>Is a machine (sawmill id or product id) owned and working?</summary>
         public bool Owns(string machineId) =>

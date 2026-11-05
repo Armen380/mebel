@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using FF.Core;
+using FF.Data;
 using FF.Gameplay.Production;
 using UnityEngine;
 
@@ -50,16 +52,21 @@ namespace FF.Gameplay.World
         }
     }
 
-    /// <summary>Buying a building: updates the world state, rebuilds the blockers and announces the unlock.</summary>
+    /// <summary>
+    /// Buying a building: updates the world state, rebuilds the blockers and announces the unlock. A product that opens
+    /// with another one (prototype <c>with</c>: Building materials with Plumbing) is owned together with it.
+    /// </summary>
     public sealed class Ownership
     {
         readonly WorldStateSnapshot _state;
         readonly WorldCollision _collision;
+        readonly IReadOnlyList<ProductDef> _products;
 
-        public Ownership(WorldStateSnapshot state, WorldCollision collision)
+        public Ownership(WorldStateSnapshot state, WorldCollision collision, IReadOnlyList<ProductDef> products = null)
         {
             _state = state;
             _collision = collision;
+            _products = products;
         }
 
         public void Own(string id)
@@ -67,8 +74,14 @@ namespace FF.Gameplay.World
             if (_state.Owns(id)) return;
             if (id == WorldStateSnapshot.Sawmill2Id) _state.OwnsSawmill2 = true;
             else _state.OwnedProducts.Add(id);
+            if (_products != null)
+                foreach (ProductDef p in _products)
+                    if (p.unlocksWith != null && p.unlocksWith.id == id) _state.OwnedProducts.Add(p.id);
             _collision.Rebuild(_state);
             GameEvents.RaiseUnlocked(id);
+            if (_products == null) return;
+            foreach (ProductDef p in _products)
+                if (p.unlocksWith != null && p.unlocksWith.id == id) GameEvents.RaiseUnlocked(p.id);
         }
     }
 }

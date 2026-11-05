@@ -44,7 +44,7 @@ namespace FF.Gameplay.Bootstrap
             Services.Register(state);
             var collision = new WorldCollision(database, state);
             Services.Register(collision);
-            Services.Register(new Ownership(state, collision));
+            Services.Register(new Ownership(state, collision, database.products));
             Services.Register(new WorldTagRegistry());
             Services.Register(new DeliveryCargo());
             Services.Register(itemPool);
