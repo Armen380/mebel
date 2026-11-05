@@ -9,7 +9,7 @@ namespace FF.Gameplay.Progress
     /// states. Also the <see cref="IUpgradeLevels"/> source (pad levels by pad id; panel upgrades by upgrade id).
     /// Plain C#; the save system (M5) serializes it.
     /// </summary>
-    public sealed class GameProgress : IUpgradeLevels, IProgressView
+    public sealed class GameProgress : IUpgradeLevels, IProgressView, IWallet
     {
         public sealed class PadState
         {

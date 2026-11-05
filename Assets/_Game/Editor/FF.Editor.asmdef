@@ -16,7 +16,8 @@
         "Unity.TextMeshPro.Editor",
         "UnityEngine.UI",
         "Unity.RenderPipelines.Universal.Runtime",
-        "Unity.RenderPipelines.Core.Runtime"
+        "Unity.RenderPipelines.Core.Runtime",
+        "FF.Ads"
     ],
     "includePlatforms": [
         "Editor"

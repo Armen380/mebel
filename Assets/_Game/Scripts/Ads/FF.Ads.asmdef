@@ -1,0 +1,11 @@
+{
+    "name": "FF.Ads",
+    "rootNamespace": "FF.Ads",
+    "references": [
+        "FF.Core",
+        "FF.Data",
+        "Unity.LevelPlay"
+    ],
+    "autoReferenced": true,
+    "noEngineReferences": false
+}

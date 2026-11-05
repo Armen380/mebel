@@ -132,6 +132,7 @@ namespace FF.Editor
             menu.AddComponent<FF.Gameplay.Bootstrap.SettingsApplier>();
             menu.AddComponent<FF.Gameplay.Audio.AudioService>().Setup(AudioLibraryBuilder.Build());
             menu.AddComponent<FF.Gameplay.Audio.Haptics>();
+            AdsSetup.Build(systems);
 
             var items = new GameObject("Items");
             items.transform.SetParent(systems, false);
@@ -290,6 +291,7 @@ namespace FF.Editor
             BuildThrowButton(safe);
             RectTransform upgradesButton = HudBuilder.BuildUpgradesButton(safe, out GameObject badge);
             HudBuilder.BuildUnlockCard(safe);
+            HudBuilder.BuildRewardOffers(safe, AdsSetup.Config());
             HudBuilder.BuildUpgradesPanel(hud, db, upgradesButton.GetComponent<Button>(), badge, joystick);
             MenuBuilder.Build(ui, hud, safe);
             return joystick;

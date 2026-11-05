@@ -480,6 +480,42 @@ namespace FF.Editor
             root.gameObject.AddComponent<PayoutPopView>().Setup(chips, 8 * Px);
         }
 
+        /// <summary>Rewarded-ad offers, bottom-left above the safe edge: "▶ ×2 +$…" after a delivery, "▶ +$…" instant cash.</summary>
+        public static void BuildRewardOffers(Transform safe, AdsConfig config)
+        {
+            RectTransform column = Rect("RewardOffers", safe);
+            column.anchorMin = column.anchorMax = column.pivot = new Vector2(0, 0);
+            column.anchoredPosition = new Vector2(16 * Px, 22 * Px);
+            var v = column.gameObject.AddComponent<VerticalLayoutGroup>();
+            v.spacing = 8 * Px;
+            v.childAlignment = TextAnchor.LowerLeft;
+            v.childControlWidth = v.childControlHeight = true;
+            v.childForceExpandWidth = v.childForceExpandHeight = false;
+            Fit(column.gameObject);
+            Button truck = Offer(column, "TruckOffer", out TMP_Text truckLabel);
+            Button cash = Offer(column, "CashOffer", out TMP_Text cashLabel);
+            column.gameObject.AddComponent<RewardOffersView>().Setup(config, truck.gameObject, truck, truckLabel, cash.gameObject, cash, cashLabel);
+        }
+
+        static Button Offer(Transform parent, string name, out TMP_Text label)
+        {
+            RectTransform r = Pill(name, parent, UiPalette.Leaf, new RectOffset(12, 16, 9, 9), 8);
+            Image bg = r.GetComponent<Image>();
+            bg.raycastTarget = true;
+            var shadow = r.gameObject.GetComponent<UnityEngine.UI.Shadow>();
+            if (shadow != null) shadow.effectColor = UiPalette.LeafDark;
+            var button = r.gameObject.AddComponent<Button>();
+            button.targetGraphic = bg;
+            RectTransform icon = Rect("Play", r);
+            Image play = icon.gameObject.AddComponent<Image>();
+            play.sprite = TextureFactory.LineIcon("play", 2.4f, TextureFactory.Closed(8, 5, 19, 12, 8, 19));
+            play.color = UiPalette.Cream;
+            play.raycastTarget = false;
+            Size(icon.gameObject, 18, 18);
+            label = Text("Label", r, "+$0", 15, UiPalette.Cream, "Black");
+            return button;
+        }
+
         /// <summary>
         /// Prototype <c>.unlock</c>: cream card with a 3 px honey border and honey-dark lip, 160 px under the safe top;
         /// honey icon tile, red "NEW", title and subtitle (wraps on phones).

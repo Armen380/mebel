@@ -140,6 +140,10 @@ namespace FF.Editor
             controls.alpha = 0.8f;
             controls.gameObject.AddComponent<LocalizedTmpText>().SetKey("ui.controls");
 
+            // "Ad privacy" link under the controls hint, and the consent dialog over everything
+            Button privacy = Link(card, "AdPrivacy", "ads.privacy");
+            BuildConsentDialog(root, privacy);
+
             var menu = canvasGo.AddComponent<MainMenu>();
             menu.Setup(root.gameObject, hudGroup, menuButton, kicker, languages, cards, template, play, playLabel, test, testLabel,
                 newGame, newGameBorder, newGameLabel);
@@ -376,6 +380,50 @@ namespace FF.Editor
             lr.offsetMax = new Vector2(-10 * Px, -6 * Px);
             if (key != null) label.gameObject.AddComponent<LocalizedTmpText>().SetKey(key);
             return button;
+        }
+
+        static Button Link(Transform parent, string name, string key)
+        {
+            TMP_Text t = Text(name, parent, "", 12, UiPalette.Honey, "ExtraBold");
+            t.fontStyle = FontStyles.Underline;
+            t.raycastTarget = true;
+            t.gameObject.AddComponent<LocalizedTmpText>().SetKey(key);
+            var button = t.gameObject.AddComponent<Button>();
+            button.transition = Selectable.Transition.None;
+            return button;
+        }
+
+        /// <summary>Modal card: title, text, Allow (primary) and No, thanks (ghost).</summary>
+        static void BuildConsentDialog(RectTransform root, Button link)
+        {
+            RectTransform dim = Rect("AdsConsent", root.parent);
+            Stretch(dim);
+            Image dimImage = dim.gameObject.AddComponent<Image>();
+            dimImage.color = new Color(20 / 255f, 12 / 255f, 8 / 255f, 0.6f);
+            RectTransform card = Card("Card", dim, UiPalette.Walnut, 22);
+            card.anchorMin = card.anchorMax = card.pivot = new Vector2(0.5f, 0.5f);
+            card.gameObject.AddComponent<ClampWidth>().Setup(340 * Px);
+            var column = card.gameObject.AddComponent<VerticalLayoutGroup>();
+            column.padding = Scaled(new RectOffset(20, 20, 20, 20));
+            column.spacing = 12 * Px;
+            column.childControlWidth = column.childControlHeight = true;
+            column.childForceExpandWidth = true;
+            column.childForceExpandHeight = false;
+            var fit = card.gameObject.AddComponent<ContentSizeFitter>();
+            fit.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            TMP_Text title = Text("Title", card, "", 20, UiPalette.Cream, "Black");
+            title.alignment = TextAlignmentOptions.Left;
+            title.gameObject.AddComponent<LocalizedTmpText>().SetKey("ads.title");
+            TMP_Text body = Text("Text", card, "", 14, Muted, "Bold");
+            body.alignment = TextAlignmentOptions.Left;
+            body.textWrappingMode = TextWrappingModes.Normal;
+            body.lineSpacing = 8;
+            body.gameObject.AddComponent<LocalizedTmpText>().SetKey("ads.text");
+            Button allow = Primary(card, out TMP_Text allowLabel);
+            allowLabel.gameObject.AddComponent<LocalizedTmpText>().SetKey("ads.allow");
+            Button deny = Ghost(card, "Deny", "ads.deny", out _, out _);
+            // on the always-active canvas: the dialog object itself is hidden while closed
+            root.parent.gameObject.AddComponent<AdsConsentDialog>().Setup(AdsSetup.Config(), dim.gameObject, allow, deny, link);
         }
 
         static void VerticalColumn(RectTransform r, float spacing)

@@ -172,5 +172,10 @@
   "ui.graphics": "Graphics",
   "ui.gLow": "Low",
   "ui.gMed": "Medium",
-  "ui.gHigh": "High"
+  "ui.gHigh": "High",
+  "ads.title": "Personalized ads",
+  "ads.text": "Rewards come from short videos you choose to watch. May we pick the ads for you? You can change this in the menu.",
+  "ads.allow": "Allow",
+  "ads.deny": "No, thanks",
+  "ads.privacy": "Ad privacy"
 }
