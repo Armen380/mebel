@@ -9,7 +9,11 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 Status: **In progress**
 - [x] iOS: Apple team F83UUGVD8Y (already signed in to Xcode) set in Unity (automatic signing); fresh Xcode export; xcodebuild archive + export with `-allowProvisioningUpdates` → Builds/iOS-Archive/ipa/FurnitureFactory.ipa (134 MB, App Store Connect signing). Fix: Xcode 27 needs iOS ≥ 15 for every pod (IronSource / Unity Ads declare 12–13) → `IosPostBuild` adds a Podfile post_install block (order 45, between Podfile generation and pod install).
 - [x] LevelPlay (Hayk gave the user "Monetize - Add Apps" on 2026-11-06): apps "Furniture Factory" not live yet, COPPA not directed — Android app key 2952cc20d with Rewarded ad unit q8ybm9nl3ctr3hcq, iOS app key 2952d351d with Rewarded ad unit udyuaxjrga2ir42g (reward "Bonus" × 1; the game computes the money itself); written to Data/AdsConfig.asset. launchTestSuite on for development builds only — turn it off before the release.
-- [ ] Android upload keystore: the user creates it (passwords are theirs).
+- [ ] Android upload keystore (user decision 2026-11-06: "I don't have the key — create and save it"): Claude generates it outside the repo in `~/Keystores/FurnitureFactory/` (`upload.keystore`, alias `upload`, RSA 2048, 10000 days, random password in `upload.properties`, chmod 600; never committed — the repo is public). `FF/Build/Android Release AAB` reads that file when Player Settings has no keystore and sets the passwords only for the build.
+  - [x] Generate the key and properties file (keytool from Unity's OpenJDK, PKCS12, same password for store and key; SHA-256 E0:E6:C8:D2:…:48:FC)
+  - [x] BuildMenu reads the properties file and clears the keystore fields after the build (no home path or password in ProjectSettings)
+  - [x] Build the release AAB, verify the signature → Builds/Android/FurnitureFactory-1.0.0.aab (50 MB, 2.6 min), jarsigner "jar verified", signer CN=Armen380 with the SHA-256 above. Note: the build takes > 30 s, so call it from `script eval` with a larger `--timeout` (or wait on `BuildPipeline.isBuildingPlayer`)
+  - [ ] The user backs up the folder (password manager / cloud); with Play App Signing a lost upload key can be reset through Play support
 - [ ] Profiler on the phone: the phone was unplugged; on a mid-range phone if one is available.
 - [ ] Upload the IPA to App Store Connect (needs the app record there — the user's call).
 
