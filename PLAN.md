@@ -8,7 +8,7 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 ### Release prep (user request 2026-11-06: "do the LevelPlay app, keystore, IPA and Profiler yourself; tell me what you cannot") (branch `release-prep`)
 Status: **In progress**
 - [x] iOS: Apple team F83UUGVD8Y (already signed in to Xcode) set in Unity (automatic signing); fresh Xcode export; xcodebuild archive + export with `-allowProvisioningUpdates` → Builds/iOS-Archive/ipa/FurnitureFactory.ipa (134 MB, App Store Connect signing). Fix: Xcode 27 needs iOS ≥ 15 for every pod (IronSource / Unity Ads declare 12–13) → `IosPostBuild` adds a Podfile post_install block (order 45, between Podfile generation and pod install).
-- [ ] LevelPlay app + rewarded ad units: the user signed in, but the dashboard says "Your account is restricted" and Add app does nothing — needs the account admin / the user.
+- [ ] LevelPlay app + rewarded ad units: the dashboard account belongs to Hayk Ghukasyan's company (administrator; app "Boltiki"); the user's login is a Contributor with "Monetize - Add Apps: Not Permitted". User decision 2026-11-06: he asks Hayk for the Add Apps right; then Claude creates Furniture Factory (Android + iOS, not live yet), one Rewarded ad unit each, fills Data/AdsConfig.asset, rebuilds and tests (Test Suite once).
 - [ ] Android upload keystore: the user creates it (passwords are theirs).
 - [ ] Profiler on the phone: the phone was unplugged; on a mid-range phone if one is available.
 - [ ] Upload the IPA to App Store Connect (needs the app record there — the user's call).
