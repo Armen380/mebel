@@ -40,7 +40,7 @@ Optimization (data: Galaxy S25 already 60 fps / CPU ≈ 5 ms; the aim is mid-ran
 - [x] 4. Prewarm world tags and customers so no Instantiate happens in play (the last GC on the phone)
 - [x] 5. Render stats at the end-game save in the Editor (batches / SetPass / triangles), cut what stands out (shadow casters on small props, far objects)
 - [x] 6. Build size: managed stripping Minimal → Low (with link.xml for reflection users), ASTC textures, check the 86 MB APK breakdown (Build Report)
-- [ ] 7. Tests, dev APK, Profiler again on the phone (and on Low tier to emulate a weak phone)
+- [ ] 7. Tests, dev APK, Profiler again on the phone (and on Low tier to emulate a weak phone) — tests 619/619, dev APK built (83.9 MB) from the clean scene (a scene save had re-serialized 168 TMP texts; reverted, only the prewarm values kept). Waiting for the phone: check save/load, languages, ads and sounds still work with stripping Low, then Profiler.
 Notes (done 2026-11-07):
 - 1–3: `BuildMenu.Performance()` sets static batching (Android + iOS), Android optimized frame pacing; `AppSettings.FrameRate(inMenu)` — `MenuPause` sets 30 in the menu / 60 in play (SettingsApplier no longer touches the frame rate). Test FrameRate_MenuHalf_PlaySixty.
 - 4: WorldTagLayer makes `prewarmPills` = 96 tags at start (end-game save has 74 sources); CustomerDirector prewarm 2 → 4 per variant (12 variants → 48; 20 walk-ins + car customers).
