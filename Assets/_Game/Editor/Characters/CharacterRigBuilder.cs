@@ -96,7 +96,21 @@ namespace FF.Editor.Characters
             rig.axe = axe.gameObject;
             rig.carryAnchor = anchor;
             root.AddComponent<CharacterAnimator>();
+            TrimShadows(root);
             return root;
+        }
+
+        /// <summary>
+        /// Small parts inside the silhouette (eyes, belt, shoes, hands, hat trim, axe) cast no shadow: the shadow keeps
+        /// its shape and a character costs ~half the shadow draws (≈ 60 characters at the end game).
+        /// </summary>
+        static readonly string[] NoShadowParts = { "Eye", "Belt", "Shoe", "Hand", "HatPompom", "HatPeak", "CrownTip", "Handle", "Blade" };
+
+        public static void TrimShadows(GameObject root)
+        {
+            foreach (MeshRenderer r in root.GetComponentsInChildren<MeshRenderer>(true))
+                if (System.Array.IndexOf(NoShadowParts, r.name) >= 0)
+                    r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         }
 
         /// <summary>Shirt (torso, arms), trousers (legs), hats by type and one look per skin with its palette materials.</summary>

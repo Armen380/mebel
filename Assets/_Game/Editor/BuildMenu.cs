@@ -33,7 +33,26 @@ namespace FF.Editor
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevelAuto;
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel26;
+            Performance(BuildTarget.Android);
+            PlayerSettings.Android.optimizedFramePacing = true; // Swappy: even frame times at 60 fps
         }
+
+        /// <summary>
+        /// Static batching for the ground / yard blockout (the only BatchingStatic objects; nothing there moves);
+        /// managed stripping Low; IL2CPP Release (store builds switch to Master).
+        /// </summary>
+        static void Performance(BuildTarget target)
+        {
+            PlayerSettings.SetStaticBatchingForPlatform(target, true);
+            // smaller IL2CPP binary; reflection users are kept by Assets/_Game/link.xml
+            var named = target == BuildTarget.iOS ? UnityEditor.Build.NamedBuildTarget.iOS : UnityEditor.Build.NamedBuildTarget.Android;
+            PlayerSettings.SetManagedStrippingLevel(named, ManagedStrippingLevel.Low);
+            PlayerSettings.SetIl2CppCompilerConfiguration(named, Il2CppCompilerConfiguration.Release);
+        }
+
+        /// <summary>Store builds: IL2CPP Master (full C++ optimization, slower to build).</summary>
+        static void StoreConfiguration(UnityEditor.Build.NamedBuildTarget named) =>
+            PlayerSettings.SetIl2CppCompilerConfiguration(named, Il2CppCompilerConfiguration.Master);
 
         [MenuItem("FF/Build/Android Development APK", priority = 200)]
         public static void AndroidDevelopmentApk()
@@ -64,6 +83,7 @@ namespace FF.Editor
                 fromFile = true;
             }
             AndroidSettings();
+            StoreConfiguration(UnityEditor.Build.NamedBuildTarget.Android);
             EditorUserBuildSettings.buildAppBundle = true;
             try
             {
@@ -118,6 +138,8 @@ namespace FF.Editor
                 return;
             }
             PlayerSettings.SetScriptingBackend(UnityEditor.Build.NamedBuildTarget.iOS, ScriptingImplementation.IL2CPP);
+            Performance(BuildTarget.iOS);
+            StoreConfiguration(UnityEditor.Build.NamedBuildTarget.iOS);
             Build(BuildTarget.iOS, $"{Root}/iOS", BuildOptions.None);
         }
 

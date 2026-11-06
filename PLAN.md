@@ -25,6 +25,28 @@ Status: **In progress**
 - [ ] Upload the IPA to App Store Connect (needs the app record there — the user's call).
 
 
+### Ads fill + optimization pass (user request 2026-11-07: "ads don't show, and optimize the game") (branch `release-prep`)
+Status: **In progress** — user decision 2026-11-07: B (add Unity Ads) + all optimization items 1–7 (not A).
+Why no ads: the game asks correctly — logcat on the phone: "[FF] Rewarded ad failed to load: Mediation No fill; retry in 30 s". The only network is ironSource, the apps are new and "not live" in any store, so live demand returns no fill; the HUD buttons appear only when an ad is loaded (by design). Test ads load fine through the Test Suite.
+Ads options:
+- [ ] A. Register the phone as a LevelPlay test device (dashboard › Testing; needs the phone's advertising ID) → the in-game buttons get test ads now
+- [ ] B. Add Unity Ads as a second network — found 2026-11-07: the adapter is already in the project and the build (ISUnityAdsAdapterDependencies.xml, unityads-adapter 5.16.0 in the APK), and Unity Ads is set up at the LevelPlay account level; what is missing is the UnityAds instance of our two apps (LevelPlay › Instances › UnityAds needs a Unity Ads Game ID + placement ID). Those come from Unity Cloud org "7 Grexov" (18967030193245, the org with Boltiki) › Monetization › Apps › Add app — **blocked**: creating the project there fails ("could not process your request"); the user is an org "User" (App Editor, Monetization Editor…), and only the owner (Hayk) / a manager can create projects. Next: Hayk creates a project "Furniture Factory" in the org (or gives the user the Manager role); then add the Android + iOS apps to it, make Rewarded placements, and fill the LevelPlay UnityAds instances (Game ID, placement ID, Rewarded on).
+- (original text) B. Add Unity Ads as a second network (adapter via the Ads Mediation package + an instance in the LevelPlay dashboard) → more fill after launch (third-party SDK — needs the user's OK)
+- Real fill also grows once the app is live on Google Play / App Store.
+Optimization (data: Galaxy S25 already 60 fps / CPU ≈ 5 ms; the aim is mid-range and low-end phones, battery and size):
+- [x] 1. Static batching on for Android (the world blockout is marked Static, but static batching is off in Player Settings)
+- [x] 2. Optimized frame pacing on (Android) — steadier 60 fps, less jank
+- [x] 3. Menu at 30 fps (nothing moves but the orbit camera) — battery
+- [x] 4. Prewarm world tags and customers so no Instantiate happens in play (the last GC on the phone)
+- [x] 5. Render stats at the end-game save in the Editor (batches / SetPass / triangles), cut what stands out (shadow casters on small props, far objects)
+- [x] 6. Build size: managed stripping Minimal → Low (with link.xml for reflection users), ASTC textures, check the 86 MB APK breakdown (Build Report)
+- [ ] 7. Tests, dev APK, Profiler again on the phone (and on Low tier to emulate a weak phone)
+Notes (done 2026-11-07):
+- 1–3: `BuildMenu.Performance()` sets static batching (Android + iOS), Android optimized frame pacing; `AppSettings.FrameRate(inMenu)` — `MenuPause` sets 30 in the menu / 60 in play (SettingsApplier no longer touches the frame rate). Test FrameRate_MenuHalf_PlaySixty.
+- 4: WorldTagLayer makes `prewarmPills` = 96 tags at start (end-game save has 74 sources); CustomerDirector prewarm 2 → 4 per variant (12 variants → 48; 20 walk-ins + car customers).
+- 5: Editor, end-game save, High: 739 draw calls, 87 SetPass, 10.3K triangles, 372 shadow casters; shadow-casting renderers by root — Workers 582, Customers 496, Blockout 627. Characters are ~16 cubes each, so small parts inside the silhouette (Eye, Belt, Shoe, Hand, HatPompom, HatPeak, CrownTip, axe Handle / Blade) cast no shadow now (`CharacterRigBuilder.TrimShadows`, applied to the 22 worker / customer prefabs; Player.prefab left alone — it has an older uncommitted rebuild).
+- 6: APK breakdown: libil2cpp.so 78 MB + global-metadata 14.8 MB of 180 MB uncompressed; managed stripping Minimal → Low with `Assets/_Game/link.xml` (FF.*, Newtonsoft, Localization, LevelPlay kept whole); IL2CPP Release for dev builds, Master for the store AAB / iOS export.
+
 ## Done
 
 ### M9 — Polish & release prep — 2026-11-05 (branch `m9-polish`)

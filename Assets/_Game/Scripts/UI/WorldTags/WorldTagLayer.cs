@@ -23,6 +23,8 @@ namespace FF.UI.WorldTags
         const float BotFontScale = 11.5f / 13f;
 
         [SerializeField] RectTransform pillTemplate;
+        [Tooltip("Tags made at start so play never instantiates (end game ≈ PrewarmPills sources).")]
+        [SerializeField] int prewarmPills = 96;
         [SerializeField] Color counterColor = new Color32(0x2b, 0x1d, 0x14, 0xd6);
         [SerializeField] Color counterText = new Color32(0xfb, 0xf1, 0xde, 0xff);
         [SerializeField] Color fullColor = new Color32(0xd9, 0x57, 0x3b, 0xff);
@@ -101,6 +103,8 @@ namespace FF.UI.WorldTags
         {
             _registry = Services.Get<WorldTagRegistry>();
             _camera = Camera.main;
+            int count = Mathf.Max(prewarmPills, _registry.Sources.Count);
+            while (_pills.Count < count) CreatePill().Rect.gameObject.SetActive(false);
         }
 
         void OnFullChanged(string value)

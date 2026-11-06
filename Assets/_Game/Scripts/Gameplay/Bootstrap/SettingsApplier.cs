@@ -24,7 +24,7 @@ namespace FF.Gameplay.Bootstrap
         {
             int level = System.Array.IndexOf(QualitySettings.names, QualityRules.LevelNames[(int)_settings.Quality]);
             if (level >= 0 && level != QualitySettings.GetQualityLevel()) QualitySettings.SetQualityLevel(level, true);
-            Application.targetFrameRate = AppSettings.TargetFrameRate;
+            // the frame rate belongs to MenuPause (30 in the menu, 60 in play)
         }
     }
 }
