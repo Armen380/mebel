@@ -16,6 +16,7 @@ namespace FF.Editor
         public const string CompanyName = "Armen380";
         public const string BundleId = "com.armen380.furniturefactory";
         public const string Version = "1.0.0";
+        public const string AppleTeamId = "F83UUGVD8Y";
         const string Folder = "Assets/_Game/Art/AppIcon";
         static readonly Color Honey = new Color32(0xf3, 0xb3, 0x3d, 0xff);
         static readonly Color HoneyDark = new Color32(0xc4, 0x86, 0x1a, 0xff);
@@ -32,6 +33,9 @@ namespace FF.Editor
             PlayerSettings.bundleVersion = Version;
             PlayerSettings.Android.bundleVersionCode = 1;
             PlayerSettings.iOS.buildNumber = "1";
+            // the user's Apple developer team (already signed in to Xcode); Xcode manages profiles automatically
+            PlayerSettings.iOS.appleDeveloperTeamID = AppleTeamId;
+            PlayerSettings.iOS.appleEnableAutomaticSigning = true;
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, BundleId);
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.iOS, BundleId);
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Standalone, BundleId);

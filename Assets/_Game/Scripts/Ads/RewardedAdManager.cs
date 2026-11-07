@@ -25,7 +25,31 @@ namespace FF.Ads
         /// <summary>Editor tools only.</summary>
         public void Setup(AdsConfig adsConfig) => config = adsConfig;
 
-        public bool IsReady => _ad != null && _ad.IsAdReady() && _pendingReward == null;
+        const float ReadyPollSeconds = 0.5f;
+        bool _ready;
+        float _nextReadyPoll;
+
+        /// <summary>
+        /// The HUD asks every frame; the SDK's IsAdReady() goes through JNI and allocates, so its answer is cached and
+        /// refreshed twice a second (real time — the menu runs at time scale 0).
+        /// </summary>
+        public bool IsReady
+        {
+            get
+            {
+                if (_ad == null || _pendingReward != null) return false;
+                float now = Time.unscaledTime;
+                if (now >= _nextReadyPoll)
+                {
+                    _nextReadyPoll = now + ReadyPollSeconds;
+                    _ready = _ad.IsAdReady();
+                }
+                return _ready;
+            }
+        }
+
+        /// <summary>Asks the SDK on the next <see cref="IsReady"/> (after a load, a show or a failure).</summary>
+        void RefreshReady() => _nextReadyPoll = 0f;
 
         void Awake() => Services.Register<IRewardedAds>(this);
 
@@ -74,6 +98,7 @@ namespace FF.Ads
 
         public void Show(string placement, Action onRewarded)
         {
+            RefreshReady();
             if (!IsReady)
             {
                 Debug.LogWarning("[FF] Rewarded ad is not ready.");
@@ -101,7 +126,11 @@ namespace FF.Ads
             reward?.Invoke();
         }
 
-        void OnAdLoaded(LevelPlayAdInfo info) => Debug.Log($"[FF] Rewarded ad loaded ({info.AdNetwork}).");
+        void OnAdLoaded(LevelPlayAdInfo info)
+        {
+            RefreshReady();
+            Debug.Log($"[FF] Rewarded ad loaded ({info.AdNetwork}).");
+        }
 
         void OnAdLoadFailed(LevelPlayAdError error)
         {
@@ -110,12 +139,17 @@ namespace FF.Ads
             Invoke(nameof(LoadAd), RetrySeconds);
         }
 
-        void OnAdDisplayed(LevelPlayAdInfo info) => Debug.Log("[FF] Rewarded ad displayed.");
+        void OnAdDisplayed(LevelPlayAdInfo info)
+        {
+            RefreshReady();
+            Debug.Log("[FF] Rewarded ad displayed.");
+        }
 
         void OnAdDisplayFailed(LevelPlayAdInfo info, LevelPlayAdError error)
         {
             Debug.LogWarning($"[FF] Rewarded ad failed to display: {error.ErrorMessage}");
             _pendingReward = null;
+            RefreshReady();
             LoadAd();
         }
 
@@ -129,6 +163,7 @@ namespace FF.Ads
         {
             Debug.Log("[FF] Rewarded ad closed.");
             if (!_rewardEarned) Invoke(nameof(DropUnearned), 1f); // the reward event can trail the close a little
+            RefreshReady();
             LoadAd();
         }
 

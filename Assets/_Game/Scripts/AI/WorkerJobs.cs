@@ -54,8 +54,11 @@ namespace FF.AI
         public static IPile SawInput(IReadOnlyList<IPile> sawInputs)
         {
             IPile best = null;
-            foreach (IPile p in sawInputs)
+            for (int psi = 0; psi < sawInputs.Count; psi++)
+            {
+                IPile p = sawInputs[psi];
                 if (p.IsActive && (best == null || p.Count < best.Count)) best = p;
+            }
             return best;
         }
 
@@ -63,8 +66,11 @@ namespace FF.AI
         public static IPile SawOutput(IReadOnlyList<IPile> sawOutputs)
         {
             IPile best = null;
-            foreach (IPile p in sawOutputs)
+            for (int psi = 0; psi < sawOutputs.Count; psi++)
+            {
+                IPile p = sawOutputs[psi];
                 if (p.IsActive && p.Settled > 0 && (best == null || p.Settled > best.Settled)) best = p;
+            }
             return best;
         }
 
@@ -73,8 +79,9 @@ namespace FF.AI
         {
             IPile best = null;
             float bestRatio = 1f;
-            foreach (ProductionLine l in lines)
+            for (int lli = 0; lli < lines.Count; lli++)
             {
+                ProductionLine l = lines[lli];
                 if (l.InputType != ItemType.Plank || !l.Input.IsActive) continue;
                 float ratio = (float)l.Input.Count / l.Input.Capacity;
                 if (ratio < bestRatio)
@@ -120,8 +127,11 @@ namespace FF.AI
             IReadOnlyList<IPile> docks, List<ProductionLine> scratch, bool sectionOnly = false)
         {
             scratch.Clear();
-            foreach (ProductionLine l in lines)
+            for (int lli = 0; lli < lines.Count; lli++)
+            {
+                ProductionLine l = lines[lli];
                 if ((!sectionOnly || l.Section) && l.Output.IsActive && l.Output.Settled > 0) scratch.Add(l);
+            }
             // stable: most items first
             for (int i = 1; i < scratch.Count; i++)
             {
@@ -155,10 +165,16 @@ namespace FF.AI
             if (type == ItemType.Plank) return PlankTarget(lines);
             if (type == ItemType.Log) return SawInput(sawInputs);
             // clay / iron: the factory that uses it (prototype in_sink / in_material)
-            foreach (ProductionLine l in lines)
+            for (int lli = 0; lli < lines.Count; lli++)
+            {
+                ProductionLine l = lines[lli];
                 if (l.InputType == type && l.InputType != ItemType.Plank) return l.Input;
-            foreach (ProductionLine l in lines)
+            }
+            for (int lli = 0; lli < lines.Count; lli++)
+            {
+                ProductionLine l = lines[lli];
                 if (l.Output.ItemType == type) return shelvesOnly ? ShelfTarget(l) : GoodsTarget(l, docks, dockFirst);
+            }
             return null;
         }
     }
@@ -173,9 +189,10 @@ namespace FF.AI
         public static WorkerJob Best(Vector3 robot, IReadOnlyList<ProductionLine> lines, IReadOnlyList<IPile> sawOutputs,
             IReadOnlyList<IPile> docks, Func<IPile, int> waitingCustomers, Func<IPile, int> otherRobotsHeadingTo, EconomyConfig e)
         {
-            WorkerJob best = null;
-            foreach (ProductionLine l in lines)
+            var best = new Candidate();
+            for (int lli = 0; lli < lines.Count; lli++)
             {
+                ProductionLine l = lines[lli];
                 IPile output = l.Output;
                 if (!output.IsActive || output.Settled == 0) continue;
                 float full = (float)output.Count / output.Capacity > e.robotFullOutputRatio ? e.robotFullOutputBonus : 0f;
@@ -202,8 +219,9 @@ namespace FF.AI
 
             IPile planks = CarrierJobs.SawOutput(sawOutputs);
             if (planks != null)
-                foreach (ProductionLine l in lines)
+                for (int lli = 0; lli < lines.Count; lli++)
                 {
+                    ProductionLine l = lines[lli];
                     if (l.InputType != ItemType.Plank || !l.Input.IsActive) continue;
                     IPile input = l.Input;
                     int room = input.Capacity - input.Count;
@@ -214,17 +232,37 @@ namespace FF.AI
                     Consider(ref best, robot, planks, input, room, score, JobLabel.Planks, l.ProductNameKey, starving, e);
                 }
 
-            return best != null && best.Score > e.robotMinScore ? best : null;
+            if (!best.Set || best.Score <= e.robotMinScore) return null;
+            // one allocation, only for the job taken (idle robots score every frame)
+            return new WorkerJob
+            {
+                From = best.From, To = best.To, Want = best.Want, Score = best.Score, Label = best.Label,
+                ProductNameKey = best.ProductNameKey, Urgent = best.Urgent,
+            };
         }
 
-        static void Consider(ref WorkerJob best, Vector3 robot, IPile from, IPile to, int want, float score, JobLabel label,
+        struct Candidate
+        {
+            public bool Set;
+            public IPile From, To;
+            public int Want;
+            public float Score;
+            public JobLabel Label;
+            public string ProductNameKey;
+            public bool Urgent;
+        }
+
+        static void Consider(ref Candidate best, Vector3 robot, IPile from, IPile to, int want, float score, JobLabel label,
             string nameKey, bool urgent, EconomyConfig e)
         {
             Vector3 f = from.Position;
             float dx = robot.x - f.x, dz = robot.z - f.z;
             score -= Mathf.Sqrt(dx * dx + dz * dz) / e.robotDistanceDivisor;
-            if (best != null && score <= best.Score) return; // first of equal scores wins, like the stable sort
-            best = new WorkerJob { From = from, To = to, Want = want, Score = score, Label = label, ProductNameKey = nameKey, Urgent = urgent };
+            if (best.Set && score <= best.Score) return; // first of equal scores wins, like the stable sort
+            best = new Candidate
+            {
+                Set = true, From = from, To = to, Want = want, Score = score, Label = label, ProductNameKey = nameKey, Urgent = urgent,
+            };
         }
     }
 

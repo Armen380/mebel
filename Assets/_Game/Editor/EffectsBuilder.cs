@@ -110,6 +110,9 @@ namespace FF.Editor
             r.shadowCastingMode = ShadowCastingMode.Off;
             r.receiveShadows = false;
             r.alignment = ParticleSystemRenderSpace.World;
+            // instanced mesh particles are skipped on Android Vulkan ("requires a compute buffer
+            // unity_ParticleInstanceData"); the bursts are small, so plain draws cost nothing
+            r.enableGPUInstancing = false;
         }
 
         static Material ParticleMaterial(string name, bool transparent)

@@ -8875,6 +8875,7 @@ GameObject:
   m_Component:
   - component: {fileID: 114219251}
   - component: {fileID: 114219252}
+  - component: {fileID: 114219253}
   m_Layer: 0
   m_Name: Sun
   m_TagString: Untagged
@@ -8962,6 +8963,35 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!114 &114219253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 114219250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1 &114284802
 GameObject:
   m_ObjectHideFlags: 0
@@ -51010,7 +51040,7 @@ MonoBehaviour:
   - {fileID: 4392950050018969977, guid: a2f425950bf1f4873835031522735924, type: 3}
   - {fileID: 8504015848800279596, guid: 9911a7eb4366a41f39e3ecbf37f4ba39, type: 3}
   - {fileID: 8089767048059985684, guid: 8d8d5ef22497c4f6a8704e72c7870b19, type: 3}
-  prewarmPerVariant: 2
+  prewarmPerVariant: 4
   shelves:
   - {fileID: 434500883}
   - {fileID: 625162544}
@@ -52976,7 +53006,7 @@ ParticleSystemRenderer:
   m_RenderAlignment: 1
   m_Pivot: {x: 0, y: 0, z: 0}
   m_Flip: {x: 0, y: 0, z: 0}
-  m_EnableGPUInstancing: 1
+  m_EnableGPUInstancing: 0
   m_ApplyActiveColorSpace: 1
   m_AllowRoll: 1
   m_FreeformStretching: 0
@@ -125361,6 +125391,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: FF.UI::FF.UI.WorldTags.WorldTagLayer
   pillTemplate: {fileID: 970852933}
+  prewarmPills: 96
   counterColor: {r: 0.16862746, g: 0.11372549, b: 0.078431375, a: 0.8392157}
   counterText: {r: 0.9843137, g: 0.94509804, b: 0.87058824, a: 1}
   fullColor: {r: 0.8509804, g: 0.34117648, b: 0.23137255, a: 1}
@@ -130426,7 +130457,7 @@ ParticleSystemRenderer:
   m_RenderAlignment: 1
   m_Pivot: {x: 0, y: 0, z: 0}
   m_Flip: {x: 0, y: 0, z: 0}
-  m_EnableGPUInstancing: 1
+  m_EnableGPUInstancing: 0
   m_ApplyActiveColorSpace: 1
   m_AllowRoll: 1
   m_FreeformStretching: 0

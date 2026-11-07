@@ -6,6 +6,7 @@ namespace FF.Gameplay.Bootstrap
     /// <summary>
     /// The menu pauses the simulation (prototype frame loop runs workers, machines, customers, cars, trucks, pads and
     /// autosave only in play): time scale 0 in the menu, 1 in play. The player's animation and the menu camera use real time.
+    /// The menu also runs at 30 fps (<see cref="AppSettings.MenuFrameRate"/>), play at 60.
     /// </summary>
     public sealed class MenuPause : MonoBehaviour
     {
@@ -24,6 +25,10 @@ namespace FF.Gameplay.Bootstrap
             Time.timeScale = 1f;
         }
 
-        static void Apply(bool inMenu) => Time.timeScale = inMenu ? 0f : 1f;
+        static void Apply(bool inMenu)
+        {
+            Time.timeScale = inMenu ? 0f : 1f;
+            Application.targetFrameRate = AppSettings.FrameRate(inMenu);
+        }
     }
 }
