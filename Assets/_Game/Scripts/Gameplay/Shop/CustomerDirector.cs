@@ -23,7 +23,7 @@ namespace FF.Gameplay.Shop
         const float FloatTextHeight = 2.2f;
 
         [SerializeField] List<Customer> variants = new List<Customer>();
-        [SerializeField] int prewarmPerVariant = 2;
+        [SerializeField] int prewarmPerVariant = 4; // 12 variants × 4 covers 20 walk-ins + car customers at the end game
         [SerializeField] List<Shelf> shelves = new List<Shelf>();
         [Tooltip("Indexed by register number (prototype regs[i]).")]
         [SerializeField] List<Register> registers = new List<Register>();

@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3550507287f445690de8b14f5df9fd, type: 3}
   m_Name: AdsConfig
   m_EditorClassIdentifier: FF.Data::FF.Data.AdsConfig
-  androidAppKey: 
-  iosAppKey: 
-  androidRewardedAdUnitId: 
-  iosRewardedAdUnitId: 
+  androidAppKey: 2952cc20d
+  iosAppKey: 2952d351d
+  androidRewardedAdUnitId: q8ybm9nl3ctr3hcq
+  iosRewardedAdUnitId: udyuaxjrga2ir42g
   useDashboardPlacements: 0
-  launchTestSuite: 0
+  launchTestSuite: 1
   instantCashCooldown: 300
   doublePayoutWindow: 8

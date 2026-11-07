@@ -43,6 +43,9 @@ namespace FF.AI
         readonly int[] _cashierRegister = new int[16];
         readonly int[] _sectionRegister = new int[4];
         readonly int[] _countPerKind = new int[WorkerKinds.All.Length];
+        // robot scoring callbacks, made once: idle robots score every frame (no per-frame delegates)
+        System.Func<IPile, int> _waitingCustomers, _robotsHeadingTo;
+        Worker _scoringRobot;
 
         GameDatabase _db;
         EconomyConfig _economy;
@@ -348,7 +351,7 @@ namespace FF.AI
                 else
                 {
                     w.Job = robot
-                        ? RobotScoring.Best(w.transform.position, _lines, _sawOutputs, _docks, WaitingCustomers, p => RobotsHeadingTo(p, w), _economy)
+                        ? ScoreRobotJob(w)
                         : CarrierJobs.Pick(_lines, _sawOutputs, stocker, _docks, _scratch, section);
                     w.Putting = false;
                     if (w.Job == null)
@@ -428,6 +431,16 @@ namespace FF.AI
                 : w.Kind == WorkerKind.SectionCarrier ? s.sectionCarrierRest + new Vector2(w.Index * s.sectionCarrierRestStep, 0f)
                 : s.CarrierRest(w.Index);
             w.MoveTo(ProtoCoords.ToUnity(spot), dt, w.Speed * _economy.workerIdleSpeedFactor);
+        }
+
+        WorkerJob ScoreRobotJob(Worker w)
+        {
+            _waitingCustomers ??= WaitingCustomers;
+            _robotsHeadingTo ??= p => RobotsHeadingTo(p, _scoringRobot);
+            _scoringRobot = w;
+            WorkerJob job = RobotScoring.Best(w.transform.position, _lines, _sawOutputs, _docks, _waitingCustomers, _robotsHeadingTo, _economy);
+            _scoringRobot = null;
+            return job;
         }
 
         int WaitingCustomers(IPile shelf)

@@ -152,5 +152,12 @@ namespace FF.Tests
             Assert.AreEqual("Furniture <color=#F3B33D>Factory</color>", LocalizedTmpText.FromHtml("Furniture <em>Factory</em>"));
             Assert.AreEqual("a\nb", LocalizedTmpText.FromHtml("a<br>b"));
         }
+
+        [Test]
+        public void FrameRate_MenuHalf_PlaySixty()
+        {
+            Assert.AreEqual(30, AppSettings.FrameRate(true));
+            Assert.AreEqual(60, AppSettings.FrameRate(false));
+        }
     }
 }
