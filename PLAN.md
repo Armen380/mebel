@@ -26,7 +26,7 @@ Status: **In progress**
 
 
 ### Ads fill + optimization pass (user request 2026-11-07: "ads don't show, and optimize the game") (branch `release-prep`)
-Status: **In progress** — user decision 2026-11-07: B (add Unity Ads) + all optimization items 1–7 (not A).
+Status: **In progress** (optimization done 2026-11-07; Unity Ads waits for Hayk) — user decision 2026-11-07: B (add Unity Ads) + all optimization items 1–7 (not A).
 Why no ads: the game asks correctly — logcat on the phone: "[FF] Rewarded ad failed to load: Mediation No fill; retry in 30 s". The only network is ironSource, the apps are new and "not live" in any store, so live demand returns no fill; the HUD buttons appear only when an ad is loaded (by design). Test ads load fine through the Test Suite.
 Ads options:
 - [ ] A. Register the phone as a LevelPlay test device (dashboard › Testing; needs the phone's advertising ID) → the in-game buttons get test ads now
@@ -40,7 +40,8 @@ Optimization (data: Galaxy S25 already 60 fps / CPU ≈ 5 ms; the aim is mid-ran
 - [x] 4. Prewarm world tags and customers so no Instantiate happens in play (the last GC on the phone)
 - [x] 5. Render stats at the end-game save in the Editor (batches / SetPass / triangles), cut what stands out (shadow casters on small props, far objects)
 - [x] 6. Build size: managed stripping Minimal → Low (with link.xml for reflection users), ASTC textures, check the 86 MB APK breakdown (Build Report)
-- [ ] 7. Tests, dev APK, Profiler again on the phone (and on Low tier to emulate a weak phone) — tests 619/619, dev APK built (83.9 MB) from the clean scene (a scene save had re-serialized 168 TMP texts; reverted, only the prewarm values kept). Waiting for the phone: check save/load, languages, ads and sounds still work with stripping Low, then Profiler.
+- [x] 7. Tests, dev APK, Profiler again on the phone (and on Low tier to emulate a weak phone) — tests 619/619, dev APK built (83.9 MB) from the clean scene (a scene save had re-serialized 168 TMP texts; reverted, only the prewarm values kept). Phone (2026-11-07): new APK installs and starts with no exceptions (stripping Low), LevelPlay init + Test Suite OK, menu in Russian OK; menu Profiler 30.0 fps (p95 34.4 ms). The first gameplay capture was invalid (the phone locked itself). Redone: save loads (Lv 282, $415K); play 60.0 fps over 1234 frames, p95 17.8 ms, p99 19.0, max 21.6; no Instantiate during play any more; GC on 27 of 124 sampled frames — the 3 s autosave (SaveService JSON, by design), Input System binding resolve once after the menu, TMP text changes. Low-tier check on a weak phone not done (no such phone); the S25 can't emulate it.
+Status of this task: optimization done; Unity Ads blocked on the Unity Cloud project (Hayk).
 Notes (done 2026-11-07):
 - 1–3: `BuildMenu.Performance()` sets static batching (Android + iOS), Android optimized frame pacing; `AppSettings.FrameRate(inMenu)` — `MenuPause` sets 30 in the menu / 60 in play (SettingsApplier no longer touches the frame rate). Test FrameRate_MenuHalf_PlaySixty.
 - 4: WorldTagLayer makes `prewarmPills` = 96 tags at start (end-game save has 74 sources); CustomerDirector prewarm 2 → 4 per variant (12 variants → 48; 20 walk-ins + car customers).
