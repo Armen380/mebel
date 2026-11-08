@@ -66,7 +66,7 @@ Notes (2026-11-08):
 - The consent text `ads.text` now says ads show between levels (hy / en / ru).
 - Scene patched in place (fresh OpenScene → replace RewardOffers with AdOffer, AdsSetup.Build → Ads has Initializer + Rewarded + Interstitial + Scheduler) → no TMP churn.
 - Editor check with LevelPlay mock ads: both units load; forced popup shows "Бонус +$500 / Смотреть рекламу", Watch → mock rewarded → reward paid, card hidden; level-up 1110 → interstitial shown (audio paused), closed → audio back, next ad loaded; level-up 1113 right after → not shown (gap). Note: the Editor save still has the tutorial at 5/8 — interstitials never show before the tutorial is done.
-- [ ] F. EditMode tests (625/625, AdScheduleTests) ✓ + Play Mode check with LevelPlay mock ads in the Editor ✓ + phone check (Test Suite: interstitial loads/shows for ironSource and UnityAds)
+- [x] F. EditMode tests (625/625, AdScheduleTests) ✓ + Play Mode check with LevelPlay mock ads in the Editor ✓ + phone check ✓ (2026-11-08, Galaxy S25: Test Suite UnityAds Interstitial test ad loaded + shown; the game logs "Interstitial ad loaded (unityads)"; the centered offer popup appeared in play and Watch started a live rewarded ad. The forced interstitial itself needs a natural level-up during play — left to the user's play-test)
 - [ ] G. Commit, push, user play-test, PR → main
 
 ## Done
