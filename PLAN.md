@@ -49,6 +49,26 @@ Notes (done 2026-11-07):
 - 5: Editor, end-game save, High: 739 draw calls, 87 SetPass, 10.3K triangles, 372 shadow casters; shadow-casting renderers by root — Workers 582, Customers 496, Blockout 627. Characters are ~16 cubes each, so small parts inside the silhouette (Eye, Belt, Shoe, Hand, HatPompom, HatPeak, CrownTip, axe Handle / Blade) cast no shadow now (`CharacterRigBuilder.TrimShadows`, applied to the 22 worker / customer prefabs; Player.prefab left alone — it has an older uncommitted rebuild).
 - 6: APK breakdown: libil2cpp.so 78 MB + global-metadata 14.8 MB of 180 MB uncompressed; managed stripping Minimal → Low with `Assets/_Game/link.xml` (FF.*, Newtonsoft, Localization, LevelPlay kept whole); IL2CPP Release for dev builds, Master for the store AAB / iOS export.
 
+### Ads rework: interstitial every 3 levels + centered offer popup (user request 2026-11-08) (branch `ads-interstitial`)
+Status: **In progress** (approved 2026-11-08)
+User decisions 2026-11-08: a forced interstitial (full-screen, no reward) every 3 levels; the bottom-left green buttons go away and are replaced by a popup in the middle of the screen with an offer and a close cross; the popup comes at most once per 5 minutes (plus right after a truck pays, ×2).
+This reverses the M9 rule "no ads ever interrupt play (rewarded only)" — the user's call.
+Plan:
+- [x] 0. Branch `ads-interstitial` from main
+- [x] A. Dashboards (2026-11-08): LevelPlay Interstitial ad units — Android `t4pf8f0eljdrjpz8`, iOS `xciid1prmx7bgb8b`; Unity Ads placements BP_Interstitial_Android (Game ID 800428941) / BP_Interstitial_iOS (800428942); LevelPlay UnityAds instances now Rewarded + Interstitial for both apps (saved). Was: LevelPlay — Interstitial ad unit for Furniture Factory Android + iOS; Unity Ads — BP_Interstitial_Android / BP_Interstitial_iOS placements; LevelPlay › Instances › UnityAds — Interstitial instance for both apps. Ids into `AdsConfig` (`androidInterstitialAdUnitId`, `iosInterstitialAdUnitId`)
+- [x] B. `InterstitialAdManager` (FF.Ads, same pattern as RewardedAdManager: preloaded, 30 s retry, cached readiness, ILRD log) + `IInterstitialAds` in Core
+- [x] C. `InterstitialRules` (Core, pure, tested): show on level-up when level % 3 == 0, not in the menu, not during the tutorial, at least `interstitialMinGap` = 120 s after any ad (interstitial or rewarded) and 60 s after the session starts; shown ~1.5 s after the level-up so the player sees the level-up first; skipped silently when no ad is loaded. Numbers in AdsConfig
+- [x] D. `AdOfferPopup` (UI/HUD, replaces RewardOffersView buttons): centered card with icon, title, amount, "▶ Watch" button and a ✕ close button; two offers — "×2 payout +$X" for 8 s after a truck pays (only when the cash offer is not up) and "Bonus +$X" (instant cash: 2 min of income, ≥ $500) every 5 min; ✕ / ignoring it starts the cooldown; game keeps running behind it (no pause); hidden while an interstitial or rewarded ad is open, in the menu and when no ad is ready. Texts in hy / en / ru (ad.offer.title, ad.offer.double, ad.offer.cash, ad.offer.watch)
+- [x] E. Remove the bottom-left buttons (RewardOffersView) from the HUD builder and scene
+Notes (2026-11-08):
+- D changed while building it: trucks pay often late in the game, so ×2 after every truck would pop the card all the time. One shared cooldown (5 min, `instantCashCooldown`) for every popup; when it is over the card offers ×2 if a truck paid in the last 8 s, else bonus cash; it stays 12 s (`cashOfferWindow`, honey bar runs out) or until ✕ / Watch, then the cooldown restarts. First offer 2.5 min after start.
+- `AdClock` (Core) records any ad on screen / the last ad end (rewarded too) for the 2-minute gap; the interstitial pauses audio while it shows.
+- The consent text `ads.text` now says ads show between levels (hy / en / ru).
+- Scene patched in place (fresh OpenScene → replace RewardOffers with AdOffer, AdsSetup.Build → Ads has Initializer + Rewarded + Interstitial + Scheduler) → no TMP churn.
+- Editor check with LevelPlay mock ads: both units load; forced popup shows "Бонус +$500 / Смотреть рекламу", Watch → mock rewarded → reward paid, card hidden; level-up 1110 → interstitial shown (audio paused), closed → audio back, next ad loaded; level-up 1113 right after → not shown (gap). Note: the Editor save still has the tutorial at 5/8 — interstitials never show before the tutorial is done.
+- [ ] F. EditMode tests (625/625, AdScheduleTests) ✓ + Play Mode check with LevelPlay mock ads in the Editor ✓ + phone check (Test Suite: interstitial loads/shows for ironSource and UnityAds)
+- [ ] G. Commit, push, user play-test, PR → main
+
 ## Done
 
 ### M9 — Polish & release prep — 2026-11-05 (branch `m9-polish`)

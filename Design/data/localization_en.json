@@ -174,8 +174,11 @@
   "ui.gMed": "Medium",
   "ui.gHigh": "High",
   "ads.title": "Personalized ads",
-  "ads.text": "Rewards come from short videos you choose to watch. May we pick the ads for you? You can change this in the menu.",
+  "ads.text": "Ads show between levels, and rewards come from short videos you choose to watch. May we pick the ads for you? You can change this in the menu.",
   "ads.allow": "Allow",
   "ads.deny": "No, thanks",
-  "ads.privacy": "Ad privacy"
+  "ads.privacy": "Ad privacy",
+  "ad.offer.double": "Double payout",
+  "ad.offer.cash": "Bonus",
+  "ad.offer.watch": "Watch ad"
 }

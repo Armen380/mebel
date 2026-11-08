@@ -480,40 +480,114 @@ namespace FF.Editor
             root.gameObject.AddComponent<PayoutPopView>().Setup(chips, 8 * Px);
         }
 
-        /// <summary>Rewarded-ad offers, bottom-left above the safe edge: "▶ ×2 +$…" after a delivery, "▶ +$…" instant cash.</summary>
-        public static void BuildRewardOffers(Transform safe, AdsConfig config)
+        /// <summary>
+        /// Rewarded-ad offer popup in the middle of the screen (user decision 2026-11-08): cream card with the unlock card's
+        /// honey border and lip, ✕ in the corner, title (×2 payout / bonus), big green amount, green "▶ Watch ad" button and
+        /// a honey bar that runs out. Only the card takes taps; the game and the joystick keep working around it.
+        /// </summary>
+        public static void BuildAdOfferPopup(Transform safe, AdsConfig config)
         {
-            RectTransform column = Rect("RewardOffers", safe);
-            column.anchorMin = column.anchorMax = column.pivot = new Vector2(0, 0);
-            column.anchoredPosition = new Vector2(16 * Px, 22 * Px);
-            var v = column.gameObject.AddComponent<VerticalLayoutGroup>();
-            v.spacing = 8 * Px;
-            v.childAlignment = TextAnchor.LowerLeft;
-            v.childControlWidth = v.childControlHeight = true;
-            v.childForceExpandWidth = v.childForceExpandHeight = false;
-            Fit(column.gameObject);
-            Button truck = Offer(column, "TruckOffer", out TMP_Text truckLabel);
-            Button cash = Offer(column, "CashOffer", out TMP_Text cashLabel);
-            column.gameObject.AddComponent<RewardOffersView>().Setup(config, truck.gameObject, truck, truckLabel, cash.gameObject, cash, cashLabel);
-        }
+            RectTransform root = Rect("AdOffer", safe);
+            Stretch(root);
 
-        static Button Offer(Transform parent, string name, out TMP_Text label)
-        {
-            RectTransform r = Pill(name, parent, UiPalette.Leaf, new RectOffset(12, 16, 9, 9), 8);
-            Image bg = r.GetComponent<Image>();
-            bg.raycastTarget = true;
-            var shadow = r.gameObject.GetComponent<UnityEngine.UI.Shadow>();
-            if (shadow != null) shadow.effectColor = UiPalette.LeafDark;
-            var button = r.gameObject.AddComponent<Button>();
-            button.targetGraphic = bg;
-            RectTransform icon = Rect("Play", r);
-            Image play = icon.gameObject.AddComponent<Image>();
+            RectTransform card = Rect("Card", root);
+            card.anchorMin = card.anchorMax = card.pivot = new Vector2(0.5f, 0.5f);
+            card.anchoredPosition = new Vector2(0, 40 * Px);
+            Image border = card.gameObject.AddComponent<Image>();
+            border.sprite = TextureFactory.Rounded();
+            border.type = Image.Type.Sliced;
+            border.pixelsPerUnitMultiplier = 16f / (20 * Px);
+            border.color = UiPalette.Honey;
+            border.raycastTarget = true; // taps on the card do not reach the joystick
+            var lip = card.gameObject.AddComponent<UnityEngine.UI.Shadow>();
+            lip.effectColor = UiPalette.HoneyDark;
+            lip.effectDistance = new Vector2(0, -5 * Px);
+            CanvasGroup group = card.gameObject.AddComponent<CanvasGroup>();
+            var column = card.gameObject.AddComponent<VerticalLayoutGroup>();
+            column.padding = Scaled(new RectOffset(22, 22, 20, 18));
+            column.spacing = 10 * Px;
+            column.childAlignment = TextAnchor.UpperCenter;
+            column.childControlWidth = column.childControlHeight = true;
+            column.childForceExpandWidth = column.childForceExpandHeight = false;
+            Fit(card.gameObject);
+            card.gameObject.AddComponent<LayoutElement>().minWidth = 250 * Px;
+
+            RectTransform inner = Rect("Inner", card);
+            inner.gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
+            Stretch(inner);
+            inner.offsetMin = new Vector2(3 * Px, 3 * Px);
+            inner.offsetMax = new Vector2(-3 * Px, -3 * Px);
+            Image cream = inner.gameObject.AddComponent<Image>();
+            cream.sprite = TextureFactory.Rounded();
+            cream.type = Image.Type.Sliced;
+            cream.pixelsPerUnitMultiplier = 16f / (17 * Px);
+            cream.color = UiPalette.Cream;
+            cream.raycastTarget = false;
+
+            TMP_Text doubleTitle = Text("DoubleTitle", card, "×2", 17, UiPalette.Walnut, "Black");
+            doubleTitle.gameObject.AddComponent<LocalizedTmpText>().SetKey("ad.offer.double");
+            TMP_Text cashTitle = Text("CashTitle", card, "Bonus", 17, UiPalette.Walnut, "Black");
+            cashTitle.gameObject.AddComponent<LocalizedTmpText>().SetKey("ad.offer.cash");
+            TMP_Text amount = Text("Amount", card, "+$0", 34, UiPalette.LeafDark, "Black");
+
+            RectTransform watch = Pill("Watch", card, UiPalette.Leaf, new RectOffset(16, 20, 11, 11), 8);
+            watch.GetComponent<HorizontalLayoutGroup>().childAlignment = TextAnchor.MiddleCenter;
+            Image watchBg = watch.GetComponent<Image>();
+            watchBg.raycastTarget = true;
+            var watchShadow = watch.gameObject.GetComponent<UnityEngine.UI.Shadow>();
+            if (watchShadow != null) watchShadow.effectColor = UiPalette.LeafDark;
+            var watchButton = watch.gameObject.AddComponent<Button>();
+            watchButton.targetGraphic = watchBg;
+            RectTransform playIcon = Rect("Play", watch);
+            Image play = playIcon.gameObject.AddComponent<Image>();
             play.sprite = TextureFactory.LineIcon("play", 2.4f, TextureFactory.Closed(8, 5, 19, 12, 8, 19));
             play.color = UiPalette.Cream;
             play.raycastTarget = false;
-            Size(icon.gameObject, 18, 18);
-            label = Text("Label", r, "+$0", 15, UiPalette.Cream, "Black");
-            return button;
+            Size(playIcon.gameObject, 18, 18);
+            TMP_Text watchLabel = Text("Label", watch, "Watch ad", 16, UiPalette.Cream, "Black");
+            watchLabel.gameObject.AddComponent<LocalizedTmpText>().SetKey("ad.offer.watch");
+
+            // time left: a thin honey bar under the button
+            RectTransform track = Rect("Timer", card);
+            Size(track.gameObject, 180, 5);
+            Image trackBg = track.gameObject.AddComponent<Image>();
+            trackBg.sprite = TextureFactory.Pill();
+            trackBg.type = Image.Type.Sliced;
+            trackBg.color = new Color(43 / 255f, 29 / 255f, 20 / 255f, 0.15f);
+            trackBg.raycastTarget = false;
+            RectTransform fillRect = Rect("Fill", track);
+            Stretch(fillRect);
+            Image fill = fillRect.gameObject.AddComponent<Image>();
+            fill.sprite = TextureFactory.Rounded();
+            fill.type = Image.Type.Filled;
+            fill.fillMethod = Image.FillMethod.Horizontal;
+            fill.fillOrigin = 0;
+            fill.color = UiPalette.Honey;
+            fill.raycastTarget = false;
+
+            // ✕ in the top-right corner, outside the layout
+            RectTransform close = Rect("Close", card);
+            close.gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
+            close.anchorMin = close.anchorMax = new Vector2(1, 1);
+            close.pivot = new Vector2(0.5f, 0.5f);
+            close.anchoredPosition = new Vector2(-6 * Px, -6 * Px);
+            close.sizeDelta = new Vector2(30 * Px, 30 * Px);
+            Image closeBg = close.gameObject.AddComponent<Image>();
+            closeBg.sprite = TextureFactory.Circle();
+            closeBg.color = UiPalette.Walnut;
+            var closeButton = close.gameObject.AddComponent<Button>();
+            closeButton.targetGraphic = closeBg;
+            RectTransform cross = Rect("Cross", close);
+            Stretch(cross);
+            cross.offsetMin = new Vector2(8 * Px, 8 * Px);
+            cross.offsetMax = new Vector2(-8 * Px, -8 * Px);
+            Image crossImage = cross.gameObject.AddComponent<Image>();
+            crossImage.sprite = TextureFactory.LineIcon("close", 3f, TextureFactory.Poly(6, 6, 18, 18), TextureFactory.Poly(18, 6, 6, 18));
+            crossImage.color = UiPalette.Cream;
+            crossImage.raycastTarget = false;
+
+            root.gameObject.AddComponent<AdOfferPopup>().Setup(config, group, doubleTitle.gameObject, cashTitle.gameObject, amount,
+                watchButton, closeButton, fill);
         }
 
         /// <summary>
