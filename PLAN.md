@@ -49,8 +49,10 @@ Notes (done 2026-11-07):
 - 5: Editor, end-game save, High: 739 draw calls, 87 SetPass, 10.3K triangles, 372 shadow casters; shadow-casting renderers by root — Workers 582, Customers 496, Blockout 627. Characters are ~16 cubes each, so small parts inside the silhouette (Eye, Belt, Shoe, Hand, HatPompom, HatPeak, CrownTip, axe Handle / Blade) cast no shadow now (`CharacterRigBuilder.TrimShadows`, applied to the 22 worker / customer prefabs; Player.prefab left alone — it has an older uncommitted rebuild).
 - 6: APK breakdown: libil2cpp.so 78 MB + global-metadata 14.8 MB of 180 MB uncompressed; managed stripping Minimal → Low with `Assets/_Game/link.xml` (FF.*, Newtonsoft, Localization, LevelPlay kept whole); IL2CPP Release for dev builds, Master for the store AAB / iOS export.
 
-### Ads rework: interstitial every 3 levels + centered offer popup (user request 2026-11-08) (branch `ads-interstitial`)
-Status: **In progress** (approved 2026-11-08)
+## Done
+
+### Ads rework: interstitial every 3 levels + centered offer popup — 2026-11-09 (branch `ads-interstitial`)
+Result: forced interstitial every 3rd level (not in menu/tutorial, 60 s after start, 2 min after any ad, audio paused) + one centered offer popup with ✕ (×2 payout or bonus, once per 5 min) replacing the corner buttons; 625 tests green; checked on the phone; user play-test OK; PR #14 merged into main.
 User decisions 2026-11-08: a forced interstitial (full-screen, no reward) every 3 levels; the bottom-left green buttons go away and are replaced by a popup in the middle of the screen with an offer and a close cross; the popup comes at most once per 5 minutes (plus right after a truck pays, ×2).
 This reverses the M9 rule "no ads ever interrupt play (rewarded only)" — the user's call.
 Plan:
@@ -67,9 +69,7 @@ Notes (2026-11-08):
 - Scene patched in place (fresh OpenScene → replace RewardOffers with AdOffer, AdsSetup.Build → Ads has Initializer + Rewarded + Interstitial + Scheduler) → no TMP churn.
 - Editor check with LevelPlay mock ads: both units load; forced popup shows "Бонус +$500 / Смотреть рекламу", Watch → mock rewarded → reward paid, card hidden; level-up 1110 → interstitial shown (audio paused), closed → audio back, next ad loaded; level-up 1113 right after → not shown (gap). Note: the Editor save still has the tutorial at 5/8 — interstitials never show before the tutorial is done.
 - [x] F. EditMode tests (625/625, AdScheduleTests) ✓ + Play Mode check with LevelPlay mock ads in the Editor ✓ + phone check ✓ (2026-11-08, Galaxy S25: Test Suite UnityAds Interstitial test ad loaded + shown; the game logs "Interstitial ad loaded (unityads)"; the centered offer popup appeared in play and Watch started a live rewarded ad. The forced interstitial itself needs a natural level-up during play — left to the user's play-test)
-- [ ] G. Commit, push, user play-test, PR → main
-
-## Done
+- [x] G. Commit, push, user play-test OK 2026-11-09, PR #14 merged into main
 
 ### M9 — Polish & release prep — 2026-11-05 (branch `m9-polish`)
 Result: menu (pause) with language switch, skins and orbit camera; settings (sound, music, vibration, graphics tiers Low / Medium / High); CC0 sounds + music; haptics; pool sizes from an end-game soak; app identity + icon; rewarded ads (LevelPlay, ×2 payout + instant cash, consent + ATT); dev APK / release AAB / iOS Xcode export; 618 tests green; user play-test OK 2026-11-06 (camera fix); merged into main.
