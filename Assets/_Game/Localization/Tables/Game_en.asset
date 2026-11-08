@@ -743,7 +743,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2133697829527552
-    m_Localized: Rewards come from short videos you choose to watch. May we pick the ads for you? You can change this in the menu.
+    m_Localized: Ads show between levels, and rewards come from short videos you choose to watch. May we pick the ads for you? You can change this in the menu.
     m_Metadata:
       m_Items: []
   - m_Id: 2133697829527553
@@ -756,6 +756,18 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 2133697829527555
     m_Localized: Ad privacy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3108074939211776
+    m_Localized: Double payout
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3108074943406080
+    m_Localized: Bonus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3108074943406081
+    m_Localized: Watch ad
     m_Metadata:
       m_Items: []
   references:

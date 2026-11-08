@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace FF.Editor
 {
-    /// <summary>Ads system objects for the game scene: AdsConfig asset (keys filled in by the user), initializer, rewarded manager.</summary>
+    /// <summary>Ads system objects for the game scene: AdsConfig asset (keys filled in by the user), initializer, rewarded and interstitial managers, interstitial schedule.</summary>
     public static class AdsSetup
     {
         public const string ConfigPath = DataImporter.DataRoot + "/AdsConfig.asset";
@@ -20,6 +20,8 @@ namespace FF.Editor
             AdsConfig config = Config();
             go.AddComponent<LevelPlayInitializer>().Setup(config);
             go.AddComponent<RewardedAdManager>().Setup(config);
+            go.AddComponent<InterstitialAdManager>().Setup(config);
+            go.AddComponent<InterstitialScheduler>().Setup(config);
         }
     }
 }

@@ -113,6 +113,7 @@ namespace FF.Ads
             _pendingReward = onRewarded;
             _rewardEarned = false;
             Debug.Log($"[FF] Showing rewarded ad ({placement}).");
+            AdClock.Begin();
             _ad.ShowAd(name);
         }
 
@@ -148,6 +149,7 @@ namespace FF.Ads
         void OnAdDisplayFailed(LevelPlayAdInfo info, LevelPlayAdError error)
         {
             Debug.LogWarning($"[FF] Rewarded ad failed to display: {error.ErrorMessage}");
+            AdClock.End(Time.realtimeSinceStartup);
             _pendingReward = null;
             RefreshReady();
             LoadAd();
@@ -162,6 +164,7 @@ namespace FF.Ads
         void OnAdClosed(LevelPlayAdInfo info)
         {
             Debug.Log("[FF] Rewarded ad closed.");
+            AdClock.End(Time.realtimeSinceStartup);
             if (!_rewardEarned) Invoke(nameof(DropUnearned), 1f); // the reward event can trail the close a little
             RefreshReady();
             LoadAd();

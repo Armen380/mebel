@@ -16,7 +16,14 @@ MonoBehaviour:
   iosAppKey: 2952d351d
   androidRewardedAdUnitId: q8ybm9nl3ctr3hcq
   iosRewardedAdUnitId: udyuaxjrga2ir42g
+  androidInterstitialAdUnitId: t4pf8f0eljdrjpz8
+  iosInterstitialAdUnitId: xciid1prmx7bgb8b
   useDashboardPlacements: 0
   launchTestSuite: 1
   instantCashCooldown: 300
   doublePayoutWindow: 8
+  cashOfferWindow: 12
+  levelsPerInterstitial: 3
+  interstitialMinGap: 120
+  interstitialSessionDelay: 60
+  interstitialDelay: 1.5
