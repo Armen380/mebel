@@ -5,6 +5,16 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
+### New app icon from the user's art (user request 2026-11-09) (branch `app-icon`)
+Status: **In progress**
+The user sent a 1408×768 picture with the icon (worker with a hammer, "FURNITURE FACTORY" sign) in a white rounded frame on orange. Kept as `Design/reference/app_icon/app_icon_source.jpg`.
+- [x] Crop the artwork inside the frame (art x 412–998, y 91–679 bottom-up; inset 36 px so the art's own rounded corners don't show → square x 448, y 128, 514 px) and scale to 1024 (bilinear) → `Assets/_Game/Art/AppIcon/AppIcon.png`. The source is only ~514 px, so the 1024 icon is a bit soft — a larger original would be sharper.
+- [x] `AppIdentity`: uses that picture instead of the generated chair — iOS / default icon = the art; Android adaptive: background = the art in the 72/108 visible part, around it a blurred copy of the art (stretched edge pixels made streaks), foreground transparent, so launchers show the whole art and the mask only rounds the corners. Opaque icons are saved as RGB (App Store rejects an alpha channel); the APK has the new launcher layers, the Xcode Icon-Store-1024 has no alpha.
+- [x] Store listing copies: `Builds/StoreIcons/google_play_icon_512.png`, `app_store_icon_1024.png` (no alpha)
+- [ ] Check on the phone (home screen icon) — the phone was not connected; dev APK with the new icon is built
+- [x] Rebuild the release AAB (52.2 MB, jar verified, upload key) + IPA (128.7 MB, archive + export OK); platform back to Android
+- [ ] Commit, PR → main after the user's OK
+
 ### Release prep (user request 2026-11-06: "do the LevelPlay app, keystore, IPA and Profiler yourself; tell me what you cannot") (branch `release-prep`)
 Status: **In progress**
 - [x] iOS: Apple team F83UUGVD8Y (already signed in to Xcode) set in Unity (automatic signing); fresh Xcode export; xcodebuild archive + export with `-allowProvisioningUpdates` → Builds/iOS-Archive/ipa/FurnitureFactory.ipa (134 MB, App Store Connect signing). Fix: Xcode 27 needs iOS ≥ 15 for every pod (IronSource / Unity Ads declare 12–13) → `IosPostBuild` adds a Podfile post_install block (order 45, between Podfile generation and pod install).
