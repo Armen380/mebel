@@ -57,6 +57,17 @@ Notes (done 2026-11-07):
 
 ## Done
 
+### New app icon from the user's art — 2026-11-09 (branch `app-icon`)
+Result: the user's artwork is the app icon on Android (adaptive, whole picture visible) and iOS (no alpha); release AAB + IPA rebuilt; store listing copies in Builds/StoreIcons; user checked on the phone; merged into main.
+Status: **Done**
+The user sent a 1408×768 picture with the icon (worker with a hammer, "FURNITURE FACTORY" sign) in a white rounded frame on orange. Kept as `Design/reference/app_icon/app_icon_source.jpg`.
+- [x] Crop the artwork inside the frame (art x 412–998, y 91–679 bottom-up; inset 36 px so the art's own rounded corners don't show → square x 448, y 128, 514 px) and scale to 1024 (bilinear) → `Assets/_Game/Art/AppIcon/AppIcon.png`. The source is only ~514 px, so the 1024 icon is a bit soft — a larger original would be sharper.
+- [x] `AppIdentity`: uses that picture instead of the generated chair — iOS / default icon = the art; Android adaptive: background = the art in the 72/108 visible part, around it a blurred copy of the art (stretched edge pixels made streaks), foreground transparent, so launchers show the whole art and the mask only rounds the corners. Opaque icons are saved as RGB (App Store rejects an alpha channel); the APK has the new launcher layers, the Xcode Icon-Store-1024 has no alpha.
+- [x] Store listing copies: `Builds/StoreIcons/google_play_icon_512.png`, `app_store_icon_1024.png` (no alpha)
+- [x] Check on the phone (home screen icon) — dev APK installed on the Galaxy S25 (2026-11-09); the user checked the icon: OK
+- [x] Rebuild the release AAB (52.2 MB, jar verified, upload key) + IPA (128.7 MB, archive + export OK); platform back to Android
+- [x] Commit, PR → main after the user's OK ("Иконка ок, слить")
+
 ### Ads rework: interstitial every 3 levels + centered offer popup — 2026-11-09 (branch `ads-interstitial`)
 Result: forced interstitial every 3rd level (not in menu/tutorial, 60 s after start, 2 min after any ad, audio paused) + one centered offer popup with ✕ (×2 payout or bonus, once per 5 min) replacing the corner buttons; 625 tests green; checked on the phone; user play-test OK; PR #14 merged into main.
 User decisions 2026-11-08: a forced interstitial (full-screen, no reward) every 3 levels; the bottom-left green buttons go away and are replaced by a popup in the middle of the screen with an offer and a close cross; the popup comes at most once per 5 minutes (plus right after a truck pays, ×2).
