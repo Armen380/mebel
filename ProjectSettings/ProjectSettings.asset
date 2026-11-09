@@ -172,7 +172,7 @@ PlayerSettings:
   androidMaxAspectRatio: 2.4
   androidMinAspectRatio: 1
   applicationIdentifier:
-    Android: com.armen380.furniturefactory
+    Android: com.incode.furniturefactory
     Standalone: com.armen380.furniturefactory
     iPhone: com.armen380.furniturefactory
     tvOS: com.Unity-Technologies.com.unity.template.urp-blank
