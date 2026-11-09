@@ -5,13 +5,6 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
-### Android package com.incode.furniturefactory (user request 2026-11-09) (branch `android-package`)
-Status: **In progress**
-Play Console rejected the AAB: the app record there is "com.incode.furniturefactory" (ours was com.armen380.furniturefactory). Only the Android package changes; iOS / Standalone keep com.armen380.furniturefactory (the IPA is already built with it) unless App Store Connect needs otherwise.
-- [x] `AppIdentity`: separate `AndroidPackage` = com.incode.furniturefactory, run FF/Setup App Identity (icon PNGs it re-saved were reverted — unchanged art)
-- [x] Rebuild the release AAB → Builds/Android/FurnitureFactory-1.0.0.aab (52.2 MB): manifest package com.incode.furniturefactory, jar verified, signer CN=Armen380 SHA-256 E0:E6:…:48:FC
-- [ ] Commit, PR → main after the user's OK (upload accepted)
-
 ### Release prep (user request 2026-11-06: "do the LevelPlay app, keystore, IPA and Profiler yourself; tell me what you cannot") (branch `release-prep`)
 Status: **In progress**
 - [x] iOS: Apple team F83UUGVD8Y (already signed in to Xcode) set in Unity (automatic signing); fresh Xcode export; xcodebuild archive + export with `-allowProvisioningUpdates` → Builds/iOS-Archive/ipa/FurnitureFactory.ipa (134 MB, App Store Connect signing). Fix: Xcode 27 needs iOS ≥ 15 for every pod (IronSource / Unity Ads declare 12–13) → `IosPostBuild` adds a Podfile post_install block (order 45, between Podfile generation and pod install).
@@ -63,6 +56,14 @@ Notes (done 2026-11-07):
 - 6: APK breakdown: libil2cpp.so 78 MB + global-metadata 14.8 MB of 180 MB uncompressed; managed stripping Minimal → Low with `Assets/_Game/link.xml` (FF.*, Newtonsoft, Localization, LevelPlay kept whole); IL2CPP Release for dev builds, Master for the store AAB / iOS export.
 
 ## Done
+
+### Android package com.incode.furniturefactory — 2026-11-09 (branch `android-package`)
+Result: Android package is com.incode.furniturefactory (the Play Console app record), iOS keeps com.armen380.furniturefactory; release AAB rebuilt and accepted by Google Play (internal testing); merged into main.
+Status: **Done**
+Play Console rejected the AAB: the app record there is "com.incode.furniturefactory" (ours was com.armen380.furniturefactory). Only the Android package changes; iOS / Standalone keep com.armen380.furniturefactory (the IPA is already built with it) unless App Store Connect needs otherwise.
+- [x] `AppIdentity`: separate `AndroidPackage` = com.incode.furniturefactory, run FF/Setup App Identity (icon PNGs it re-saved were reverted — unchanged art)
+- [x] Rebuild the release AAB → Builds/Android/FurnitureFactory-1.0.0.aab (52.2 MB): manifest package com.incode.furniturefactory, jar verified, signer CN=Armen380 SHA-256 E0:E6:…:48:FC
+- [x] Commit, PR → main after the user's OK ("Принял, слить")
 
 ### New app icon from the user's art — 2026-11-09 (branch `app-icon`)
 Result: the user's artwork is the app icon on Android (adaptive, whole picture visible) and iOS (no alpha); release AAB + IPA rebuilt; store listing copies in Builds/StoreIcons; user checked on the phone; merged into main.
