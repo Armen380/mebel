@@ -57,6 +57,11 @@ Notes (done 2026-11-07):
 
 ## Done
 
+### Privacy policy page (user request 2026-11-09) — GitHub Pages
+Result: `docs/privacy/index.html` (en / ru / hy), published with GitHub Pages from `main` /docs → https://armen380.github.io/mebel/privacy/ — for the Google Play listing (and App Store). Developer "Incode", contact armenzakaryan888@gmail.com (user's choice). Content: no data collected by us (progress stays on the device); Unity LevelPlay (ironSource) + Unity Ads collect ad ID / IP / device info; consent dialog + main-menu "Ad privacy" link, ATT on iOS; not for children under 13.
+- [x] Write the page, Pages from main /docs, check the URL
+- [ ] Google also wants the policy linked inside the app (follow-up: a link in the main menu next to "Ad privacy")
+
 ### Android package com.incode.furniturefactory — 2026-11-09 (branch `android-package`)
 Result: Android package is com.incode.furniturefactory (the Play Console app record), iOS keeps com.armen380.furniturefactory; release AAB rebuilt and accepted by Google Play (internal testing); merged into main.
 Status: **Done**
