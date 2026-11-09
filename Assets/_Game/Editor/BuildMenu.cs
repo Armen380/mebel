@@ -87,7 +87,7 @@ namespace FF.Editor
             EditorUserBuildSettings.buildAppBundle = true;
             try
             {
-                Build(BuildTarget.Android, $"{Root}/Android/FurnitureFactory-{PlayerSettings.bundleVersion}.aab", BuildOptions.None);
+                Build(BuildTarget.Android, $"{Root}/Android/FurnitureFactory-{PlayerSettings.bundleVersion}-{PlayerSettings.Android.bundleVersionCode}.aab", BuildOptions.None);
             }
             finally
             {

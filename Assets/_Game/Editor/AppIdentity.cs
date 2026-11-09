@@ -21,6 +21,8 @@ namespace FF.Editor
         /// <summary>Android package (user's Play Console app record, 2026-11-09); iOS / Standalone keep <see cref="BundleId"/>.</summary>
         public const string AndroidPackage = "com.incode.furniturefactory";
         public const string Version = "1.0.0";
+        /// <summary>Google Play needs a higher code on every upload: 1 = first internal test, 2 = privacy policy link (2026-11-09).</summary>
+        public const int AndroidVersionCode = 2;
         public const string AppleTeamId = "F83UUGVD8Y";
         const string Folder = "Assets/_Game/Art/AppIcon";
         const string ArtPath = Folder + "/AppIcon.png";
@@ -35,7 +37,7 @@ namespace FF.Editor
             PlayerSettings.productName = ProductName;
             PlayerSettings.companyName = CompanyName;
             PlayerSettings.bundleVersion = Version;
-            PlayerSettings.Android.bundleVersionCode = 1;
+            PlayerSettings.Android.bundleVersionCode = AndroidVersionCode;
             PlayerSettings.iOS.buildNumber = "1";
             // the user's Apple developer team (already signed in to Xcode); Xcode manages profiles automatically
             PlayerSettings.iOS.appleDeveloperTeamID = AppleTeamId;

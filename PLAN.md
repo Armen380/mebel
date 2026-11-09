@@ -57,6 +57,15 @@ Notes (done 2026-11-07):
 
 ## Done
 
+### Android version code 2 (user request 2026-11-09: "Да, слить и собрать") (branch `version-code-2`)
+Result: release AAB 1.0.0 (code 2) with the in-app privacy policy link → Builds/Android/FurnitureFactory-1.0.0-2.aab; PR #20 merged. The user uploads it to Play Console (internal testing).
+Status: **Done**
+The AAB already in Play Console (1.0.0, code 1) has no in-app privacy policy link; Google only takes a higher version code.
+- [x] Merge PR #19 (privacy link) into main
+- [x] `AppIdentity.AndroidVersionCode = 2` (Setup used a hard-coded 1); AAB file name gets the code (FurnitureFactory-1.0.0-2.aab)
+- [x] Release AAB from main + this change; verify jar signature, package com.incode.furniturefactory, versionCode 2 → Builds/Android/FurnitureFactory-1.0.0-2.aab (52.2 MB), jar verified, signer CN=Armen380 SHA-256 E0:E6:…:48:FC, manifest versionCode 2 / versionName 1.0.0. Keystore noise (`AndroidKeystoreName: '{inproject}: '`) reverted.
+- [x] Commit, PR #20 → main
+
 ### Privacy policy link in the game (user request 2026-11-09: "Да, добавить") (branch `privacy-link`)
 Result: main menu shows "Privacy policy" next to "Ad privacy" (opens https://armen380.github.io/mebel/privacy/ from AdsConfig, en / ru / hy); PR #19 merged.
 Status: **Done**
