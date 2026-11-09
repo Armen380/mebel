@@ -36,6 +36,10 @@ namespace FF.Data
         [Tooltip("Real seconds between the level-up and the interstitial, so the level-up is seen first.")]
         public float interstitialDelay = 1.5f;
 
+        [Header("Privacy")]
+        [Tooltip("Public privacy policy page (stores require a link inside the app too); opened from the menu.")]
+        public string privacyPolicyUrl = "https://armen380.github.io/mebel/privacy/";
+
         const string EditorPlaceholder = "editor-mock";
 
         public string AppKey => Pick(androidAppKey, iosAppKey);

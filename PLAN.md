@@ -57,10 +57,20 @@ Notes (done 2026-11-07):
 
 ## Done
 
+### Privacy policy link in the game (user request 2026-11-09: "Да, добавить") (branch `privacy-link`)
+Result: main menu shows "Privacy policy" next to "Ad privacy" (opens https://armen380.github.io/mebel/privacy/ from AdsConfig, en / ru / hy); PR #19 merged.
+Status: **Done**
+Google wants the policy linked inside the app too. Plan: the menu's "Ad privacy" link gets a row partner "Privacy policy" that opens https://armen380.github.io/mebel/privacy/ in the browser.
+- [x] `AdsConfig.privacyPolicyUrl` (data, not in the MonoBehaviour); `PrivacyPolicyLink` (FF.UI.Menu) opens it with Application.OpenURL
+- [x] Localization key `ui.privacy_policy` in en / ru / hy, re-import (only the 4 string-table assets changed)
+- [x] MenuBuilder: links row (Ad privacy left, Privacy policy right, wrap on narrow screens); scene patched in place. Note: patching the already-open scene re-serialized ~170 TMP texts (1.9K-line diff) — reverted, reopened Game.unity fresh (OpenSceneMode.Single) and patched again → only the new objects in the diff.
+- [x] Tests 626/626; Play Mode: menu shows both links (Russian wraps to two lines each), PrivacyPolicyLink active with the URL, no console errors. Opening the URL itself not clicked in the Editor (would open the user's browser) — check on the phone.
+- [x] Commit, PR → main after the user's OK ("Да, слить и собрать")
+
 ### Privacy policy page (user request 2026-11-09) — GitHub Pages
 Result: `docs/privacy/index.html` (en / ru / hy), published with GitHub Pages from `main` /docs → https://armen380.github.io/mebel/privacy/ — for the Google Play listing (and App Store). Developer "Incode", contact armenzakaryan888@gmail.com (user's choice). Content: no data collected by us (progress stays on the device); Unity LevelPlay (ironSource) + Unity Ads collect ad ID / IP / device info; consent dialog + main-menu "Ad privacy" link, ATT on iOS; not for children under 13.
 - [x] Write the page, Pages from main /docs, check the URL
-- [ ] Google also wants the policy linked inside the app (follow-up: a link in the main menu next to "Ad privacy")
+- [x] Google also wants the policy linked inside the app → done in "Privacy policy link in the game"
 
 ### Android package com.incode.furniturefactory — 2026-11-09 (branch `android-package`)
 Result: Android package is com.incode.furniturefactory (the Play Console app record), iOS keeps com.armen380.furniturefactory; release AAB rebuilt and accepted by Google Play (internal testing); merged into main.

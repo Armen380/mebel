@@ -140,8 +140,11 @@ namespace FF.Editor
             controls.alpha = 0.8f;
             controls.gameObject.AddComponent<LocalizedTmpText>().SetKey("ui.controls");
 
-            // "Ad privacy" link under the controls hint, and the consent dialog over everything
-            Button privacy = Link(card, "AdPrivacy", "ads.privacy");
+            // "Ad privacy" + "Privacy policy" links under the controls hint, and the consent dialog over everything
+            RectTransform links = BuildLinkRow(card);
+            Button privacy = Link(links, "AdPrivacy", "ads.privacy");
+            FitInRow(privacy, TextAlignmentOptions.Left);
+            BuildPrivacyPolicyLink(links);
             BuildConsentDialog(root, privacy);
 
             var menu = canvasGo.AddComponent<MainMenu>();
@@ -391,6 +394,35 @@ namespace FF.Editor
             var button = t.gameObject.AddComponent<Button>();
             button.transition = Selectable.Transition.None;
             return button;
+        }
+
+        /// <summary>Row for the menu's small links: they share the width and wrap on narrow screens.</summary>
+        public static RectTransform BuildLinkRow(Transform card)
+        {
+            RectTransform row = Rect("Links", card);
+            var h = row.gameObject.AddComponent<HorizontalLayoutGroup>();
+            h.spacing = 16 * Px;
+            h.childAlignment = TextAnchor.UpperLeft;
+            h.childControlWidth = h.childControlHeight = true;
+            h.childForceExpandWidth = true;
+            h.childForceExpandHeight = false;
+            return row;
+        }
+
+        /// <summary>"Privacy policy": opens the public policy page (stores want it reachable inside the app).</summary>
+        public static void BuildPrivacyPolicyLink(Transform row)
+        {
+            Button link = Link(row, "PrivacyPolicy", "ui.privacy_policy");
+            FitInRow(link, TextAlignmentOptions.Right);
+            link.gameObject.AddComponent<PrivacyPolicyLink>().Setup(AdsSetup.Config(), link);
+        }
+
+        static void FitInRow(Button link, TextAlignmentOptions alignment)
+        {
+            var text = link.GetComponent<TMP_Text>();
+            text.alignment = alignment;
+            text.textWrappingMode = TextWrappingModes.Normal;
+            link.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
         }
 
         /// <summary>Modal card: title, text, Allow (primary) and No, thanks (ghost).</summary>
