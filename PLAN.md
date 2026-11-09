@@ -22,7 +22,13 @@ Status: **In progress**
   - [x] EffectsBuilder: GPU instancing off on mesh particle renderers (Vulkan)
   - [x] Tests green (618/618), dev APK rebuilt, profiled again on the same save: 60.0 fps, p95 17.0 ms, p99 17.1, max 18.3 (was 26.9); GC on 13 of 154 sampled frames (was every frame), ≈ 128 B/frame on average — what is left is first-time Instantiate of world tags / customers while their pools fill after launch, plus the 0.5 s ad-ready poll (8 B); no Vulkan particle warning any more. Scene patched in place (Smoke / Confetti renderers); URP also added the default UniversalAdditionalLightData to Sun on save.
   - Follow-up (not blocking): profile on a real mid-range phone (Snapdragon 7-series) if one is available; prewarm world tags / customers if Instantiate shows up after the first minute. the phone was unplugged; on a mid-range phone if one is available.
-- [ ] Upload the IPA to App Store Connect (needs the app record there — the user's call).
+- [x] Release builds with the ads rework (2026-11-09, user: "давай начнём"): the Test Suite is already dev-only (`launchTestSuite && Debug.isDebugBuild`), no change needed. Release AAB 1.0.0 (1) rebuilt from main → Builds/Android/FurnitureFactory-1.0.0.aab (51.7 MB), jar verified, signer CN=Armen380, SHA-256 E0:E6:…:48:FC.
+  - Fix: the build writes ProjectSettings to disk while the store values are set, so the keystore path (home folder) and IL2CPP Master stayed in ProjectSettings.asset after the release AAB (passwords never hit the disk). `BuildMenu.RestoreAfterStoreBuild` now puts IL2CPP back to Release and calls `AssetDatabase.SaveAssets()` after the AAB and the iOS export.
+  - [x] iOS: platform switched to iOS, Xcode project exported (team F83UUGVD8Y); xcodebuild archive + export → Builds/iOS-Archive/ipa/FurnitureFactory.ipa (125 MB, 1.0.0 (1), App Store Connect signing). Platform switched back to Android afterwards.
+  - Fix: the ATT prompt (`IosPostBuild.TrackingDescription`) still said "Ads only appear when you choose to watch one for a reward" — untrue since the interstitials; now "…The game shows ads between levels and short videos you choose to watch for a reward." IPA rebuilt and checked.
+  - The iOS export also stores static batching on + IL2CPP Release for iPhone in ProjectSettings (set by `BuildMenu.Performance`, committed now).
+  - Tests 625/625.
+- [ ] Upload the AAB to Google Play Console and the IPA to App Store Connect (the user; needs the app records there).
 
 
 ### Ads fill + optimization pass (user request 2026-11-07: "ads don't show, and optimize the game") (branch `release-prep`)

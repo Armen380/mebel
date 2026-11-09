@@ -101,6 +101,7 @@ namespace FF.Editor
                     PlayerSettings.Android.keystorePass = "";
                     PlayerSettings.Android.keyaliasPass = "";
                 }
+                RestoreAfterStoreBuild(UnityEditor.Build.NamedBuildTarget.Android);
             }
         }
 
@@ -140,7 +141,24 @@ namespace FF.Editor
             PlayerSettings.SetScriptingBackend(UnityEditor.Build.NamedBuildTarget.iOS, ScriptingImplementation.IL2CPP);
             Performance(BuildTarget.iOS);
             StoreConfiguration(UnityEditor.Build.NamedBuildTarget.iOS);
-            Build(BuildTarget.iOS, $"{Root}/iOS", BuildOptions.None);
+            try
+            {
+                Build(BuildTarget.iOS, $"{Root}/iOS", BuildOptions.None);
+            }
+            finally
+            {
+                RestoreAfterStoreBuild(UnityEditor.Build.NamedBuildTarget.iOS);
+            }
+        }
+
+        /// <summary>
+        /// The build itself writes ProjectSettings to disk while the store values are set (IL2CPP Master, the keystore
+        /// path), so put the everyday values back and save again — otherwise they end up in the next commit.
+        /// </summary>
+        static void RestoreAfterStoreBuild(UnityEditor.Build.NamedBuildTarget named)
+        {
+            PlayerSettings.SetIl2CppCompilerConfiguration(named, Il2CppCompilerConfiguration.Release);
+            AssetDatabase.SaveAssets();
         }
 
         static void Build(BuildTarget target, string path, BuildOptions options)

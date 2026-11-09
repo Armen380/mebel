@@ -13,7 +13,7 @@ namespace FF.Editor
     {
         const string Key = "NSUserTrackingUsageDescription";
         const string TrackingDescription =
-            "Your choice lets us show ads that fit you better. Ads only appear when you choose to watch one for a reward.";
+            "Your choice lets us show ads that fit you better. The game shows ads between levels and short videos you choose to watch for a reward.";
 
         const string MinimumIos = "15.0";
         const string PodfileMarker = "# FF: minimum iOS for every pod";
