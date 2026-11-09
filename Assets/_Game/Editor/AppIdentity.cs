@@ -6,7 +6,7 @@ using UnityEngine;
 namespace FF.Editor
 {
     /// <summary>
-    /// App identity (M9, user decision 2026-11-05): "Furniture Factory", com.armen380.furniturefactory, company Armen380,
+    /// App identity (M9, user decision 2026-11-05): "Furniture Factory", com.armen380.furniturefactory (iOS) / com.incode.furniturefactory (Android, 2026-11-09), company Armen380,
     /// version 1.0.0 (build 1); no Unity splash, launch background in the game's sky colour.
     /// Icon (user decision 2026-11-09): the user's artwork, cropped to <c>Art/AppIcon/AppIcon.png</c> (1024 px, source in
     /// Design/reference/app_icon). iOS and the default icon use it as it is; the Android adaptive icon gets it as the
@@ -18,6 +18,8 @@ namespace FF.Editor
         public const string ProductName = "Furniture Factory";
         public const string CompanyName = "Armen380";
         public const string BundleId = "com.armen380.furniturefactory";
+        /// <summary>Android package (user's Play Console app record, 2026-11-09); iOS / Standalone keep <see cref="BundleId"/>.</summary>
+        public const string AndroidPackage = "com.incode.furniturefactory";
         public const string Version = "1.0.0";
         public const string AppleTeamId = "F83UUGVD8Y";
         const string Folder = "Assets/_Game/Art/AppIcon";
@@ -38,7 +40,7 @@ namespace FF.Editor
             // the user's Apple developer team (already signed in to Xcode); Xcode manages profiles automatically
             PlayerSettings.iOS.appleDeveloperTeamID = AppleTeamId;
             PlayerSettings.iOS.appleEnableAutomaticSigning = true;
-            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, BundleId);
+            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, AndroidPackage);
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.iOS, BundleId);
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Standalone, BundleId);
 
@@ -65,7 +67,7 @@ namespace FF.Editor
             PlayerSettings.SplashScreen.backgroundColor = Sky;
             PlayerSettings.Android.splashScreenScale = AndroidSplashScreenScale.Center;
             AssetDatabase.SaveAssets();
-            Debug.Log($"[FF] App identity: {ProductName} {Version} ({BundleId}), icon {ArtPath}, no splash.");
+            Debug.Log($"[FF] App identity: {ProductName} {Version} (Android {AndroidPackage}, iOS {BundleId}), icon {ArtPath}, no splash.");
         }
 
         /// <summary>The art (any size, read straight from the PNG so import settings don't matter) resampled to Size².</summary>

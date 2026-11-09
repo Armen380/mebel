@@ -57,6 +57,14 @@ Notes (done 2026-11-07):
 
 ## Done
 
+### Android package com.incode.furniturefactory — 2026-11-09 (branch `android-package`)
+Result: Android package is com.incode.furniturefactory (the Play Console app record), iOS keeps com.armen380.furniturefactory; release AAB rebuilt and accepted by Google Play (internal testing); merged into main.
+Status: **Done**
+Play Console rejected the AAB: the app record there is "com.incode.furniturefactory" (ours was com.armen380.furniturefactory). Only the Android package changes; iOS / Standalone keep com.armen380.furniturefactory (the IPA is already built with it) unless App Store Connect needs otherwise.
+- [x] `AppIdentity`: separate `AndroidPackage` = com.incode.furniturefactory, run FF/Setup App Identity (icon PNGs it re-saved were reverted — unchanged art)
+- [x] Rebuild the release AAB → Builds/Android/FurnitureFactory-1.0.0.aab (52.2 MB): manifest package com.incode.furniturefactory, jar verified, signer CN=Armen380 SHA-256 E0:E6:…:48:FC
+- [x] Commit, PR → main after the user's OK ("Принял, слить")
+
 ### New app icon from the user's art — 2026-11-09 (branch `app-icon`)
 Result: the user's artwork is the app icon on Android (adaptive, whole picture visible) and iOS (no alpha); release AAB + IPA rebuilt; store listing copies in Builds/StoreIcons; user checked on the phone; merged into main.
 Status: **Done**
