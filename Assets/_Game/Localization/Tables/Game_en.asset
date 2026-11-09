@@ -770,6 +770,10 @@ MonoBehaviour:
     m_Localized: Watch ad
     m_Metadata:
       m_Items: []
+  - m_Id: 3452419588481024
+    m_Localized: Privacy policy
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

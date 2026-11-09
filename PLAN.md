@@ -5,6 +5,15 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
+### Privacy policy link in the game (user request 2026-11-09: "Да, добавить") (branch `privacy-link`)
+Status: **In progress**
+Google wants the policy linked inside the app too. Plan: the menu's "Ad privacy" link gets a row partner "Privacy policy" that opens https://armen380.github.io/mebel/privacy/ in the browser.
+- [x] `AdsConfig.privacyPolicyUrl` (data, not in the MonoBehaviour); `PrivacyPolicyLink` (FF.UI.Menu) opens it with Application.OpenURL
+- [x] Localization key `ui.privacy_policy` in en / ru / hy, re-import (only the 4 string-table assets changed)
+- [x] MenuBuilder: links row (Ad privacy left, Privacy policy right, wrap on narrow screens); scene patched in place. Note: patching the already-open scene re-serialized ~170 TMP texts (1.9K-line diff) — reverted, reopened Game.unity fresh (OpenSceneMode.Single) and patched again → only the new objects in the diff.
+- [x] Tests 626/626; Play Mode: menu shows both links (Russian wraps to two lines each), PrivacyPolicyLink active with the URL, no console errors. Opening the URL itself not clicked in the Editor (would open the user's browser) — check on the phone.
+- [ ] Commit, PR → main after the user's OK
+
 ### Release prep (user request 2026-11-06: "do the LevelPlay app, keystore, IPA and Profiler yourself; tell me what you cannot") (branch `release-prep`)
 Status: **In progress**
 - [x] iOS: Apple team F83UUGVD8Y (already signed in to Xcode) set in Unity (automatic signing); fresh Xcode export; xcodebuild archive + export with `-allowProvisioningUpdates` → Builds/iOS-Archive/ipa/FurnitureFactory.ipa (134 MB, App Store Connect signing). Fix: Xcode 27 needs iOS ≥ 15 for every pod (IronSource / Unity Ads declare 12–13) → `IosPostBuild` adds a Podfile post_install block (order 45, between Podfile generation and pod install).
