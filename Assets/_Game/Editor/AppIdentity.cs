@@ -17,12 +17,13 @@ namespace FF.Editor
     {
         public const string ProductName = "Furniture Factory";
         public const string CompanyName = "Armen380";
-        public const string BundleId = "com.armen380.furniturefactory";
-        /// <summary>Android package (user's Play Console app record, 2026-11-09); iOS / Standalone keep <see cref="BundleId"/>.</summary>
-        public const string AndroidPackage = "com.incode.furniturefactory";
+        /// <summary>Android package (Play Console app record, 2026-11-09) and iOS bundle id (user's choice for App Store Connect, 2026-11-10).</summary>
+        public const string BundleId = "com.incode.furniturefactory";
         public const string Version = "1.0.0";
         /// <summary>Google Play needs a higher code on every upload: 1 = first internal test, 2 = privacy policy link (2026-11-09).</summary>
         public const int AndroidVersionCode = 2;
+        /// <summary>App Store Connect needs a new build number per upload: 1 = iPhone only, 2 = iPhone + iPad (2026-11-10).</summary>
+        public const string IosBuildNumber = "2";
         public const string AppleTeamId = "F83UUGVD8Y";
         const string Folder = "Assets/_Game/Art/AppIcon";
         const string ArtPath = Folder + "/AppIcon.png";
@@ -38,13 +39,15 @@ namespace FF.Editor
             PlayerSettings.companyName = CompanyName;
             PlayerSettings.bundleVersion = Version;
             PlayerSettings.Android.bundleVersionCode = AndroidVersionCode;
-            PlayerSettings.iOS.buildNumber = "1";
+            PlayerSettings.iOS.buildNumber = IosBuildNumber;
             // the user's Apple developer team (already signed in to Xcode); Xcode manages profiles automatically
             PlayerSettings.iOS.appleDeveloperTeamID = AppleTeamId;
             PlayerSettings.iOS.appleEnableAutomaticSigning = true;
-            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, AndroidPackage);
+            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, BundleId);
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.iOS, BundleId);
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Standalone, BundleId);
+            // iPhone and iPad (user decision 2026-11-10); full screen, so iPad multitasking does not resize the game
+            PlayerSettings.iOS.targetDevice = iOSTargetDevice.iPhoneAndiPad;
 
             Texture2D full = Import(ArtPath, false);
             if (full == null)
@@ -69,7 +72,7 @@ namespace FF.Editor
             PlayerSettings.SplashScreen.backgroundColor = Sky;
             PlayerSettings.Android.splashScreenScale = AndroidSplashScreenScale.Center;
             AssetDatabase.SaveAssets();
-            Debug.Log($"[FF] App identity: {ProductName} {Version} (Android {AndroidPackage}, iOS {BundleId}), icon {ArtPath}, no splash.");
+            Debug.Log($"[FF] App identity: {ProductName} {Version} ({BundleId}, iPhone + iPad), icon {ArtPath}, no splash.");
         }
 
         /// <summary>The art (any size, read straight from the PNG so import settings don't matter) resampled to Size².</summary>

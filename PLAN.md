@@ -57,6 +57,23 @@ Notes (done 2026-11-07):
 
 ## Done
 
+### App Store upload: bundle id com.incode.furniturefactory (user 2026-11-10: "com.incode.furniturefactory, хочу этот") (branch `ios-bundle-id`)
+Result: IPA 1.0.0 (2) for iPhone + iPad (com.incode.furniturefactory) uploaded to App Store Connect; build 1 (iPhone only) was uploaded first. Store page and review submission are the user's.
+Status: **Done**
+The IPA from 2026-11-09 predates the in-app privacy link and uses com.armen380.furniturefactory. The user picked com.incode.furniturefactory for the App Store Connect record (same as Android). iPad: the user did not answer; Claude took iPhone only (reversible: iPad can be added later, not removed after release) — say so.
+- [x] Branch, plan
+- [x] `AppIdentity.BundleId` = com.incode.furniturefactory for every platform (AndroidPackage merged into it); `PlayerSettings.iOS.targetDevice = iPhoneOnly`
+- [x] Tests 626/626
+- [x] Switch to iOS, FF/Build/iOS Xcode Project; xcodebuild archive + export (`-allowProvisioningUpdates` registers the new App ID on team F83UUGVD8Y)
+- [x] Verify the IPA (bundle id, version 1.0.0 (1), iPhone only, signing); switch back to Android → Builds/iOS-Archive/ipa/FurnitureFactory.ipa (128 MB): com.incode.furniturefactory, 1.0.0 (1), UIDeviceFamily [1], iOS ≥ 15, team F83UUGVD8Y, Cloud Managed Apple Distribution, get-task-allow false. Platform back on Android; no keystore noise.
+- [x] Commit, PR #21 (merge after the user's OK)
+- [x] The user created the App Store Connect record ("Создал, загружай"); Claude uploaded with `xcodebuild -exportArchive` (ExportOptions destination=upload, 2026-11-10): "Upload succeeded", package processing. Only warning: no dSYM for UnityRuntime.framework (crash symbols for the Unity runtime, harmless).
+- [x] iPad too (user 2026-11-10: "добавь ещё версию для айпад"): `targetDevice = iPhoneAndiPad`, `AppIdentity.IosBuildNumber = "2"` (build 1 is already uploaded); orientation: all four allowed + UIRequiresFullScreen already on
+  - [x] Check the game at iPad sizes (portrait 2048×2732, landscape 2732×2048) in Play Mode: menu card fits (fills most of the portrait screen), HUD fits in both orientations, no console errors. Game view size set by reflection (GameViewSizes custom size + GameView.selectedSizeIndex); `capture game_view` always returns 1280×720, so un-stretch with sips to judge.
+  - [x] Tests 626/626, iOS export, archive, IPA (com.incode.furniturefactory 1.0.0 (2), UIDeviceFamily [1, 2], UIRequiresFullScreen), uploaded 2026-11-10 ("Upload succeeded"), platform back on Android
+  - [x] Merge PR #21 (user: "хочу")
+- [ ] The user: App Store page (privacy URL, App Privacy, age rating, iPhone 6.9" + iPad 13" screenshots, description), pick the build, submit for review (or TestFlight first)
+
 ### Android version code 2 (user request 2026-11-09: "Да, слить и собрать") (branch `version-code-2`)
 Result: release AAB 1.0.0 (code 2) with the in-app privacy policy link → Builds/Android/FurnitureFactory-1.0.0-2.aab; PR #20 merged. The user uploads it to Play Console (internal testing).
 Status: **Done**
