@@ -13,8 +13,9 @@ The IPA from 2026-11-09 predates the in-app privacy link and uses com.armen380.f
 - [x] Tests 626/626
 - [x] Switch to iOS, FF/Build/iOS Xcode Project; xcodebuild archive + export (`-allowProvisioningUpdates` registers the new App ID on team F83UUGVD8Y)
 - [x] Verify the IPA (bundle id, version 1.0.0 (1), iPhone only, signing); switch back to Android → Builds/iOS-Archive/ipa/FurnitureFactory.ipa (128 MB): com.incode.furniturefactory, 1.0.0 (1), UIDeviceFamily [1], iOS ≥ 15, team F83UUGVD8Y, Cloud Managed Apple Distribution, get-task-allow false. Platform back on Android; no keystore noise.
-- [ ] Commit, PR → main
-- [ ] The user creates the App Store Connect record with this bundle id; upload (Claude via Xcode after the user's yes, or the user via Transporter)
+- [x] Commit, PR #21 (merge after the user's OK)
+- [x] The user created the App Store Connect record ("Создал, загружай"); Claude uploaded with `xcodebuild -exportArchive` (ExportOptions destination=upload, 2026-11-10): "Upload succeeded", package processing. Only warning: no dSYM for UnityRuntime.framework (crash symbols for the Unity runtime, harmless).
+- [ ] The user: App Store page (privacy URL, App Privacy, age rating, iPhone 6.9" screenshots, description), pick the build, submit for review (or TestFlight first)
 
 ### Release prep (user request 2026-11-06: "do the LevelPlay app, keystore, IPA and Profiler yourself; tell me what you cannot") (branch `release-prep`)
 Status: **In progress**
