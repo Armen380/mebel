@@ -57,6 +57,15 @@ Notes (done 2026-11-07):
 
 ## Done
 
+### App Store art for more device sizes (user 2026-11-10: iPhone 6.1/6.3" and a 2034×1398 / 2853×2007 device reject the 6.9" files)
+Result: Builds/Screenshots/iPhone-1206x2622/ and Device-2007x2853/ — 5 portrait shots + one landscape aerial each, English, exact sizes; editor reset (ru, Game view 0, run in background off).
+Status: **Done**
+App Store Connect asks for: iPhone 6.1/6.3" 1179×2556 or 1206×2622 (either orientation); another device 1398×2034 or 2007×2853 (either orientation). Per device: the 5 portrait shots (menu, factories, shop, upgrades, forest) + one landscape aerial (no HUD), same method as the earlier sets. Output: Builds/Screenshots/iPhone-1206x2622/, Builds/Screenshots/Device-2007x2853/.
+- [x] iPhone 1206×2622 shots + 2622×1206 aerial
+- [x] 2007×2853 shots + 2853×2007 aerial
+- [x] Check sizes and look; reset editor state; send to the user
+
+
 ### App Store product page header art (user 2026-11-10: "создавай для этого отдела два фото")
 Result: Builds/Screenshots/Header/header-5244x2950.png and header-3840x1646.png — wide aerial view (sawmill, factories, shop with customers, trucks, road), English signs, no HUD.
 Status: **Done**
