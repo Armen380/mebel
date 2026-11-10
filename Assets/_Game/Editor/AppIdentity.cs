@@ -19,11 +19,11 @@ namespace FF.Editor
         public const string CompanyName = "Armen380";
         /// <summary>Android package (Play Console app record, 2026-11-09) and iOS bundle id (user's choice for App Store Connect, 2026-11-10).</summary>
         public const string BundleId = "com.incode.furniturefactory";
-        public const string Version = "1.0.0";
-        /// <summary>Google Play needs a higher code on every upload: 1 = first internal test, 2 = privacy policy link (2026-11-09).</summary>
-        public const int AndroidVersionCode = 2;
-        /// <summary>App Store Connect needs a new build number per upload: 1 = iPhone only, 2 = iPhone + iPad (2026-11-10).</summary>
-        public const string IosBuildNumber = "2";
+        public const string Version = "1.0.1";
+        /// <summary>Google Play needs a higher code on every upload: 1 = first internal test, 2 = privacy policy link (2026-11-09), 3 = 1.0.1.</summary>
+        public const int AndroidVersionCode = 3;
+        /// <summary>App Store Connect needs a new build number per upload: 1 = iPhone only, 2 = iPhone + iPad (2026-11-10), 3 = 1.0.1.</summary>
+        public const string IosBuildNumber = "3";
         public const string AppleTeamId = "F83UUGVD8Y";
         const string Folder = "Assets/_Game/Art/AppIcon";
         const string ArtPath = Folder + "/AppIcon.png";

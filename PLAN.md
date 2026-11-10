@@ -26,7 +26,8 @@ User: "1) at the start put arrows on the floor so the player finds every point f
    - The user rejected the muted version ("нет, хочу яркие, насыщенные, приятные на глаз и привлекающие, как во всех таких играх"). Second version (Builds/ColorCompare/*-2-vivid.png): saturation 1.12, highlights 1.0, warmth 0.04 + hand-picked overrides grass 9cce68 / lawn 92cc62 → 70c04b, hill 8cc65a → 68b844, paving e8d29f → e9c27c, sidewalk d8d0c0 → dcd2bf, road 5d5a57 → 4c5361; sun 1.0 with shadow strength 0.6, ambient sky 0.72 → 0.78 (softer shadows). An in-between try (paving f3d79e, ambient 0.82) washed the sand out.
    - [x] The user approved the vivid version ("Да, сохранить"): sun / ambient saved in Game.unity (fresh open, 4-line diff) and in GameSceneBuilder; 140 lit + 138 ghost materials re-coloured; tests 630/630, console clean.
 4. Release
-   - [ ] Version 1.0.1: iOS build 3, Android code 3; tests, Play Mode check, AAB + IPA after the user's play-test; upload after App Review approves 1.0.
+   - [x] Version 1.0.1: iOS build 3, Android code 3 (AppIdentity + PlayerSettings)
+   - [ ] The user's play-test (Editor or dev APK on the phone), then merge, AAB + IPA; upload after App Review approves 1.0.
 
 ### Release prep (user request 2026-11-06: "do the LevelPlay app, keystore, IPA and Profiler yourself; tell me what you cannot") (branch `release-prep`)
 Status: **In progress**
