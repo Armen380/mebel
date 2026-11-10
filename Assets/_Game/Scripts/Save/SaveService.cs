@@ -142,19 +142,16 @@ namespace FF.Save
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX
         /// <summary>
         /// M9 renamed the app (DefaultCompany / Mebel → Armen380 / Furniture Factory), which moved the desktop save folder:
-        /// copy a save from the old folder once (the old file stays). Phones are unaffected — the new bundle id is a new app.
+        /// bring a save over from the old folder once. Phones are unaffected — the new bundle id is a new app.
         /// </summary>
         void MigrateLegacySave()
         {
             string root = Path.GetDirectoryName(Path.GetDirectoryName(Application.persistentDataPath));
             if (string.IsNullOrEmpty(root)) return;
             string legacy = Path.Combine(root, "DefaultCompany", "Mebel", FileName);
-            if (!File.Exists(legacy)) return;
             try
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(_path));
-                File.Copy(legacy, _path, false);
-                Debug.Log($"[FF] Save copied from the old app folder: {legacy}");
+                if (MigrateLegacy(legacy, _path)) Debug.Log($"[FF] Save copied from the old app folder: {legacy}");
             }
             catch (IOException e)
             {
@@ -191,6 +188,23 @@ namespace FF.Save
             File.WriteAllText(temp, json);
             if (File.Exists(path)) File.Delete(path);
             File.Move(temp, path);
+        }
+
+        /// <summary>
+        /// Copies <paramref name="legacy"/> to <paramref name="target"/> when there is no save yet, then renames the old file
+        /// to <c>save.migrated.json</c> so it is used only once. Before 1.0.1 the old file stayed, so "New game" on a Mac
+        /// (save deleted) brought the old save back on the next start (user report 2026-11-10: the game started at
+        /// tutorial step 5). Returns true when a save was copied.
+        /// </summary>
+        public static bool MigrateLegacy(string legacy, string target)
+        {
+            if (File.Exists(target) || !File.Exists(legacy)) return false;
+            Directory.CreateDirectory(Path.GetDirectoryName(target));
+            File.Copy(legacy, target, false);
+            string done = Path.ChangeExtension(legacy, ".migrated.json");
+            if (File.Exists(done)) File.Delete(done);
+            File.Move(legacy, done);
+            return true;
         }
 
         public static void Delete(string path)

@@ -27,6 +27,7 @@ User: "1) at the start put arrows on the floor so the player finds every point f
    - [x] The user approved the vivid version ("Да, сохранить"): sun / ambient saved in Game.unity (fresh open, 4-line diff) and in GameSceneBuilder; 140 lit + 138 ghost materials re-coloured; tests 630/630, console clean.
 4. Release
    - [x] Version 1.0.1: iOS build 3, Android code 3 (AppIdentity + PlayerSettings)
+   - [x] Bug from the user's Editor test ("Игра начинается с пятого этапа обучения"): "New game" deletes save.json, and on macOS / Editor `MigrateLegacySave` then copied the pre-rename save (DefaultCompany/Mebel, Lv 983, quest 4) back every time. Fix: `SaveService.MigrateLegacy` copies once and renames the old file to save.migrated.json; tests. Phones were never affected. The user's Lv 1109 Editor save is kept in the scratchpad backup (not restored — the user pressed New game on purpose).
    - [ ] The user's play-test (Editor or dev APK on the phone), then merge, AAB + IPA; upload after App Review approves 1.0.
 
 ### Release prep (user request 2026-11-06: "do the LevelPlay app, keystore, IPA and Profiler yourself; tell me what you cannot") (branch `release-prep`)
