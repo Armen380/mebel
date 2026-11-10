@@ -17,7 +17,38 @@ namespace FF.Editor.Art
         const string UnlitShader = "Universal Render Pipeline/Unlit";
         const float GhostOpacity = 0.22f;
 
+        public const string TonePath = Folder + "/PaletteTone.asset";
+
         public static MaterialPalette Palette => DataImporter.GetOrCreate<MaterialPalette>(PalettePath);
+
+        /// <summary>Update 1.0.1 softer colours: lit materials get the toned colour, the palette key stays the prototype one.</summary>
+        public static PaletteTone Tone => DataImporter.GetOrCreate<PaletteTone>(TonePath);
+
+        static Color Lit(Color32 color) => Tone.Apply(color);
+
+        /// <summary>Re-applies <see cref="Tone"/> to every lit palette material and its ghost twin.</summary>
+        [MenuItem("FF/Art/Apply Palette Tone", priority = 40)]
+        public static void ApplyTone()
+        {
+            MaterialPalette palette = Palette;
+            int n = 0;
+            foreach (MaterialPalette.Entry e in palette.entries)
+            {
+                if (e.unlit || e.material == null) continue;
+                Color c = Lit(e.color);
+                e.material.SetColor("_BaseColor", c);
+                EditorUtility.SetDirty(e.material);
+                if (e.ghost != null)
+                {
+                    c.a = GhostOpacity;
+                    e.ghost.SetColor("_BaseColor", c);
+                    EditorUtility.SetDirty(e.ghost);
+                }
+                n++;
+            }
+            AssetDatabase.SaveAssets();
+            Debug.Log($"[FF] Palette tone applied to {n} lit colours.");
+        }
 
         public static Material Get(Color32 color, bool unlit = false)
         {
@@ -31,7 +62,7 @@ namespace FF.Editor.Art
             if (material == null)
             {
                 material = new Material(Shader.Find(unlit ? UnlitShader : LitShader)) { enableInstancing = true };
-                material.SetColor("_BaseColor", color);
+                material.SetColor("_BaseColor", unlit ? (Color)color : Lit(color));
                 if (!unlit) material.SetFloat("_Smoothness", 0.1f);
                 AssetDatabase.CreateAsset(material, path);
             }
@@ -62,7 +93,7 @@ namespace FF.Editor.Art
             if (m != null) return m;
             DataImporter.EnsureFolder(Folder + "/Ghost");
             m = new Material(Shader.Find(LitShader)) { enableInstancing = true };
-            Color c = color;
+            Color c = Lit(color);
             c.a = GhostOpacity;
             m.SetColor("_BaseColor", c);
             m.SetFloat("_Smoothness", 0.1f);

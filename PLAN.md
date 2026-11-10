@@ -21,8 +21,10 @@ User: "1) at the start put arrows on the floor so the player finds every point f
    - [x] Section carrier / miner / cashiers unchanged. Upgrade descriptions (en / ru / hy) updated to match.
    - [x] Tests for the new `CarrierJobs.Pick` / `RobotScoring` rules.
 3. Softer colours
-   - [ ] Palette pass with no runtime cost (no post-processing): grass, paving, sand paths, sky / fog, building walls and roofs a bit less saturated and a little darker; sun intensity / ambient slightly lower; UI honey and green buttons a touch calmer. Colours stay in the data / builders, not in MonoBehaviours.
-   - [ ] Before / after screenshots for the user's OK before rebuilding everything.
+   - [x] Palette pass with no runtime cost (no post-processing): grass, paving, sand paths, sky / fog, building walls and roofs a bit less saturated and a little darker; sun intensity / ambient slightly lower; UI honey and green buttons a touch calmer. Colours stay in the data / builders, not in MonoBehaviours.
+   - [x] Before / after screenshots for the user's OK before rebuilding everything → Builds/ColorCompare/ (not in git). Method: `PaletteTone` SO (Art/Materials/PaletteTone.asset: saturation 0.72, highlights 0.86, warmth 0.12) applied to the lit palette materials by `FF/Art/Apply Palette Tone` (palette keys stay the prototype colours, unlit guide colours stay vivid) + sun 1.1 → 0.95 (set in the open scene, not saved yet). First try (0.8 / 0.92 / sun 1.1) was hardly visible. Grass 9cce68 → 9aba76, paving e8d29f → cdbe9b.
+   - The user rejected the muted version ("нет, хочу яркие, насыщенные, приятные на глаз и привлекающие, как во всех таких играх"). Second version (Builds/ColorCompare/*-2-vivid.png): saturation 1.12, highlights 1.0, warmth 0.04 + hand-picked overrides grass 9cce68 / lawn 92cc62 → 70c04b, hill 8cc65a → 68b844, paving e8d29f → e9c27c, sidewalk d8d0c0 → dcd2bf, road 5d5a57 → 4c5361; sun 1.0 with shadow strength 0.6, ambient sky 0.72 → 0.78 (softer shadows). An in-between try (paving f3d79e, ambient 0.82) washed the sand out.
+   - [x] The user approved the vivid version ("Да, сохранить"): sun / ambient saved in Game.unity (fresh open, 4-line diff) and in GameSceneBuilder; 140 lit + 138 ghost materials re-coloured; tests 630/630, console clean.
 4. Release
    - [ ] Version 1.0.1: iOS build 3, Android code 3; tests, Play Mode check, AAB + IPA after the user's play-test; upload after App Review approves 1.0.
 

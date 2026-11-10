@@ -94,7 +94,8 @@ namespace FF.Editor
             RenderSettings.fogEndDistance = 95f;
             // prototype HemisphereLight(sky #ffffff, ground #7a9a55, 0.72)
             RenderSettings.ambientMode = AmbientMode.Trilight;
-            RenderSettings.ambientSkyColor = new Color(0.72f, 0.72f, 0.72f);
+            // update 1.0.1 brighter grade: a lighter sky term (0.72 → 0.78) for softer shadows
+            RenderSettings.ambientSkyColor = new Color(0.78f, 0.78f, 0.8f);
             RenderSettings.ambientEquatorColor = Color.Lerp(new Color(0.72f, 0.72f, 0.72f), (Color)new Color32(0x7a, 0x9a, 0x55, 0xff) * 0.72f, 0.5f);
             RenderSettings.ambientGroundColor = (Color)new Color32(0x7a, 0x9a, 0x55, 0xff) * 0.72f;
 
@@ -106,8 +107,9 @@ namespace FF.Editor
             var sun = sunGo.AddComponent<Light>();
             sun.type = LightType.Directional;
             sun.color = new Color32(0xff, 0xf1, 0xd6, 0xff);
-            sun.intensity = 1.1f;
+            sun.intensity = 1f; // update 1.0.1 grade (prototype 1.1), with lighter shadows
             sun.shadows = LightShadows.Soft;
+            sun.shadowStrength = 0.6f;
             sun.shadowBias = 0.05f;
             // prototype sun sits at player + (14, 26, 12) proto and points at the player
             Vector3 fromPlayer = ProtoCoords.ToUnity(14f, 26f, 12f);
