@@ -17,9 +17,8 @@ namespace FF.Editor
     {
         public const string ProductName = "Furniture Factory";
         public const string CompanyName = "Armen380";
-        public const string BundleId = "com.armen380.furniturefactory";
-        /// <summary>Android package (user's Play Console app record, 2026-11-09); iOS / Standalone keep <see cref="BundleId"/>.</summary>
-        public const string AndroidPackage = "com.incode.furniturefactory";
+        /// <summary>Android package (Play Console app record, 2026-11-09) and iOS bundle id (user's choice for App Store Connect, 2026-11-10).</summary>
+        public const string BundleId = "com.incode.furniturefactory";
         public const string Version = "1.0.0";
         /// <summary>Google Play needs a higher code on every upload: 1 = first internal test, 2 = privacy policy link (2026-11-09).</summary>
         public const int AndroidVersionCode = 2;
@@ -42,9 +41,11 @@ namespace FF.Editor
             // the user's Apple developer team (already signed in to Xcode); Xcode manages profiles automatically
             PlayerSettings.iOS.appleDeveloperTeamID = AppleTeamId;
             PlayerSettings.iOS.appleEnableAutomaticSigning = true;
-            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, AndroidPackage);
+            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, BundleId);
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.iOS, BundleId);
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Standalone, BundleId);
+            // iPhone only for now: iPad support can be added in a later update, but not dropped once shipped
+            PlayerSettings.iOS.targetDevice = iOSTargetDevice.iPhoneOnly;
 
             Texture2D full = Import(ArtPath, false);
             if (full == null)
@@ -69,7 +70,7 @@ namespace FF.Editor
             PlayerSettings.SplashScreen.backgroundColor = Sky;
             PlayerSettings.Android.splashScreenScale = AndroidSplashScreenScale.Center;
             AssetDatabase.SaveAssets();
-            Debug.Log($"[FF] App identity: {ProductName} {Version} (Android {AndroidPackage}, iOS {BundleId}), icon {ArtPath}, no splash.");
+            Debug.Log($"[FF] App identity: {ProductName} {Version} ({BundleId}, iPhone only), icon {ArtPath}, no splash.");
         }
 
         /// <summary>The art (any size, read straight from the PNG so import settings don't matter) resampled to Size².</summary>

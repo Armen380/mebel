@@ -9,7 +9,7 @@ PlayerSettings:
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
   defaultScreenOrientation: 4
-  targetDevice: 2
+  targetDevice: 0
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: Armen380
@@ -173,8 +173,8 @@ PlayerSettings:
   androidMinAspectRatio: 1
   applicationIdentifier:
     Android: com.incode.furniturefactory
-    Standalone: com.armen380.furniturefactory
-    iPhone: com.armen380.furniturefactory
+    Standalone: com.incode.furniturefactory
+    iPhone: com.incode.furniturefactory
     tvOS: com.Unity-Technologies.com.unity.template.urp-blank
   buildNumber:
     Standalone: 0

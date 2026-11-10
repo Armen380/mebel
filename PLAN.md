@@ -5,6 +5,17 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
+### App Store upload: bundle id com.incode.furniturefactory (user 2026-11-10: "com.incode.furniturefactory, хочу этот") (branch `ios-bundle-id`)
+Status: **In progress**
+The IPA from 2026-11-09 predates the in-app privacy link and uses com.armen380.furniturefactory. The user picked com.incode.furniturefactory for the App Store Connect record (same as Android). iPad: the user did not answer; Claude took iPhone only (reversible: iPad can be added later, not removed after release) — say so.
+- [x] Branch, plan
+- [x] `AppIdentity.BundleId` = com.incode.furniturefactory for every platform (AndroidPackage merged into it); `PlayerSettings.iOS.targetDevice = iPhoneOnly`
+- [x] Tests 626/626
+- [x] Switch to iOS, FF/Build/iOS Xcode Project; xcodebuild archive + export (`-allowProvisioningUpdates` registers the new App ID on team F83UUGVD8Y)
+- [x] Verify the IPA (bundle id, version 1.0.0 (1), iPhone only, signing); switch back to Android → Builds/iOS-Archive/ipa/FurnitureFactory.ipa (128 MB): com.incode.furniturefactory, 1.0.0 (1), UIDeviceFamily [1], iOS ≥ 15, team F83UUGVD8Y, Cloud Managed Apple Distribution, get-task-allow false. Platform back on Android; no keystore noise.
+- [ ] Commit, PR → main
+- [ ] The user creates the App Store Connect record with this bundle id; upload (Claude via Xcode after the user's yes, or the user via Transporter)
+
 ### Release prep (user request 2026-11-06: "do the LevelPlay app, keystore, IPA and Profiler yourself; tell me what you cannot") (branch `release-prep`)
 Status: **In progress**
 - [x] iOS: Apple team F83UUGVD8Y (already signed in to Xcode) set in Unity (automatic signing); fresh Xcode export; xcodebuild archive + export with `-allowProvisioningUpdates` → Builds/iOS-Archive/ipa/FurnitureFactory.ipa (134 MB, App Store Connect signing). Fix: Xcode 27 needs iOS ≥ 15 for every pod (IronSource / Unity Ads declare 12–13) → `IosPostBuild` adds a Podfile post_install block (order 45, between Podfile generation and pod install).
