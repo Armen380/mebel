@@ -260,7 +260,7 @@ namespace FF.Editor
             RectTransform area = Rect("JoystickArea", safe);
             Stretch(area);
             area.gameObject.AddComponent<Image>().color = new Color(0, 0, 0, 0);
-            Sprite knobSprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Knob.psd");
+            Sprite knobSprite = TextureFactory.JoystickCircle();
 
             RectTransform stickBase = Rect("Base", area);
             stickBase.anchorMin = stickBase.anchorMax = new Vector2(0.5f, 0.5f);

@@ -28,7 +28,8 @@ User: "1) at the start put arrows on the floor so the player finds every point f
 4. Release
    - [x] Version 1.0.1: iOS build 3, Android code 3 (AppIdentity + PlayerSettings)
    - [x] Bug from the user's Editor test ("Игра начинается с пятого этапа обучения"): "New game" deletes save.json, and on macOS / Editor `MigrateLegacySave` then copied the pre-rename save (DefaultCompany/Mebel, Lv 983, quest 4) back every time. Fix: `SaveService.MigrateLegacy` copies once and renames the old file to save.migrated.json; tests. Phones were never affected. The user's Lv 1109 Editor save is kept in the scratchpad backup (not restored — the user pressed New game on purpose).
-   - [ ] The user's play-test (Editor or dev APK on the phone), then merge, AAB + IPA; upload after App Review approves 1.0.
+   - [x] The user's Editor play-test: "Все отлично работает", plus one fix — the joystick ("аналог") looked pixelated and lumpy: it used the built-in 16 px UI/Skin/Knob sprite stretched to 330 px. Now `TextureFactory.JoystickCircle()` (512 px, anti-aliased) for base, fill and knob; builder + Game.unity patched in place (3-line diff); checked in Play Mode.
+   - [ ] Merge after the user's OK, then merge, AAB + IPA; upload after App Review approves 1.0.
 
 ### Release prep (user request 2026-11-06: "do the LevelPlay app, keystore, IPA and Profiler yourself; tell me what you cannot") (branch `release-prep`)
 Status: **In progress**

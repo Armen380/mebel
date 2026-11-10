@@ -20,6 +20,16 @@ namespace FF.Editor.Art
             return new Color(1, 1, 1, Mathf.Clamp01(r - d));
         });
 
+        /// <summary>
+        /// Large anti-aliased disc for the virtual joystick (1.0.1: the built-in 16 px "Knob" sprite stretched to 330 px
+        /// looked pixelated and lumpy — user report 2026-11-10).
+        /// </summary>
+        public static Sprite JoystickCircle() => Sprite($"{UiFolder}/JoystickCircle.png", 512, Vector4.zero, (x, y, s) =>
+        {
+            float r = s / 2f - 1f, c = s / 2f, d = Vector2.Distance(new Vector2(x + 0.5f, y + 0.5f), new Vector2(c, c));
+            return new Color(1, 1, 1, Mathf.Clamp01((r - d) / 1.5f + 0.5f));
+        });
+
         /// <summary>Prototype <c>.menu</c> backdrop: transparent down to 35 % of the height, then to 50 % black (tinted by the Image).</summary>
         public static Sprite VerticalFade() => Sprite($"{UiFolder}/VerticalFade.png", 64, Vector4.zero, (x, y, s) =>
         {
