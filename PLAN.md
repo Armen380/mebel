@@ -5,6 +5,32 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
+### Update 1.0.1: floor arrows, worker roles, softer colours (user request 2026-11-10) (branch `update-1.0.1`)
+Status: **In progress**
+Progress: parts 1–2 done and checked (the Editor had been closed at 10:59, reopened). Tests 630/630 after the localization re-import (only the 4 string tables changed). Game.unity patched in place (fresh open): GuideTrail after TutorialArrow, 24 arrows — `git diff --patience` shows insertions only. Play Mode on the user's save (backed up and restored, same SHA): tutorial step forced to 4/8 → orange chevrons from the player to the target; first try (0.55 m, every 1.1 m) was too small → 1 m every 1.5 m. Worker sampling: carriers held only planks, robots only sofas / sinks, lumberjacks logs.
+Decisions (user answers 2026-11-10): arrows for the tutorial **and** new-unlock guides; robots carry only finished goods; carriers only planks (lumberjacks keep the logs); colours by a palette pass (no post-processing), before / after screenshots first.
+User: "1) at the start put arrows on the floor so the player finds every point faster 2) carriers only take wood to the factories, robots and stockers carry finished furniture to the shelves and the trucks 3) make the colours easy on the eyes for long sessions". These change the prototype on purpose (user decision), so they win over prototype.html here.
+1. Floor arrows (tutorial guide)
+   - [x] `GuideTrail` (FF.Gameplay.Tutorial): a row of flat chevron arrows on the ground from the player to the current target (same target as `TutorialArrow`: tutorial step, else the last unlock guide), pooled (fixed count), spaced every ~1.2 m, gently scrolling toward the target, hidden in the menu and once the player is within ~2 m. Straight line, clipped to the walkable path (no pathfinding; buildings are low enough not to hide it).
+   - [x] Pure C# `GuideTrailLayout` (points + yaw along the segment) with EditMode tests; tunables (spacing, count, speed, colour) in a ScriptableObject.
+   - [x] Built by the Editor tools (Build Game Scene) — chevron mesh from `LowPolyMeshFactory`, honey colour, unlit.
+2. Worker roles
+   - [x] Carrier: only planks from the sawmill outputs to the factory inputs (no furniture). Lumberjacks keep bringing logs to the sawmill.
+   - [x] Stocker: finished goods to the shelves **and** free truck docks (today: shelves only).
+   - [x] Robot: finished goods to shelves / trucks only (no planks).
+   - [x] Section carrier / miner / cashiers unchanged. Upgrade descriptions (en / ru / hy) updated to match.
+   - [x] Tests for the new `CarrierJobs.Pick` / `RobotScoring` rules.
+3. Softer colours
+   - [x] Palette pass with no runtime cost (no post-processing): grass, paving, sand paths, sky / fog, building walls and roofs a bit less saturated and a little darker; sun intensity / ambient slightly lower; UI honey and green buttons a touch calmer. Colours stay in the data / builders, not in MonoBehaviours.
+   - [x] Before / after screenshots for the user's OK before rebuilding everything → Builds/ColorCompare/ (not in git). Method: `PaletteTone` SO (Art/Materials/PaletteTone.asset: saturation 0.72, highlights 0.86, warmth 0.12) applied to the lit palette materials by `FF/Art/Apply Palette Tone` (palette keys stay the prototype colours, unlit guide colours stay vivid) + sun 1.1 → 0.95 (set in the open scene, not saved yet). First try (0.8 / 0.92 / sun 1.1) was hardly visible. Grass 9cce68 → 9aba76, paving e8d29f → cdbe9b.
+   - The user rejected the muted version ("нет, хочу яркие, насыщенные, приятные на глаз и привлекающие, как во всех таких играх"). Second version (Builds/ColorCompare/*-2-vivid.png): saturation 1.12, highlights 1.0, warmth 0.04 + hand-picked overrides grass 9cce68 / lawn 92cc62 → 70c04b, hill 8cc65a → 68b844, paving e8d29f → e9c27c, sidewalk d8d0c0 → dcd2bf, road 5d5a57 → 4c5361; sun 1.0 with shadow strength 0.6, ambient sky 0.72 → 0.78 (softer shadows). An in-between try (paving f3d79e, ambient 0.82) washed the sand out.
+   - [x] The user approved the vivid version ("Да, сохранить"): sun / ambient saved in Game.unity (fresh open, 4-line diff) and in GameSceneBuilder; 140 lit + 138 ghost materials re-coloured; tests 630/630, console clean.
+4. Release
+   - [x] Version 1.0.1: iOS build 3, Android code 3 (AppIdentity + PlayerSettings)
+   - [x] Bug from the user's Editor test ("Игра начинается с пятого этапа обучения"): "New game" deletes save.json, and on macOS / Editor `MigrateLegacySave` then copied the pre-rename save (DefaultCompany/Mebel, Lv 983, quest 4) back every time. Fix: `SaveService.MigrateLegacy` copies once and renames the old file to save.migrated.json; tests. Phones were never affected. The user's Lv 1109 Editor save is kept in the scratchpad backup (not restored — the user pressed New game on purpose).
+   - [x] The user's Editor play-test: "Все отлично работает", plus one fix — the joystick ("аналог") looked pixelated and lumpy: it used the built-in 16 px UI/Skin/Knob sprite stretched to 330 px. Now `TextureFactory.JoystickCircle()` (512 px, anti-aliased) for base, fill and knob; builder + Game.unity patched in place (3-line diff); checked in Play Mode.
+   - [x] Merge after the user's OK ("Да, слить и собрать"), then merge, AAB + IPA; upload after App Review approves 1.0.
+
 ### Release prep (user request 2026-11-06: "do the LevelPlay app, keystore, IPA and Profiler yourself; tell me what you cannot") (branch `release-prep`)
 Status: **In progress**
 - [x] iOS: Apple team F83UUGVD8Y (already signed in to Xcode) set in Unity (automatic signing); fresh Xcode export; xcodebuild archive + export with `-allowProvisioningUpdates` → Builds/iOS-Archive/ipa/FurnitureFactory.ipa (134 MB, App Store Connect signing). Fix: Xcode 27 needs iOS ≥ 15 for every pod (IronSource / Unity Ads declare 12–13) → `IosPostBuild` adds a Podfile post_install block (order 45, between Podfile generation and pod install).

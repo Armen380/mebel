@@ -209,6 +209,43 @@ namespace FF.Editor.World
             return arrow;
         }
 
+        // ---------- guide trail (update 1.0.1) ----------
+
+        const string GuideTrailConfigPath = "Assets/_Game/Data/GuideTrail.asset";
+
+        /// <summary>Pool of flat honey chevrons the <see cref="GuideTrail"/> lays from the player to the arrow's target.</summary>
+        public static GuideTrail BuildGuideTrail(Transform parent, TutorialService service, UnlockService unlocks, Transform player)
+        {
+            var config = AssetDatabase.LoadAssetAtPath<GuideTrailConfig>(GuideTrailConfigPath);
+            if (config == null)
+            {
+                config = ScriptableObject.CreateInstance<GuideTrailConfig>();
+                AssetDatabase.CreateAsset(config, GuideTrailConfigPath);
+            }
+            Transform old = parent.Find("GuideTrail");
+            if (old != null) Object.DestroyImmediate(old.gameObject);
+            var go = new GameObject("GuideTrail");
+            go.transform.SetParent(parent, false);
+            Mesh mesh = LowPolyMeshFactory.Chevron();
+            Material material = MaterialPaletteEditor.Get(Blockout.Hex(Honey), true);
+            var marks = new Transform[Mathf.Max(1, config.count)];
+            for (int i = 0; i < marks.Length; i++)
+            {
+                var mark = new GameObject("Arrow" + i);
+                mark.transform.SetParent(go.transform, false);
+                mark.AddComponent<MeshFilter>().sharedMesh = mesh;
+                var r = mark.AddComponent<MeshRenderer>();
+                r.sharedMaterial = material;
+                r.shadowCastingMode = ShadowCastingMode.Off;
+                r.receiveShadows = false;
+                mark.SetActive(false);
+                marks[i] = mark.transform;
+            }
+            var trail = go.AddComponent<GuideTrail>();
+            trail.Setup(service, unlocks, player, config, marks);
+            return trail;
+        }
+
         /// <summary>Shared assets while building.</summary>
         sealed class Context
         {

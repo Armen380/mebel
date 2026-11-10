@@ -44,6 +44,17 @@ namespace FF.AI
         public bool Urgent;
     }
 
+    /// <summary>What a carrying worker moves (update 1.0.1 worker roles).</summary>
+    public enum CarrierRole
+    {
+        /// <summary>Carriers: planks from the sawmills to the factories.</summary>
+        Planks,
+        /// <summary>Stockers: finished goods to the shelves and trucks.</summary>
+        Goods,
+        /// <summary>Section carriers: Plumbing / Building materials to their shelves and trucks.</summary>
+        Section,
+    }
+
     /// <summary>
     /// Prototype carrier helpers (<c>sawIns / sawOuts / plankTarget / goodsTarget / pickJob</c> and the leftover rule of
     /// <c>updCarrier</c>). Ties keep the list order, like the prototype's stable sort.
@@ -119,13 +130,22 @@ namespace FF.AI
         }
 
         /// <summary>
-        /// Prototype <c>pickJob(only, dockFirst, sec)</c>: goods from the fullest factory output to its shelf (carriers: else
-        /// a free truck dock); otherwise (carriers only) planks from the fullest sawmill output to the emptiest plank-factory
-        /// input. Section carriers (<paramref name="sectionOnly"/>) take only Plumbing / Building materials and no planks.
+        /// Prototype <c>pickJob</c>, split by role (user decision 2026-11-10, update 1.0.1 — the prototype let carriers
+        /// take furniture too): <see cref="CarrierRole.Planks"/> (carriers) only planks from the fullest sawmill output to
+        /// the emptiest plank-factory input; <see cref="CarrierRole.Goods"/> (stockers) goods from the fullest factory
+        /// output to its shelf, else a free truck dock; <see cref="CarrierRole.Section"/> the same for Plumbing / Building
+        /// materials only.
         /// </summary>
-        public static WorkerJob Pick(IReadOnlyList<ProductionLine> lines, IReadOnlyList<IPile> sawOutputs, bool shelvesOnly,
-            IReadOnlyList<IPile> docks, List<ProductionLine> scratch, bool sectionOnly = false)
+        public static WorkerJob Pick(IReadOnlyList<ProductionLine> lines, IReadOnlyList<IPile> sawOutputs, CarrierRole role,
+            IReadOnlyList<IPile> docks, List<ProductionLine> scratch)
         {
+            if (role == CarrierRole.Planks)
+            {
+                IPile planks = SawOutput(sawOutputs);
+                IPile target = planks != null ? PlankTarget(lines) : null;
+                return target != null ? new WorkerJob { From = planks, To = target } : null;
+            }
+            bool sectionOnly = role == CarrierRole.Section;
             scratch.Clear();
             for (int lli = 0; lli < lines.Count; lli++)
             {
@@ -144,23 +164,21 @@ namespace FF.AI
                 }
                 scratch[j + 1] = x;
             }
-            foreach (ProductionLine l in scratch)
+            for (int si = 0; si < scratch.Count; si++)
             {
-                IPile to = shelvesOnly ? ShelfTarget(l) : GoodsTarget(l, docks, false);
+                ProductionLine l = scratch[si];
+                IPile to = GoodsTarget(l, docks, false);
                 if (to != null) return new WorkerJob { From = l.Output, To = to };
             }
-            if (shelvesOnly || sectionOnly) return null;
-            IPile planks = SawOutput(sawOutputs);
-            IPile target = planks != null ? PlankTarget(lines) : null;
-            return target != null ? new WorkerJob { From = planks, To = target } : null;
+            return null;
         }
 
         /// <summary>
-        /// Where items already in hand go when there is no job (prototype <c>updCarrier</c> leftover rule): stockers only
-        /// to the shelf, robots dock first, carriers shelf first.
+        /// Where items already in hand go when there is no job (prototype <c>updCarrier</c> leftover rule): goods to the
+        /// shelf, else a truck (robots dock first); planks / logs / clay / iron to the input that uses them.
         /// </summary>
         public static IPile LeftoverTarget(ItemType type, IReadOnlyList<ProductionLine> lines, IReadOnlyList<IPile> sawInputs,
-            bool shelvesOnly, bool dockFirst, IReadOnlyList<IPile> docks)
+            bool dockFirst, IReadOnlyList<IPile> docks)
         {
             if (type == ItemType.Plank) return PlankTarget(lines);
             if (type == ItemType.Log) return SawInput(sawInputs);
@@ -173,21 +191,20 @@ namespace FF.AI
             for (int lli = 0; lli < lines.Count; lli++)
             {
                 ProductionLine l = lines[lli];
-                if (l.Output.ItemType == type) return shelvesOnly ? ShelfTarget(l) : GoodsTarget(l, docks, dockFirst);
+                if (l.Output.ItemType == type) return GoodsTarget(l, docks, dockFirst);
             }
             return null;
         }
     }
 
     /// <summary>
-    /// Prototype <c>robotJob</c>: scores every delivery and takes the most urgent one above the threshold —
-    /// customers waiting at an empty shelf &gt; a factory idle without planks &gt; a truck waiting at the dock &gt; a nearly
-    /// full factory output.
+    /// Prototype <c>robotJob</c> without the plank jobs (user decision 2026-11-10, update 1.0.1: robots carry only
+    /// finished goods): scores every delivery and takes the most urgent one above the threshold — customers waiting at an
+    /// empty shelf &gt; a truck waiting at the dock &gt; a nearly full factory output.
     /// </summary>
     public static class RobotScoring
     {
-        public static WorkerJob Best(Vector3 robot, IReadOnlyList<ProductionLine> lines, IReadOnlyList<IPile> sawOutputs,
-            IReadOnlyList<IPile> docks, Func<IPile, int> waitingCustomers, Func<IPile, int> otherRobotsHeadingTo, EconomyConfig e)
+        public static WorkerJob Best(Vector3 robot, IReadOnlyList<ProductionLine> lines, IReadOnlyList<IPile> docks, Func<IPile, int> waitingCustomers, Func<IPile, int> otherRobotsHeadingTo, EconomyConfig e)
         {
             var best = new Candidate();
             for (int lli = 0; lli < lines.Count; lli++)
@@ -216,21 +233,6 @@ namespace FF.AI
                     Consider(ref best, robot, output, dock, order - n, score, JobLabel.Truck, null, false, e);
                 }
             }
-
-            IPile planks = CarrierJobs.SawOutput(sawOutputs);
-            if (planks != null)
-                for (int lli = 0; lli < lines.Count; lli++)
-                {
-                    ProductionLine l = lines[lli];
-                    if (l.InputType != ItemType.Plank || !l.Input.IsActive) continue;
-                    IPile input = l.Input;
-                    int room = input.Capacity - input.Count;
-                    if (room <= 0) continue;
-                    bool starving = input.Settled < l.InputPerCycle && !l.MachineBusy();
-                    float score = (1f - (float)input.Count / input.Capacity) * e.robotPlankWeight + (starving ? e.robotStarvingBonus : 0f)
-                                  - otherRobotsHeadingTo(input) * e.robotBusyPenalty;
-                    Consider(ref best, robot, planks, input, room, score, JobLabel.Planks, l.ProductNameKey, starving, e);
-                }
 
             if (!best.Set || best.Score <= e.robotMinScore) return null;
             // one allocation, only for the job taken (idle robots score every frame)

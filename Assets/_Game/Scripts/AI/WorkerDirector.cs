@@ -334,12 +334,12 @@ namespace FF.AI
         void UpdateCarrier(Worker w, float dt)
         {
             ItemStack hands = w.Hands;
-            bool robot = w.Kind == WorkerKind.Robot, stocker = w.Kind == WorkerKind.Stocker, section = w.Kind == WorkerKind.SectionCarrier;
+            bool robot = w.Kind == WorkerKind.Robot;
             if (w.Job == null)
             {
                 if (hands.Count > 0)
                 {
-                    IPile leftover = CarrierJobs.LeftoverTarget(hands.Type, _lines, _sawInputs, stocker, robot, _docks);
+                    IPile leftover = CarrierJobs.LeftoverTarget(hands.Type, _lines, _sawInputs, robot, _docks);
                     if (leftover == null)
                     {
                         Rest(w, dt);
@@ -352,7 +352,7 @@ namespace FF.AI
                 {
                     w.Job = robot
                         ? ScoreRobotJob(w)
-                        : CarrierJobs.Pick(_lines, _sawOutputs, stocker, _docks, _scratch, section);
+                        : CarrierJobs.Pick(_lines, _sawOutputs, Role(w.Kind), _docks, _scratch);
                     w.Putting = false;
                     if (w.Job == null)
                     {
@@ -433,12 +433,15 @@ namespace FF.AI
             w.MoveTo(ProtoCoords.ToUnity(spot), dt, w.Speed * _economy.workerIdleSpeedFactor);
         }
 
+        static CarrierRole Role(WorkerKind kind) =>
+            kind == WorkerKind.Stocker ? CarrierRole.Goods : kind == WorkerKind.SectionCarrier ? CarrierRole.Section : CarrierRole.Planks;
+
         WorkerJob ScoreRobotJob(Worker w)
         {
             _waitingCustomers ??= WaitingCustomers;
             _robotsHeadingTo ??= p => RobotsHeadingTo(p, _scoringRobot);
             _scoringRobot = w;
-            WorkerJob job = RobotScoring.Best(w.transform.position, _lines, _sawOutputs, _docks, _waitingCustomers, _robotsHeadingTo, _economy);
+            WorkerJob job = RobotScoring.Best(w.transform.position, _lines, _docks, _waitingCustomers, _robotsHeadingTo, _economy);
             _scoringRobot = null;
             return job;
         }

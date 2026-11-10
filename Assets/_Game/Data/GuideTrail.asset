@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3eb8fcffdc254413a81e77637a20a33a, type: 3}
+  m_Name: GuideTrail
+  m_EditorClassIdentifier: FF.Data::FF.Data.GuideTrailConfig
+  count: 24
+  spacing: 1.5
+  startGap: 1.2
+  endGap: 1.1
+  fade: 0.8
+  speed: 1.4
+  size: 1
+  height: 0.04
