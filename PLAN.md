@@ -57,6 +57,15 @@ Notes (done 2026-11-07):
 
 ## Done
 
+### App Store product page header art (user 2026-11-10: "создавай для этого отдела два фото")
+Result: Builds/Screenshots/Header/header-5244x2950.png and header-3840x1646.png — wide aerial view (sawmill, factories, shop with customers, trucks, road), English signs, no HUD.
+Status: **Done**
+App Store Connect's new product-page "header" / "search results" artwork accepts 5244×2950 and 3840×1646. Two landscape key-art renders from the game, no HUD or text (the store overlays name and icon): Game view at half size + `ScreenCapture.CaptureScreenshot(path, 2)`, HUD canvas off, camera pulled back by scaling `GameCameraRig._baseOffset` in Play Mode only (nothing saved). Output: Builds/Screenshots/Header/.
+- [x] 5244×2950
+- [x] 3840×1646
+- [x] Check, reset editor state, send to the user
+- Framing: player at (8, 0, 1) / (8, 0, 0), camera offset ×2.0 / ×1.9, locale en; locale back to ru, Game view index 0, run in background off.
+
 ### App Store screenshots (user 2026-11-10: "Да, сделай")
 Result: 5 + 5 PNGs in Builds/Screenshots/{iPhone,iPad}: 1-menu, 2-factories, 3-shop, 4-upgrades, 5-forest (English). Dream plot skipped (shows "Coming soon").
 Status: **Done**
