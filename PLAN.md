@@ -57,6 +57,16 @@ Notes (done 2026-11-07):
 
 ## Done
 
+### App Store screenshots (user 2026-11-10: "Да, сделай")
+Result: 5 + 5 PNGs in Builds/Screenshots/{iPhone,iPad}: 1-menu, 2-factories, 3-shop, 4-upgrades, 5-forest (English). Dream plot skipped (shows "Coming soon").
+Status: **Done**
+iPhone 6.9" 1320×2868 and iPad 13" 2064×2752, portrait, English UI, from the user's Editor save. Game view set to the exact size by reflection, `ScreenCapture.CaptureScreenshot` in Play Mode (run in background on, reset after). The dev-only "Test +25 levels" button is hidden for the shots (release builds hide it anyway). Output: Builds/Screenshots/ (not in git).
+- [x] iPhone set: menu, factories, shop, upgrades, dream plot
+- [x] iPad set: same shots
+- [x] Check sizes and look; reset Game view / run in background
+- [x] Send to the user
+- Shot spots (Unity coords, player teleported via transform): factories (2, 5), shop (14, -3), forest (-20, 3); upgrades panel opened through its openButton. Locale set back to ru, Game view back to index 0, run in background off.
+
 ### App Store upload: bundle id com.incode.furniturefactory (user 2026-11-10: "com.incode.furniturefactory, хочу этот") (branch `ios-bundle-id`)
 Result: IPA 1.0.0 (2) for iPhone + iPad (com.incode.furniturefactory) uploaded to App Store Connect; build 1 (iPhone only) was uploaded first. Store page and review submission are the user's.
 Status: **Done**
