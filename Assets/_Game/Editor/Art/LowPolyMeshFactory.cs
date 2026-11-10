@@ -109,6 +109,20 @@ namespace FF.Editor.Art
             }
         });
 
+        /// <summary>Flat chevron on the ground (y = 0) pointing +Z, 1 m wide: the guide-trail arrow.</summary>
+        public static Mesh Chevron() => GetOrCreate("Chevron", () =>
+        {
+            var b = new Builder();
+            Vector3 tip = new Vector3(0f, 0f, 0.4f), notch = new Vector3(0f, 0f, 0.05f);
+            Vector3 rOut = new Vector3(0.5f, 0f, -0.1f), rIn = new Vector3(0.5f, 0f, -0.4f);
+            Vector3 lOut = new Vector3(-0.5f, 0f, -0.1f), lIn = new Vector3(-0.5f, 0f, -0.4f);
+            b.Tri(tip, rOut, rIn, Vector3.up);
+            b.Tri(tip, rIn, notch, Vector3.up);
+            b.Tri(tip, notch, lIn, Vector3.up);
+            b.Tri(tip, lIn, lOut, Vector3.up);
+            return b;
+        });
+
         static Mesh GetOrCreate(string name, System.Func<Builder> build)
         {
             string path = $"{Folder}/{name}.asset";

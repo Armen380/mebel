@@ -209,7 +209,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 300933145
-    m_Localized: Takes planks to factories, furniture to the shop or trucks
+    m_Localized: Takes planks from the sawmill to the factories
     m_Metadata:
       m_Items: []
   - m_Id: 300933146
@@ -217,7 +217,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 300933147
-    m_Localized: Fast and carries a lot. Figures out what is missing (empty shelf, waiting truck, idle factory) and handles that first
+    m_Localized: Fast and carries a lot. Takes finished furniture where it is needed most (empty shelf, waiting truck, full factory)
     m_Metadata:
       m_Items: []
   - m_Id: 300933148
@@ -241,7 +241,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 300933153
-    m_Localized: Brings finished furniture from the factories to the shop shelves
+    m_Localized: Brings finished furniture from the factories to the shop shelves and the trucks
     m_Metadata:
       m_Items: []
   - m_Id: 300933154

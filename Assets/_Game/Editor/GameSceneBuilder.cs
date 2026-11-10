@@ -183,6 +183,7 @@ namespace FF.Editor
             var unlocks = unlocksGo.AddComponent<UnlockService>();
             unlocks.Setup(player);
             ShopBuilder.BuildTutorialArrow(Root("World"), tutorial, unlocks);
+            ShopBuilder.BuildGuideTrail(Root("World"), tutorial, unlocks, player);
 
             var saveGo = new GameObject("Save");
             saveGo.transform.SetParent(systems, false);

@@ -199,14 +199,14 @@ namespace FF.Tests
             var docks = new List<IPile>();
             var scratch = new List<ProductionLine>();
 
-            WorkerJob carrier = CarrierJobs.Pick(lines, saws, false, docks, scratch);
-            Assert.AreSame(lines[0].Output, carrier.From, "carriers take the fullest output");
-            WorkerJob section = CarrierJobs.Pick(lines, saws, false, docks, scratch, true);
+            WorkerJob stocker = CarrierJobs.Pick(lines, saws, CarrierRole.Goods, docks, scratch);
+            Assert.AreSame(lines[0].Output, stocker.From, "stockers take the fullest output");
+            WorkerJob section = CarrierJobs.Pick(lines, saws, CarrierRole.Section, docks, scratch);
             Assert.AreSame(lines[1].Output, section.From);
             Assert.AreSame(lines[1].Shelf, section.To);
 
             ((Pile)lines[1].Output).Settled = 0;
-            Assert.IsNull(CarrierJobs.Pick(lines, saws, false, docks, scratch, true), "section carriers never take planks");
+            Assert.IsNull(CarrierJobs.Pick(lines, saws, CarrierRole.Section, docks, scratch), "section carriers never take planks");
         }
 
         [Test]
@@ -219,8 +219,8 @@ namespace FF.Tests
                 Line("material", ItemType.Material, ItemType.Iron, 0, true),
             };
             var none = new List<IPile>();
-            Assert.AreSame(lines[1].Input, CarrierJobs.LeftoverTarget(ItemType.Clay, lines, none, false, false, none));
-            Assert.AreSame(lines[2].Input, CarrierJobs.LeftoverTarget(ItemType.Iron, lines, none, false, true, none));
+            Assert.AreSame(lines[1].Input, CarrierJobs.LeftoverTarget(ItemType.Clay, lines, none, false, none));
+            Assert.AreSame(lines[2].Input, CarrierJobs.LeftoverTarget(ItemType.Iron, lines, none, true, none));
         }
 
         // ---------- section cashier ----------

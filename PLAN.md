@@ -5,6 +5,27 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
+### Update 1.0.1: floor arrows, worker roles, softer colours (user request 2026-11-10) (branch `update-1.0.1`)
+Status: **In progress**
+Progress: parts 1–2 done and checked (the Editor had been closed at 10:59, reopened). Tests 630/630 after the localization re-import (only the 4 string tables changed). Game.unity patched in place (fresh open): GuideTrail after TutorialArrow, 24 arrows — `git diff --patience` shows insertions only. Play Mode on the user's save (backed up and restored, same SHA): tutorial step forced to 4/8 → orange chevrons from the player to the target; first try (0.55 m, every 1.1 m) was too small → 1 m every 1.5 m. Worker sampling: carriers held only planks, robots only sofas / sinks, lumberjacks logs.
+Decisions (user answers 2026-11-10): arrows for the tutorial **and** new-unlock guides; robots carry only finished goods; carriers only planks (lumberjacks keep the logs); colours by a palette pass (no post-processing), before / after screenshots first.
+User: "1) at the start put arrows on the floor so the player finds every point faster 2) carriers only take wood to the factories, robots and stockers carry finished furniture to the shelves and the trucks 3) make the colours easy on the eyes for long sessions". These change the prototype on purpose (user decision), so they win over prototype.html here.
+1. Floor arrows (tutorial guide)
+   - [x] `GuideTrail` (FF.Gameplay.Tutorial): a row of flat chevron arrows on the ground from the player to the current target (same target as `TutorialArrow`: tutorial step, else the last unlock guide), pooled (fixed count), spaced every ~1.2 m, gently scrolling toward the target, hidden in the menu and once the player is within ~2 m. Straight line, clipped to the walkable path (no pathfinding; buildings are low enough not to hide it).
+   - [x] Pure C# `GuideTrailLayout` (points + yaw along the segment) with EditMode tests; tunables (spacing, count, speed, colour) in a ScriptableObject.
+   - [x] Built by the Editor tools (Build Game Scene) — chevron mesh from `LowPolyMeshFactory`, honey colour, unlit.
+2. Worker roles
+   - [x] Carrier: only planks from the sawmill outputs to the factory inputs (no furniture). Lumberjacks keep bringing logs to the sawmill.
+   - [x] Stocker: finished goods to the shelves **and** free truck docks (today: shelves only).
+   - [x] Robot: finished goods to shelves / trucks only (no planks).
+   - [x] Section carrier / miner / cashiers unchanged. Upgrade descriptions (en / ru / hy) updated to match.
+   - [x] Tests for the new `CarrierJobs.Pick` / `RobotScoring` rules.
+3. Softer colours
+   - [ ] Palette pass with no runtime cost (no post-processing): grass, paving, sand paths, sky / fog, building walls and roofs a bit less saturated and a little darker; sun intensity / ambient slightly lower; UI honey and green buttons a touch calmer. Colours stay in the data / builders, not in MonoBehaviours.
+   - [ ] Before / after screenshots for the user's OK before rebuilding everything.
+4. Release
+   - [ ] Version 1.0.1: iOS build 3, Android code 3; tests, Play Mode check, AAB + IPA after the user's play-test; upload after App Review approves 1.0.
+
 ### Release prep (user request 2026-11-06: "do the LevelPlay app, keystore, IPA and Profiler yourself; tell me what you cannot") (branch `release-prep`)
 Status: **In progress**
 - [x] iOS: Apple team F83UUGVD8Y (already signed in to Xcode) set in Unity (automatic signing); fresh Xcode export; xcodebuild archive + export with `-allowProvisioningUpdates` → Builds/iOS-Archive/ipa/FurnitureFactory.ipa (134 MB, App Store Connect signing). Fix: Xcode 27 needs iOS ≥ 15 for every pod (IronSource / Unity Ads declare 12–13) → `IosPostBuild` adds a Podfile post_install block (order 45, between Podfile generation and pod install).
