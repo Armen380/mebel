@@ -65,6 +65,20 @@ namespace FF.Core
         public static void RaiseTruckDelivered(long payout) => TruckDelivered?.Invoke(payout);
         public static void RaiseSound(SoundCue cue) => Sound?.Invoke(cue);
 
+        /// <summary>Dream House furnishing or stage changed (M10).</summary>
+        public static event Action HomeChanged;
+        /// <summary>Show the variant picker for a slot id; null hides it.</summary>
+        public static event Action<string> HomeVariantPicker;
+        /// <summary>The player arrived at (true) or left (false) the Home Store counter.</summary>
+        public static event Action<bool> HomeStoreOpen;
+        /// <summary>An area was filled for the first time: area id, gift paid.</summary>
+        public static event Action<string, long> HomeAreaCompleted;
+
+        public static void RaiseHomeChanged() => HomeChanged?.Invoke();
+        public static void RaiseHomeVariantPicker(string slotId) => HomeVariantPicker?.Invoke(slotId);
+        public static void RaiseHomeStoreOpen(bool open) => HomeStoreOpen?.Invoke(open);
+        public static void RaiseHomeAreaCompleted(string areaId, long gift) => HomeAreaCompleted?.Invoke(areaId, gift);
+
         /// <summary>Drops all subscribers (domain-reload-free Play Mode and tests).</summary>
         public static void Reset()
         {
@@ -87,6 +101,10 @@ namespace FF.Core
             UnlockCardHidden = null;
             Sound = null;
             TruckDelivered = null;
+            HomeChanged = null;
+            HomeVariantPicker = null;
+            HomeStoreOpen = null;
+            HomeAreaCompleted = null;
         }
     }
 

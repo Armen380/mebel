@@ -51,6 +51,10 @@ namespace FF.Gameplay.Bootstrap
             Services.Register(new GameSettings(new PlayerPrefsSettingsStore(),
                 Application.isEditor ? QualityTier.High : QualityRules.DefaultTier(SystemInfo.systemMemorySize, SystemInfo.processorCount)));
             Services.Register(new DeliveryCargo());
+            var home = new Home.HomeService(database.home, progress, state);
+            Services.Register(home);
+            Services.Register<IHomeStore>(home);
+            Services.Register<IHomeBonus>(home);
             Services.Register(itemPool);
             Services.Register(itemFlights);
             Services.Register(zones);

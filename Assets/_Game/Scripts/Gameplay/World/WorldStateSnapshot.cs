@@ -26,6 +26,8 @@ namespace FF.Gameplay.World
         public int MainRegisters = 1;
         /// <summary>Second materials-shop register bought (pad reg_annex).</summary>
         public bool AnnexSecondRegister;
+        /// <summary>Dream House stages built, 0 … 4 (leading house_* pads with level ≥ 1, see WorldStateSync).</summary>
+        public int HouseStage;
         public readonly HashSet<string> OwnedProducts = new HashSet<string>();
 
         public bool MinesOpen => OwnsPlumbing;

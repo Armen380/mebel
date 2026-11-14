@@ -58,12 +58,15 @@ namespace FF.Gameplay.Shop
             player = playerTransform;
         }
 
+        IHomeBonus _home;
+
         void Start()
         {
             _db = Services.Get<GameDatabase>();
             _economy = _db.economy;
             _world = _db.world;
             _levels = Services.Get<IUpgradeLevels>();
+            Services.TryGet(out _home);
             _state = Services.Get<WorldStateSnapshot>();
             _progress = Services.Get<GameProgress>();
             _items = Services.Get<ItemPool>();
@@ -191,7 +194,7 @@ namespace FF.Gameplay.Shop
         {
             ProductDef p = c.Want;
             int n = Mathf.Max(1, c.Hands.Settled);
-            long price = _economy.SalePrice(p.basePrice, _levels.GetLevel(QualityId));
+            long price = _economy.SalePrice(p.basePrice, _levels.GetLevel(QualityId), _home != null ? _home.SaleMultiplier : 1.0);
             long value = _economy.BillValue(price, _levels.GetLevel(ConsultantId), n, false);
 
             Vector3 at = c.transform.position;
