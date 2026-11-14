@@ -6,25 +6,31 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 ## In progress
 
 ### M10 Dream House (user request 2026-11-14, after Apple's 4.3(a) rejection of 1.0) (branch `m10-dream-house`)
-Status: **In progress** — design approved 2026-11-14; implementation plan written, waiting for the user's approval.
+Status: **In progress** — implemented and reviewed; waiting for the user's play-test, then merge and T12.
 - Design: docs/superpowers/specs/2026-11-14-dream-house-design.md (user decisions: build by hand like the game, Home Store
   next to the house, walk inside, fixed slots, Armenian style, same scene + catalog panel; 1б no house tutorial, 2а
   furnishing only, no upkeep).
 - Plan (12 tasks, detailed steps): docs/superpowers/plans/2026-11-14-dream-house.md
 - [x] Design agreed and approved
-- [x] Implementation plan written
-- [ ] Plan approved by the user
-- [ ] T1 Data, import, strings
-- [ ] T2 Pure home logic (HomeRules / HomeState)
-- [ ] T3 Save v5
-- [ ] T4 HomeService, sale bonus, room gifts
-- [ ] T5 Stage pads, world state, walls
-- [ ] T6 House / yard / store visuals
-- [ ] T7 Slots in the world + variant picker
-- [ ] T8 Home Store catalog
-- [ ] T9 Cut-away + camera zoom
-- [ ] T10 Comfort chip, guide
-- [ ] T11 Verification, user play-test, PR
+- [x] Implementation plan written and approved
+- [x] T1 Data, import, strings (Design/data/dream_house.json, 4 house_* pads, en/ru/hy; Armenian texts drafted by Claude — user to check)
+- [x] T2 Pure home logic (HomeRules / HomeState)
+- [x] T3 Save v5 (home: slots, storage, rooms; v4 saves load with an empty home)
+- [x] T4 HomeService, comfort sale bonus (customers + trucks, +20 % max), room gifts
+- [x] T5 Stage pads (one at a time, first after the tutorial), house walls with door gaps, Home Store blocker
+- [x] T6 Armenian tuff house (4 stages pop in), yard, Home Store building (HouseBuilder, non-static World/DreamHouse)
+- [x] T7 32 slots with ghosts/models, factory drop zones, carpets/paintings textures, variant picker
+- [x] T8 Home Store catalog (House / Yard tabs) at the counter
+- [x] T9 Cut-away inside the house (front wall sinks, roof hides) + camera zoom ×0.75
+- [x] T10 Comfort chip (HUD, from the foundation) and a one-time guide to the Home Store
+- [x] T11 Tests 660/660, Play Mode checks, whole-branch review (2 Important fixed: per-item buy cap, cut-away from the walls stage)
+- [ ] User play-test, merge into main
+- Deferred review minors (not blocking): a few slots reachable through a wall (wardrobe, kitchen, bowl, towel — move
+  0.2–0.4 m in); a swap doesn't autosave until the next money change; standing on the stage pad pays all four stages in a
+  row; some home tunables are MonoBehaviour constants; HomeStoreRow caches no CanvasGroup; loading doesn't validate
+  hand-edited home ids; variant buttons share the group icon.
+- Play Mode automation: back up ~/Library/Application Support/Armen380/Furniture Factory/save.json first (autosave writes
+  the test stages into it); a full Game scene rebuild (FF/Build Game Scene) is needed after builder changes.
 - [ ] T12 Release 1.0.2 (1.0.1 is not released separately; ASC version 1.0 renamed to 1.0.2; Google Play after 1.0 is live)
 
 ### Release prep (user request 2026-11-06: "do the LevelPlay app, keystore, IPA and Profiler yourself; tell me what you cannot") (branch `release-prep`)
