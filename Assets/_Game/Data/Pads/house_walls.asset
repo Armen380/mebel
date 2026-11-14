@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: FF.Data::FF.Data.PadDef
   id: house_walls
   protoPos: {x: 83.6, y: -11.4}
-  glyph: "\u2302"
+  glyph: $
   baseCost: 8000
   costMultiplier: 1
   maxLevel: 1

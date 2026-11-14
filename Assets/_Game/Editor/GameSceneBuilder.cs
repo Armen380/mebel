@@ -66,6 +66,7 @@ namespace FF.Editor
             List<Zone> zones = ProductionBuilder.Build(db);
             ShopBuilder.Result shop = ShopBuilder.Build(db);
             zones.AddRange(shop.Zones);
+            HouseBuilder.Result house = HouseBuilder.Build(db, Root("World"));
             BuildingKit kit = BuildingKitBuilder.Build(db); // after the blockout: ghosts for every palette colour
             Transform player = SpawnPlayer(db.world);
             foreach (BuildingFader fader in Root("World").GetComponentsInChildren<BuildingFader>(true)) fader.Setup(player);

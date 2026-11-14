@@ -123,6 +123,42 @@ namespace FF.Editor.Art
             return b;
         });
 
+        /// <summary>
+        /// Arch (M10, Armenian tuff arches): a half ring in the XY plane standing on y = 0, outer radius 1, inner radius
+        /// 0.78, depth 1 (z −0.5 … 0.5), 10 segments. Scale x = half width, y = rise, z = depth.
+        /// </summary>
+        public static Mesh Arch() => GetOrCreate("Arch", () =>
+        {
+            const int segments = 10;
+            const float inner = 0.78f, h = 0.5f;
+            var b = new Builder();
+            for (int i = 0; i < segments; i++)
+            {
+                float a0 = Mathf.PI * i / segments, a1 = Mathf.PI * (i + 1) / segments;
+                var o0 = new Vector2(Mathf.Cos(a0), Mathf.Sin(a0));
+                var o1 = new Vector2(Mathf.Cos(a1), Mathf.Sin(a1));
+                Vector2 i0 = o0 * inner, i1 = o1 * inner;
+                Vector3 F(Vector2 p, float z) => new Vector3(p.x, p.y, z);
+                // front and back faces
+                b.Tri(F(o0, h), F(o1, h), F(i1, h), Vector3.forward);
+                b.Tri(F(o0, h), F(i1, h), F(i0, h), Vector3.forward);
+                b.Tri(F(o0, -h), F(o1, -h), F(i1, -h), Vector3.back);
+                b.Tri(F(o0, -h), F(i1, -h), F(i0, -h), Vector3.back);
+                // outer and inner surfaces
+                Vector3 outN = F((o0 + o1) * 0.5f, 0f);
+                b.Tri(F(o0, h), F(o0, -h), F(o1, -h), outN);
+                b.Tri(F(o0, h), F(o1, -h), F(o1, h), outN);
+                b.Tri(F(i0, h), F(i0, -h), F(i1, -h), -outN);
+                b.Tri(F(i0, h), F(i1, -h), F(i1, h), -outN);
+            }
+            // feet
+            b.Tri(new Vector3(1, 0, h), new Vector3(1, 0, -h), new Vector3(inner, 0, -h), Vector3.down);
+            b.Tri(new Vector3(1, 0, h), new Vector3(inner, 0, -h), new Vector3(inner, 0, h), Vector3.down);
+            b.Tri(new Vector3(-1, 0, h), new Vector3(-1, 0, -h), new Vector3(-inner, 0, -h), Vector3.down);
+            b.Tri(new Vector3(-1, 0, h), new Vector3(-inner, 0, -h), new Vector3(-inner, 0, h), Vector3.down);
+            return b;
+        });
+
         static Mesh GetOrCreate(string name, System.Func<Builder> build)
         {
             string path = $"{Folder}/{name}.asset";

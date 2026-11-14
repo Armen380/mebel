@@ -561,7 +561,7 @@
         83.6,
         -11.4
       ],
-      "glyph": "⌂",
+      "glyph": "$",
       "baseCost": 1600,
       "costMultiplier": 1,
       "maxLevel": 1,
@@ -577,7 +577,7 @@
         83.6,
         -11.4
       ],
-      "glyph": "⌂",
+      "glyph": "$",
       "baseCost": 8000,
       "costMultiplier": 1,
       "maxLevel": 1,
@@ -593,7 +593,7 @@
         83.6,
         -11.4
       ],
-      "glyph": "⌂",
+      "glyph": "$",
       "baseCost": 24000,
       "costMultiplier": 1,
       "maxLevel": 1,
@@ -609,7 +609,7 @@
         83.6,
         -11.4
       ],
-      "glyph": "⌂",
+      "glyph": "$",
       "baseCost": 60000,
       "costMultiplier": 1,
       "maxLevel": 1,

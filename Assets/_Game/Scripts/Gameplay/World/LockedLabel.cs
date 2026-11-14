@@ -25,6 +25,8 @@ namespace FF.Gameplay.World
             Fixed,
             /// <summary>lk.with: product sign + the product it opens with, while it is not owned.</summary>
             OpensWith,
+            /// <summary>Shows <c>textKey</c> until the Dream House foundation is built (M10).</summary>
+            HouseNotStarted,
         }
 
         const string Table = "Game";
@@ -77,6 +79,7 @@ namespace FF.Gameplay.World
                     case Kind.FactoryLevel: return !_state.Owns(ownerId) && _progress.Level < _product.unlockLevel;
                     case Kind.NotOwned:
                     case Kind.OpensWith: return !_state.Owns(ownerId);
+                    case Kind.HouseNotStarted: return _state.HouseStage == 0;
                     default: return true;
                 }
             }

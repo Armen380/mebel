@@ -71,6 +71,15 @@ namespace FF.Editor.Art
             return material;
         }
 
+        /// <summary>The transparent ghost twin of a lit palette colour (created with it).</summary>
+        public static Material GetGhost(Color32 color)
+        {
+            Get(color);
+            foreach (MaterialPalette.Entry e in Palette.entries)
+                if (!e.unlit && e.color.r == color.r && e.color.g == color.g && e.color.b == color.b) return e.ghost != null ? e.ghost : e.material;
+            return Get(color);
+        }
+
         /// <summary>Adds missing ghost twins to every lit palette entry (palettes made before M4).</summary>
         public static void EnsureGhosts()
         {
