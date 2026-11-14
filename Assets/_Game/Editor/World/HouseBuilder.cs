@@ -26,8 +26,10 @@ namespace FF.Editor.World
         public sealed class Result
         {
             public Transform Root;
-            /// <summary>Roof and front-wall parts the cut-away hides while the player is inside.</summary>
-            public readonly List<GameObject> Cutaway = new List<GameObject>();
+            /// <summary>Parts the cut-away hides at once while the player is inside (roof, front window frames).</summary>
+            public readonly List<GameObject> Hide = new List<GameObject>();
+            /// <summary>Parts that sink to the ground while the player is inside (front wall).</summary>
+            public readonly List<Transform> Sink = new List<Transform>();
             public Transform Counter;
             public Transform Slots;
         }
@@ -148,7 +150,7 @@ namespace FF.Editor.World
                 Window(b, walls, d.foundationCenter.x - d.foundationSize.x / 2, z, 90f);
                 Window(b, walls, d.foundationCenter.x + d.foundationSize.x / 2, z, 90f);
             }
-            r.Cutaway.Add(front.parent.gameObject);
+            r.Sink.Add(front.parent);
         }
 
         static bool IsOuter(ProtoRect rect, WorldLayout.DreamHouseSettings d)
@@ -187,7 +189,7 @@ namespace FF.Editor.World
             // tuff chimney
             b.Box(p, 0.6f, 1.4f, 0.6f, Tuff, c.x + 3.2f, y + 1.3f, c.y - 1.2f, "Chimney");
             b.Box(p, 0.75f, 0.15f, 0.75f, TuffTrim, c.x + 3.2f, y + 2.05f, c.y - 1.2f, "ChimneyCap");
-            r.Cutaway.Add(p.parent.gameObject);
+            r.Hide.Add(p.parent.gameObject);
         }
 
         // ---------- stage 4: windows and doors ----------
@@ -213,7 +215,7 @@ namespace FF.Editor.World
             b.GlowBox(front, 0.12f, 0.2f, 0.12f, 0xffe4a3, door.x - 1.15f, SlabTop + 2.2f, frontZ + 0.3f, "LanternLight");
             b.Box(front, 0.18f, 0.32f, 0.18f, Walnut, door.x + 1.15f, SlabTop + 2.2f, frontZ + 0.2f, "Lantern");
             b.GlowBox(front, 0.12f, 0.2f, 0.12f, 0xffe4a3, door.x + 1.15f, SlabTop + 2.2f, frontZ + 0.3f, "LanternLight");
-            r.Cutaway.Add(front.parent.gameObject);
+            r.Hide.Add(front.parent.gameObject);
         }
 
         static void Frame(Blockout b, Transform p, float x, float z, float yaw, bool flowers)
