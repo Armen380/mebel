@@ -67,6 +67,14 @@ namespace FF.Gameplay.Home
             return true;
         }
 
+        public int Variants(string slotId, System.Collections.Generic.List<string> into)
+        {
+            HomeDef.SlotDef slot = _def.Slot(slotId);
+            if (slot != null) return HomeRules.OtherVariants(_def, State, slot, into);
+            into.Clear();
+            return 0;
+        }
+
         public bool Swap(string slotId, string itemId)
         {
             HomeDef.SlotDef slot = _def.Slot(slotId);

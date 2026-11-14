@@ -67,10 +67,13 @@ namespace FF.Editor
             ShopBuilder.Result shop = ShopBuilder.Build(db);
             zones.AddRange(shop.Zones);
             HouseBuilder.Result house = HouseBuilder.Build(db, Root("World"));
+            HomeSlotBuilder.Result homeSlots = HomeSlotBuilder.Build(db, house.Slots);
+            zones.AddRange(homeSlots.Zones);
             BuildingKit kit = BuildingKitBuilder.Build(db); // after the blockout: ghosts for every palette colour
             Transform player = SpawnPlayer(db.world);
             foreach (BuildingFader fader in Root("World").GetComponentsInChildren<BuildingFader>(true)) fader.Setup(player);
             SetupSystems(zones, shop, player, kit);
+            SetupHome(homeSlots, player);
             MoveInputAggregator input = SetupInput();
             VirtualJoystick joystick = SetupHud(db);
             Wire(input, "joystickSource", joystick);
@@ -119,6 +122,17 @@ namespace FF.Editor
         }
 
         // ---------- systems ----------
+
+        /// <summary>Dream House runtime (M10): the slot loop (placement, variant picker, room-complete feedback).</summary>
+        static void SetupHome(HomeSlotBuilder.Result slots, Transform player)
+        {
+            Transform systems = Root("Systems");
+            Transform old = systems.Find("Home");
+            if (old != null) Object.DestroyImmediate(old.gameObject);
+            var go = new GameObject("Home");
+            go.transform.SetParent(systems, false);
+            go.AddComponent<FF.Gameplay.Home.HomeSlotSystem>().Setup(slots.Slots, player.GetComponent<PlayerMover>());
+        }
 
         static void SetupSystems(List<Zone> zones, ShopBuilder.Result shop, Transform player, BuildingKit kit)
         {
@@ -292,6 +306,7 @@ namespace FF.Editor
             HudBuilder.BuildTopLeft(safe);
             HudBuilder.BuildQuestBar(safe);
             HudBuilder.BuildToast(safe);
+            HomeHudBuilder.BuildVariantPicker(safe, db);
             BuildThrowButton(safe);
             RectTransform upgradesButton = HudBuilder.BuildUpgradesButton(safe, out GameObject badge);
             HudBuilder.BuildUnlockCard(safe);

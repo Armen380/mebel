@@ -24,6 +24,8 @@ namespace FF.Core
         /// <summary>This item stands on some slot.</summary>
         bool IsPlaced(string itemId);
         bool Buy(string itemId);
+        /// <summary>Storage items that could replace the slot's placed item; returns how many.</summary>
+        int Variants(string slotId, System.Collections.Generic.List<string> into);
         /// <summary>Puts the slot's item back into storage and places <paramref name="itemId"/> instead.</summary>
         bool Swap(string slotId, string itemId);
     }

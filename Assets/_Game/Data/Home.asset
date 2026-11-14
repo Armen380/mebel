@@ -55,14 +55,14 @@ MonoBehaviour:
     group: 
     comfort: 4
     protoPos: {x: 77.6, y: -14.6}
-    yaw: 90
+    yaw: -90
   - id: living_chair2
     area: living
     product: 6
     group: 
     comfort: 4
     protoPos: {x: 79.6, y: -14.6}
-    yaw: -90
+    yaw: 90
   - id: living_carpet
     area: living
     product: 0
@@ -90,7 +90,7 @@ MonoBehaviour:
     group: painting
     comfort: 0
     protoPos: {x: 75.8, y: -15.4}
-    yaw: 90
+    yaw: -90
   - id: living_plant
     area: living
     product: 0
@@ -111,14 +111,14 @@ MonoBehaviour:
     group: 
     comfort: 4
     protoPos: {x: 83, y: -14.3}
-    yaw: 180
+    yaw: 0
   - id: kitchen_chair2
     area: kitchen
     product: 6
     group: 
     comfort: 4
     protoPos: {x: 84.6, y: -14.3}
-    yaw: 180
+    yaw: 0
   - id: kitchen_fridge
     area: kitchen
     product: 0
@@ -181,7 +181,7 @@ MonoBehaviour:
     group: 
     comfort: 12
     protoPos: {x: 85.9, y: -18.4}
-    yaw: -90
+    yaw: 90
   - id: bathroom_tub
     area: bathroom
     product: 0
@@ -195,7 +195,7 @@ MonoBehaviour:
     group: mirror
     comfort: 0
     protoPos: {x: 86.2, y: -19.6}
-    yaw: -90
+    yaw: 90
   - id: bathroom_towel
     area: bathroom
     product: 0

@@ -1,5 +1,5 @@
 {
-  "_note": "Dream House (M10). Positions are prototype coordinates (x east, z south). Catalog prices are final dollars (no ECON). Stages are pads house_found..house_windows in pads.json. comfortBonusPerPoint · best comfort (200) = +20% sale prices.",
+  "_note": "Dream House (M10). Positions are prototype coordinates (x east, z south). Catalog prices are final dollars (no ECON). Stages are pads house_found..house_windows in pads.json. comfortBonusPerPoint · best comfort (200) = +20% sale prices. Slot yaw: degrees around y; 0 = the model's front faces the camera/road, -90 = faces east (+x), 90 = faces west.",
   "comfortBonusPerPoint": 0.001,
   "areas": [
     {
@@ -63,7 +63,7 @@
         77.6,
         -14.6
       ],
-      "yaw": 90
+      "yaw": -90
     },
     {
       "id": "living_chair2",
@@ -75,7 +75,7 @@
         79.6,
         -14.6
       ],
-      "yaw": -90
+      "yaw": 90
     },
     {
       "id": "living_carpet",
@@ -123,7 +123,7 @@
         75.8,
         -15.4
       ],
-      "yaw": 90
+      "yaw": -90
     },
     {
       "id": "living_plant",
@@ -159,7 +159,7 @@
         83.0,
         -14.3
       ],
-      "yaw": 180
+      "yaw": 0
     },
     {
       "id": "kitchen_chair2",
@@ -171,7 +171,7 @@
         84.6,
         -14.3
       ],
-      "yaw": 180
+      "yaw": 0
     },
     {
       "id": "kitchen_fridge",
@@ -279,7 +279,7 @@
         85.9,
         -18.4
       ],
-      "yaw": -90
+      "yaw": 90
     },
     {
       "id": "bathroom_tub",
@@ -303,7 +303,7 @@
         86.2,
         -19.6
       ],
-      "yaw": -90
+      "yaw": 90
     },
     {
       "id": "bathroom_towel",

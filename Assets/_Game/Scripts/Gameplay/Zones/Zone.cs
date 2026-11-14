@@ -55,6 +55,9 @@ namespace FF.Gameplay.Zones
             tagStyle = zoneKind == ZoneKind.Cash ? WorldTagStyle.Cash : WorldTagStyle.Counter;
         }
 
+        /// <summary>Editor tools only: no n/cap counter over the pile (Dream House slots show a ghost instead).</summary>
+        public void HideCounter() => showCounter = false;
+
         /// <summary>Editor tools only: a drop zone for any product whose pile is lent by its owner (no own counter).</summary>
         public void SetupAnyProduct()
         {

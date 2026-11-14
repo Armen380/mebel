@@ -997,3 +997,93 @@ MonoBehaviour:
     unlit: 0
     material: {fileID: 2100000, guid: 4235c7aa50a214b119fd4e3407884c4c, type: 2}
     ghost: {fileID: 2100000, guid: 6e3d3da4fde23456a9839921d1b9e10f, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4292472054
+    unlit: 0
+    material: {fileID: 2100000, guid: 277c42c8ca46e41e3abb5e041f66e689, type: 2}
+    ghost: {fileID: 2100000, guid: cab102a88e8a74d71b1f958541c58c45, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4283082450
+    unlit: 0
+    material: {fileID: 2100000, guid: fd8dcb8a7c8144134bf3f8c84fe4913b, type: 2}
+    ghost: {fileID: 2100000, guid: 060a95c25a484435195a68ee6e2f7cf4, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4281543979
+    unlit: 0
+    material: {fileID: 2100000, guid: 6d881f77a50b548aa92e82250c4f13ba, type: 2}
+    ghost: {fileID: 2100000, guid: 86710cbd6bf8b4ed8ac68a3ac6f509e4, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4287589947
+    unlit: 0
+    material: {fileID: 2100000, guid: 479073fbda50a424bbbf3ca70738190d, type: 2}
+    ghost: {fileID: 2100000, guid: 60055d08bb16a4d3f8e0167268413af9, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4293980914
+    unlit: 0
+    material: {fileID: 2100000, guid: 97ebb0578bab24672b45a6dc1187c431, type: 2}
+    ghost: {fileID: 2100000, guid: f499fc0255b7e4f3dbc23ae274705979, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4289569690
+    unlit: 0
+    material: {fileID: 2100000, guid: 0aa1c747f32404efdbb8dec491d719e1, type: 2}
+    ghost: {fileID: 2100000, guid: d617e8c20fc7f4264a6ca0c48b8f463a, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4281146764
+    unlit: 0
+    material: {fileID: 2100000, guid: 13bae7046bc714d14bef664f61dde00b, type: 2}
+    ghost: {fileID: 2100000, guid: c6480b3794c364f1a9d42cdf368519eb, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4292457295
+    unlit: 0
+    material: {fileID: 2100000, guid: 2e73c8b1fe23348fa89db37d2e1a0187, type: 2}
+    ghost: {fileID: 2100000, guid: 1fb5bfdd1ad684088b1d3234cef27ae1, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4294307544
+    unlit: 0
+    material: {fileID: 2100000, guid: f42ec2c260069406cbaf8b39f3eb5ee8, type: 2}
+    ghost: {fileID: 2100000, guid: b787b56ff0734451f9cfcd3fae922e49, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4286200427
+    unlit: 0
+    material: {fileID: 2100000, guid: 4e8f26228714741928fc1658f651bb8a, type: 2}
+    ghost: {fileID: 2100000, guid: a3a8741753f164e2fb4144780520ab64, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4281555594
+    unlit: 0
+    material: {fileID: 2100000, guid: 2117faa75e4224b23bb4df84b6d842d1, type: 2}
+    ghost: {fileID: 2100000, guid: db0b40b6a6dcd4459be3fd3dd1d7ccb3, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4281691695
+    unlit: 0
+    material: {fileID: 2100000, guid: 4ed11211a66ae47ce9062544339c1f6c, type: 2}
+    ghost: {fileID: 2100000, guid: 49cd39694858641ed9a70bb06b087aa8, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4281023834
+    unlit: 0
+    material: {fileID: 2100000, guid: 93da3cc308b0748558c2686a1a907620, type: 2}
+    ghost: {fileID: 2100000, guid: dcc724122b3d54faba51835e0a4c7e1a, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4285881832
+    unlit: 0
+    material: {fileID: 2100000, guid: ab4140fecd82240889ccc53bab1b8709, type: 2}
+    ghost: {fileID: 2100000, guid: 3228abc526a7b4eb29aa363e7b330795, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4280847602
+    unlit: 0
+    material: {fileID: 2100000, guid: 74756fffcdee5416d9ffdea1c73e5b71, type: 2}
+    ghost: {fileID: 2100000, guid: 1c1c8cc072ff149bb869f17139915f6e, type: 2}
