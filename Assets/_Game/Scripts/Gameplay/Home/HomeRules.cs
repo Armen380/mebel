@@ -75,6 +75,15 @@ namespace FF.Gameplay.Home
             return n;
         }
 
+        /// <summary>This item in storage plus on slots.</summary>
+        public static int OwnedItem(HomeDef d, HomeState s, string itemId)
+        {
+            int n = Count(s, itemId);
+            foreach (string placed in s.Placed.Values)
+                if (placed == itemId) n++;
+            return n;
+        }
+
         public static int SlotsOf(HomeDef d, string group)
         {
             int n = 0;
@@ -91,7 +100,11 @@ namespace FF.Gameplay.Home
             return false;
         }
 
-        public static bool IsAtCap(HomeDef d, HomeState s, HomeDef.HomeItemDef item) => Owned(d, s, item.group) >= SlotsOf(d, item.group);
+        /// <summary>
+        /// Each item can be owned as many times as its group has slots (review fix: a cap on the whole group made the
+        /// better variants unbuyable after one cheap pick, so the best house was unreachable).
+        /// </summary>
+        public static bool IsAtCap(HomeDef d, HomeState s, HomeDef.HomeItemDef item) => OwnedItem(d, s, item.id) >= SlotsOf(d, item.group);
 
         public static bool CanBuy(HomeDef d, HomeState s, HomeDef.HomeItemDef item, int stage, long money) =>
             money >= item.price && IsItemAvailable(d, item, stage) && !IsAtCap(d, s, item);

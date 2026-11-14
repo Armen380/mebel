@@ -59,14 +59,18 @@ namespace FF.Tests
         }
 
         [Test]
-        public void Buy_CappedBySlotCount()
+        public void Buy_CappedPerItemBySlotCount()
         {
+            // each variant can be owned as many times as its group has slots, so every slot can hold the best variant
             Assert.IsTrue(HomeRules.CanBuy(_def, _state, Item("carpet_a"), 2, 10000));
             HomeRules.Buy(_state, Item("carpet_a"));
-            HomeRules.Buy(_state, Item("carpet_b"));
-            Assert.AreEqual(2, HomeRules.Owned(_def, _state, "carpet"));
-            Assert.IsFalse(HomeRules.CanBuy(_def, _state, Item("carpet_a"), 2, 10000), "two carpet slots, two owned");
-            Assert.IsFalse(HomeRules.CanBuy(_def, _state, Item("carpet_b"), 2, 10000));
+            HomeRules.Buy(_state, Item("carpet_a"));
+            Assert.AreEqual(2, HomeRules.OwnedItem(_def, _state, "carpet_a"));
+            Assert.IsFalse(HomeRules.CanBuy(_def, _state, Item("carpet_a"), 2, 10000), "two carpet slots, two of this carpet owned");
+            Assert.IsTrue(HomeRules.CanBuy(_def, _state, Item("carpet_b"), 2, 10000), "another variant is still buyable");
+            HomeRules.TryPlaceFromStorage(_def, _state, Slot("living_carpet"), 2, out _);
+            Assert.AreEqual(2, HomeRules.OwnedItem(_def, _state, "carpet_a"), "placed ones count too");
+            Assert.IsFalse(HomeRules.CanBuy(_def, _state, Item("carpet_a"), 2, 10000));
         }
 
         [Test]

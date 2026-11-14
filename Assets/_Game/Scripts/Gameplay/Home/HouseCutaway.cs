@@ -8,13 +8,16 @@ using UnityEngine;
 namespace FF.Gameplay.Home
 {
     /// <summary>
-    /// Dream House inside view (M10): while the player stands inside the house footprint and the roof is built, the
+    /// Dream House inside view (M10): while the player stands inside the house footprint once the walls stand, the
     /// front wall sinks to the ground (0.25 s) and the roof and front windows hide; the camera moves in (×0.75).
+    /// From the walls stage, not the roof: a 3 m front wall already hides the front rooms (review fix).
     /// </summary>
     public sealed class HouseCutaway : MonoBehaviour
     {
         const float SinkSeconds = 0.25f, Zoom = 0.75f, Margin = 0.15f;
-        const int RoofStage = 3;
+        const int WallsStage = 2;
+
+        public static bool ShouldCut(int houseStage, bool inside) => inside && houseStage >= WallsStage;
 
         [Tooltip("Hidden at once (roof, front window frames).")]
         [SerializeField] GameObject[] hide;
@@ -49,7 +52,7 @@ namespace FF.Gameplay.Home
 
         void LateUpdate()
         {
-            bool inside = _state.HouseStage >= RoofStage && IsInside(player.transform.position, _inside);
+            bool inside = ShouldCut(_state.HouseStage, IsInside(player.transform.position, _inside));
             if (inside != _in)
             {
                 _in = inside;

@@ -96,6 +96,15 @@ namespace FF.Tests
         }
 
         [Test]
+        public void Cutaway_FromWallsStage()
+        {
+            Assert.IsFalse(FF.Gameplay.Home.HouseCutaway.ShouldCut(1, true), "no walls yet");
+            Assert.IsTrue(FF.Gameplay.Home.HouseCutaway.ShouldCut(2, true), "the front wall hides the player at stage 2");
+            Assert.IsTrue(FF.Gameplay.Home.HouseCutaway.ShouldCut(4, true));
+            Assert.IsFalse(FF.Gameplay.Home.HouseCutaway.ShouldCut(4, false));
+        }
+
+        [Test]
         public void AfterPad_VisibleOnlyAfterPrevious()
         {
             Assert.IsTrue(PadRules.IsVisible(PadRule.AfterPad, 0, 1, true, 1, 0, 0, 0));
