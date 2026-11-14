@@ -261,7 +261,7 @@ namespace FF.Tests
             cargo.Of(2).Add(ItemType.Table);
 
             SaveData data = SaveSerializer.FromJson(SaveSerializer.ToJson(SaveMapper.Capture(progress, state, cargo, "en")));
-            Assert.AreEqual(4, data.version);
+            Assert.AreEqual(SaveData.CurrentVersion, data.version);
 
             var loaded = new DeliveryCargo();
             SaveMapper.Apply(data, new GameProgress(_db.economy), WorldStateSnapshot.NewGame(_db.products), loaded);
