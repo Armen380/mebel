@@ -5,6 +5,28 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
+### M10 Dream House (user request 2026-11-14, after Apple's 4.3(a) rejection of 1.0) (branch `m10-dream-house`)
+Status: **In progress** — design approved 2026-11-14; implementation plan written, waiting for the user's approval.
+- Design: docs/superpowers/specs/2026-11-14-dream-house-design.md (user decisions: build by hand like the game, Home Store
+  next to the house, walk inside, fixed slots, Armenian style, same scene + catalog panel; 1б no house tutorial, 2а
+  furnishing only, no upkeep).
+- Plan (12 tasks, detailed steps): docs/superpowers/plans/2026-11-14-dream-house.md
+- [x] Design agreed and approved
+- [x] Implementation plan written
+- [ ] Plan approved by the user
+- [ ] T1 Data, import, strings
+- [ ] T2 Pure home logic (HomeRules / HomeState)
+- [ ] T3 Save v5
+- [ ] T4 HomeService, sale bonus, room gifts
+- [ ] T5 Stage pads, world state, walls
+- [ ] T6 House / yard / store visuals
+- [ ] T7 Slots in the world + variant picker
+- [ ] T8 Home Store catalog
+- [ ] T9 Cut-away + camera zoom
+- [ ] T10 Comfort chip, guide
+- [ ] T11 Verification, user play-test, PR
+- [ ] T12 Release 1.0.2 (1.0.1 is not released separately; ASC version 1.0 renamed to 1.0.2; Google Play after 1.0 is live)
+
 ### Release prep (user request 2026-11-06: "do the LevelPlay app, keystore, IPA and Profiler yourself; tell me what you cannot") (branch `release-prep`)
 Status: **In progress**
 - [x] iOS: Apple team F83UUGVD8Y (already signed in to Xcode) set in Unity (automatic signing); fresh Xcode export; xcodebuild archive + export with `-allowProvisioningUpdates` → Builds/iOS-Archive/ipa/FurnitureFactory.ipa (134 MB, App Store Connect signing). Fix: Xcode 27 needs iOS ≥ 15 for every pod (IronSource / Unity Ads declare 12–13) → `IosPostBuild` adds a Podfile post_install block (order 45, between Podfile generation and pod install).
@@ -58,7 +80,7 @@ Notes (done 2026-11-07):
 ## Done
 
 ### Update 1.0.1: floor arrows, worker roles, softer colours (user request 2026-11-10) (branch `update-1.0.1`)
-Result: 1.0.1 merged (PR #25) and built — Builds/Android/FurnitureFactory-1.0.1-3.aab (52.3 MB, jar verified, CN=Armen380 E0:E6:…:48:FC, com.incode.furniturefactory, versionCode 3 / 1.0.1) and Builds/iOS-Archive/FurnitureFactory-1.0.1-3.ipa (129 MB, com.incode.furniturefactory 1.0.1 (3), iPhone + iPad, distribution signing). Not uploaded: Google Play when the user wants, App Store after 1.0 is approved (then create version 1.0.1 in App Store Connect).
+Result: 1.0.1 merged (PR #25) and built — Builds/Android/FurnitureFactory-1.0.1-3.aab (52.3 MB, jar verified, CN=Armen380 E0:E6:…:48:FC, com.incode.furniturefactory, versionCode 3 / 1.0.1) and Builds/iOS-Archive/FurnitureFactory-1.0.1-3.ipa (129 MB, com.incode.furniturefactory 1.0.1 (3), iPhone + iPad, distribution signing). Not uploaded. User decision 2026-11-10: hold 1.0.1 on BOTH stores until 1.0 passes review and is published on Google Play and the App Store; then upload AAB code 3 (new Play release) and IPA build 3 (new App Store version 1.0.1).
 Status: **Done**
 Progress: parts 1–2 done and checked (the Editor had been closed at 10:59, reopened). Tests 630/630 after the localization re-import (only the 4 string tables changed). Game.unity patched in place (fresh open): GuideTrail after TutorialArrow, 24 arrows — `git diff --patience` shows insertions only. Play Mode on the user's save (backed up and restored, same SHA): tutorial step forced to 4/8 → orange chevrons from the player to the target; first try (0.55 m, every 1.1 m) was too small → 1 m every 1.5 m. Worker sampling: carriers held only planks, robots only sofas / sinks, lumberjacks logs.
 Decisions (user answers 2026-11-10): arrows for the tutorial **and** new-unlock guides; robots carry only finished goods; carriers only planks (lumberjacks keep the logs); colours by a palette pass (no post-processing), before / after screenshots first.
