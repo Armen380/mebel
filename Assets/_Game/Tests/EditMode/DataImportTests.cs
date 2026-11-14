@@ -54,7 +54,7 @@ namespace FF.Tests
         [Test]
         public void Pads_AllImported()
         {
-            Assert.AreEqual(29, _db.pads.Count);
+            Assert.AreEqual(33, _db.pads.Count); // 29 + four Dream House stages (M10)
             Assert.AreEqual(new Vector2(-6f, -11.1f), _db.Pad("saw_speed").protoPos);
             Assert.AreEqual(new Vector2(26.4f, 3.5f), _db.Pad("reg").protoPos);
             Assert.AreEqual(1, _db.Pad("saw2_buy").maxLevel);

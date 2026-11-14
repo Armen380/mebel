@@ -16,6 +16,7 @@ namespace FF.Gameplay.Pads
     {
         public const string Sawmill2BuyPad = "saw2_buy";
         const string BuySuffix = "_buy";
+        const string HouseStagePrefix = "house_";
         const string Table = "Game";
 
         readonly Dictionary<string, object> _args = new Dictionary<string, object>();
@@ -44,6 +45,14 @@ namespace FF.Gameplay.Pads
             {
                 _ownership.Own(WorldStateSnapshot.Sawmill2Id);
                 GameEvents.RaiseToast(Text("sign.saw2"), Text("t.saw2"));
+            }
+            else if (padId.StartsWith(HouseStagePrefix))
+            {
+                // Dream House stage (M10): the world state, walls and the home react
+                WorldStateSync.Apply(_state, _levels);
+                _collision.Rebuild(_state);
+                GameEvents.RaiseToast(Text("home.stage." + padId), Text("done.house"));
+                GameEvents.RaiseHomeChanged();
             }
             else if (padId.EndsWith(BuySuffix))
             {

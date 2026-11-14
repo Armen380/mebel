@@ -54,11 +54,11 @@ namespace FF.Gameplay.Delivery
             return BayTagKind.FreeIn;
         }
 
-        /// <summary>Σ round(salePrice·1.4) over the bed (prototype <c>t.pay</c>), with the quality level of the moment.</summary>
-        public static long Payout(IReadOnlyList<ProductDef> cargo, EconomyConfig e, int qualityLevel)
+        /// <summary>Σ round(salePrice·1.4) over the bed (prototype <c>t.pay</c>), with the quality level and the Dream House bonus of the moment.</summary>
+        public static long Payout(IReadOnlyList<ProductDef> cargo, EconomyConfig e, int qualityLevel, double homeMultiplier = 1.0)
         {
             long pay = 0;
-            for (int i = 0; i < cargo.Count; i++) pay += e.TruckItemPayout(e.SalePrice(cargo[i].basePrice, qualityLevel));
+            for (int i = 0; i < cargo.Count; i++) pay += e.TruckItemPayout(e.SalePrice(cargo[i].basePrice, qualityLevel, homeMultiplier));
             return pay;
         }
 

@@ -39,7 +39,8 @@ namespace FF.Save
                 pads["reg"] = pads["reg2"];
                 pads.Remove("reg2");
             }
-            // future: if ((int?)root["version"] < 4) { … }
+            // v4 → v5 (M10): no field changes; a missing "home" deserializes to an empty HomeSave.
+            if (root["home"] is JValue) root.Remove("home");
         }
     }
 }

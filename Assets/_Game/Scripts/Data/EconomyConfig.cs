@@ -210,8 +210,11 @@ namespace FF.Data
         public int XpNeeded(int level) => (int)JsMath.Round(xpBase + xpPerLevel * level);
 
         /// <summary>round(base·ECON.price·(1+0.25·quality)/10)·10.</summary>
-        public long SalePrice(int basePrice, int qualityLevel) =>
-            JsMath.RoundToLong(basePrice * priceMultiplier * (1 + qualityBonusPerLevel * qualityLevel) / 10) * 10;
+        public long SalePrice(int basePrice, int qualityLevel) => SalePrice(basePrice, qualityLevel, 1.0);
+
+        /// <summary>With the Dream House comfort bonus (M10): round(base·ECON.price·(1+0.25·quality)·home/10)·10.</summary>
+        public long SalePrice(int basePrice, int qualityLevel, double homeMultiplier) =>
+            JsMath.RoundToLong(basePrice * priceMultiplier * (1 + qualityBonusPerLevel * qualityLevel) * homeMultiplier / 10) * 10;
 
         /// <summary>Panel upgrades and ground pads share the prototype price: round(base·ECON.cost·mul^lv/50)·50.</summary>
         public long UpgradePrice(long baseCost, double multiplier, int level) =>

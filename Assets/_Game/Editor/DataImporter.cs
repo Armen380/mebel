@@ -41,6 +41,7 @@ namespace FF.Editor
             db.pads = ImportPads((JArray)ReadObject("pads.json")["pads"], db.world);
             db.skins = ImportSkins(ReadArray("skins.json"));
             db.tutorial = ImportTutorial(ReadArray("tutorial_quest.json"));
+            db.home = ImportHome(ReadObject("dream_house.json"));
             db.ClearCaches();
 
             EditorUtility.SetDirty(db);
@@ -348,6 +349,7 @@ namespace FF.Editor
             if (id.EndsWith("_speed")) return "done.speed";
             if (id.EndsWith("_qty")) return "done.floor";
             if (id == "saw2_buy") return "done.saw";
+            if (id.StartsWith("house_")) return "done.house";
             if (id.EndsWith("_buy")) return "done.factory";
             switch (id)
             {
@@ -358,6 +360,39 @@ namespace FF.Editor
                 case "parking": return "done.parking";
                 default: return "done.generic";
             }
+        }
+
+        public const string HomePath = DataRoot + "/Home.asset";
+
+        /// <summary>Dream House (M10): areas, slots and the Home Store catalog; name keys follow the ids.</summary>
+        static HomeDef ImportHome(JObject j)
+        {
+            var h = GetOrCreate<HomeDef>(HomePath);
+            h.comfortBonusPerPoint = (double)j["comfortBonusPerPoint"];
+            h.areas = new List<HomeDef.AreaDef>();
+            foreach (JObject a in (JArray)j["areas"])
+                h.areas.Add(new HomeDef.AreaDef
+                {
+                    id = (string)a["id"], nameKey = "home.area." + (string)a["id"],
+                    requiresStage = (int)a["requiresStage"], gift = (long)a["gift"],
+                });
+            h.slots = new List<HomeDef.SlotDef>();
+            foreach (JObject s in (JArray)j["slots"])
+                h.slots.Add(new HomeDef.SlotDef
+                {
+                    id = (string)s["id"], area = (string)s["area"], product = ParseItem((string)s["product"]),
+                    group = (string)s["group"] ?? "", comfort = (int)s["comfort"], protoPos = V2(s["pos"]), yaw = (float)s["yaw"],
+                });
+            h.items = new List<HomeDef.HomeItemDef>();
+            foreach (JObject i in (JArray)j["items"])
+                h.items.Add(new HomeDef.HomeItemDef
+                {
+                    id = (string)i["id"], group = (string)i["group"], nameKey = "home.item." + (string)i["id"],
+                    price = (long)i["price"], comfort = (int)i["comfort"],
+                });
+            h.ClearCaches();
+            EditorUtility.SetDirty(h);
+            return h;
         }
 
         static List<SkinDef> ImportSkins(JArray items)

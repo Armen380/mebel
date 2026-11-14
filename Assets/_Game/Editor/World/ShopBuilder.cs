@@ -92,6 +92,13 @@ namespace FF.Editor.World
             AddPad(result, ctx, padsRoot, db.Pad(WorldStateSync.AnnexRegisterPadId), PadRule.OwnerOwned, WorldStateSnapshot.PlumbingId);
             AddPad(result, ctx, padsRoot, db.Pad(DeliveryDirector.TruckPadId), PadRule.Always, null);
             AddPad(result, ctx, padsRoot, db.Pad(TruckBay.ParkingPadId), PadRule.Always, null);
+            // Dream House stages (M10): one at a time, each after the previous one; the first after the tutorial
+            string previous = null;
+            foreach (string stage in WorldStateSnapshot.HouseStagePads)
+            {
+                AddPad(result, ctx, padsRoot, db.Pad(stage), PadRule.AfterPad, previous);
+                previous = stage;
+            }
 
             BuildLockedLabels(world, db);
 
@@ -124,7 +131,7 @@ namespace FF.Editor.World
             }
             Vector2 saw2 = w.sawmill2.building;
             Label(root, "Lock_saw2", LockedLabel.Kind.NotOwned, WorldStateSnapshot.Sawmill2Id, "sign.saw2", new Vector3(saw2.x, 2.2f, saw2.y + 0.5f));
-            Label(root, "DreamSoon", LockedLabel.Kind.Fixed, null, "dream.chip", w.dreamHouse.soonChip);
+            Label(root, "DreamSoon", LockedLabel.Kind.HouseNotStarted, null, "dream.chip", w.dreamHouse.soonChip);
         }
 
         static void Label(Transform root, string name, LockedLabel.Kind kind, string owner, string key, Vector3 protoPos)

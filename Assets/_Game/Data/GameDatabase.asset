@@ -17,6 +17,7 @@ MonoBehaviour:
   tutorial: {fileID: 11400000, guid: ae7e737e608fa43b4be01875e3812e5f, type: 2}
   items: {fileID: 11400000, guid: 6d9e6b830ce484002b0b72229d167c73, type: 2}
   buildingKit: {fileID: 11400000, guid: df25d16fcb97e4fbbb02f038618bf4aa, type: 2}
+  home: {fileID: 11400000, guid: c8aad3212d86048a6b497dca076ec38a, type: 2}
   products:
   - {fileID: 11400000, guid: 0b4dbb213623f4d8497450d2e7c4f1a7, type: 2}
   - {fileID: 11400000, guid: 9fac12986cb194a7f95eb9de1f45a15b, type: 2}
@@ -71,6 +72,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2bd1a12e7701a45ebaad26cb164767bd, type: 2}
   - {fileID: 11400000, guid: 371ae2b1ff5e74386aae28a04c9ffb42, type: 2}
   - {fileID: 11400000, guid: 3f0e7a8a530a644259df6bb0153b0830, type: 2}
+  - {fileID: 11400000, guid: 8fce33bfef4a54b8e87a68f70dd61a68, type: 2}
+  - {fileID: 11400000, guid: 2f53263be386945c0a9cc3cae66b791d, type: 2}
+  - {fileID: 11400000, guid: 50b022c8328dd4c8aafdcf75df48dabd, type: 2}
+  - {fileID: 11400000, guid: 482c38a80ae7849bb8b415272253efc6, type: 2}
   skins:
   - {fileID: 11400000, guid: 2a2afa99156a9444b8a92240d0caa2a6, type: 2}
   - {fileID: 11400000, guid: bdd74cacc4b7e495a870fd161a5a8a52, type: 2}

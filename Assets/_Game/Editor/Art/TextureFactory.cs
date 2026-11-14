@@ -284,6 +284,113 @@ namespace FF.Editor.Art
             return c;
         }
 
+        // ---------- Dream House (M10) ----------
+
+        static Color C(int rgb) => new Color(((rgb >> 16) & 255) / 255f, ((rgb >> 8) & 255) / 255f, (rgb & 255) / 255f, 1f);
+
+        /// <summary>
+        /// Armenian-style carpet patterns (256 px, geometric medallions and borders): vishap (red field, navy border, gold
+        /// diamonds), garden (green compartments with red flowers), star (navy field, red border, gold eight-point star).
+        /// </summary>
+        public static Texture2D CarpetTexture(string id) => Texture($"{TextureFolder}/Carpet_{id}.png", 256, (x, y, s) =>
+        {
+            float u = (x + 0.5f) / s, v = (y + 0.5f) / s;
+            float edge = Mathf.Min(Mathf.Min(u, 1 - u), Mathf.Min(v, 1 - v));
+            float cu = u - 0.5f, cv = v - 0.5f;
+            switch (id)
+            {
+                case "carpet_garden":
+                {
+                    if (edge < 0.06f) return C(0xb3263a);
+                    if (edge < 0.075f) return C(0xf2c14e);
+                    float gu = Mathf.Repeat((u - 0.075f) * 4f, 1f), gv = Mathf.Repeat((v - 0.075f) * 4f, 1f);
+                    if (gu < 0.06f || gv < 0.06f) return C(0xf6ecd9);
+                    float fd = Vector2.Distance(new Vector2(gu, gv), new Vector2(0.53f, 0.53f));
+                    if (fd < 0.12f) return C(0xb3263a);
+                    if (fd < 0.2f && Mathf.Abs(gu - 0.53f) < 0.04f) return C(0x2f5e36);
+                    return C(0x3f7d4a);
+                }
+                case "carpet_star":
+                {
+                    if (edge < 0.08f) return Mathf.Repeat((u + v) * 14f, 1f) < 0.5f ? C(0xb3263a) : C(0x8c1d2d);
+                    if (edge < 0.095f) return C(0xf2c14e);
+                    float a = Mathf.Abs(cu) + Mathf.Abs(cv), b = Mathf.Max(Mathf.Abs(cu), Mathf.Abs(cv));
+                    if (a < 0.3f && b < 0.21f) return a < 0.12f ? C(0xb3263a) : C(0xf2c14e);
+                    float corner = Mathf.Abs(Mathf.Abs(cu) - 0.32f) + Mathf.Abs(Mathf.Abs(cv) - 0.32f);
+                    if (corner < 0.06f) return C(0xf2c14e);
+                    return C(0x23345e);
+                }
+                default: // carpet_vishap
+                {
+                    if (edge < 0.07f) return Mathf.Repeat(Mathf.Abs(u - v) * 18f, 1f) < 0.3f ? C(0xf2c14e) : C(0x1f3a6b);
+                    if (edge < 0.085f) return C(0xf6ecd9);
+                    for (int i = -1; i <= 1; i++)
+                    {
+                        float d = Mathf.Abs(cu - i * 0.26f) * 1.3f + Mathf.Abs(cv);
+                        if (d < 0.08f) return C(0xa82c2a);
+                        if (d < 0.14f) return C(0x1f3a6b);
+                        if (d < 0.2f) return C(0xf2c14e);
+                    }
+                    if (Mathf.Repeat(u * 9f, 1f) < 0.08f && Mathf.Repeat(v * 9f, 1f) < 0.08f) return C(0xf6ecd9);
+                    return C(0xa82c2a);
+                }
+            }
+        });
+
+        /// <summary>Small canvases for the house paintings (128 px): Mount Ararat (Masis and Sis) and the Garni temple.</summary>
+        public static Texture2D PaintingTexture(string id) => Texture($"{TextureFolder}/Painting_{id}.png", 128, (x, y, s) =>
+        {
+            float u = (x + 0.5f) / s, v = (y + 0.5f) / s;
+            Color sky = Color.Lerp(C(0xf7d9a8), C(0x7fb3e0), v);
+            if (id == "painting_garni")
+            {
+                if (v < 0.22f) return C(0x6f9a3e);
+                if (v < 0.28f && u > 0.18f && u < 0.82f) return C(0xd9c7a6);
+                if (v >= 0.28f && v < 0.62f && u > 0.24f && u < 0.76f && Mathf.Repeat((u - 0.24f) * 12.5f, 1f) < 0.55f) return C(0xeadcc1);
+                if (v >= 0.62f && v < 0.67f && u > 0.2f && u < 0.8f) return C(0xd9c7a6);
+                if (v >= 0.67f && v < 0.67f + 0.2f * (1 - Mathf.Abs(u - 0.5f) / 0.3f)) return C(0xeadcc1);
+                return v < 0.4f ? Color.Lerp(C(0x8bb35a), sky, (v - 0.22f) * 3f) : sky;
+            }
+            // Ararat: Masis on the left, Sis on the right, snow above 0.6
+            float masis = 0.78f - Mathf.Abs(u - 0.38f) * 1.5f, sis = 0.55f - Mathf.Abs(u - 0.78f) * 1.6f;
+            if (v < 0.18f) return C(0x6f9a3e);
+            if (v < masis) return v > 0.6f ? C(0xffffff) : C(0x8b6f8e);
+            if (v < sis) return v > 0.47f ? C(0xf1eef4) : C(0x9a7f9c);
+            return sky;
+        });
+
+        /// <summary>Home Store catalog / variant picker icons (M10), one per item group, in the product-icon line style.</summary>
+        public static Sprite HomeIcon(string group)
+        {
+            const float w = 2.1f;
+            switch (group)
+            {
+                case "carpet": return LineIcon("home_" + group, w, Closed(3, 7, 21, 7, 21, 17, 3, 17), Closed(7, 10, 17, 10, 17, 14, 7, 14), Poly(5, 17, 5, 20), Poly(9, 17, 9, 20), Poly(15, 17, 15, 20), Poly(19, 17, 19, 20));
+                case "lamp": return LineIcon("home_" + group, w, Closed(8, 4, 16, 4, 18, 11, 6, 11), Poly(12, 11, 12, 19), Poly(8, 20, 16, 20));
+                case "tv": return LineIcon("home_" + group, w, RoundRect(3, 5, 18, 12, 1.5f), Poly(12, 17, 12, 20), Poly(8, 20, 16, 20));
+                case "painting": return LineIcon("home_" + group, w, Closed(4, 5, 20, 5, 20, 19, 4, 19), Poly(6, 16, 11, 9, 14, 13, 16, 11, 18, 16));
+                case "plant": return LineIcon("home_" + group, w, Closed(8, 14, 16, 14, 15, 20, 9, 20), Poly(12, 14, 12, 6), Poly(12, 11, 8, 7), Poly(12, 9, 16, 5));
+                case "fridge": return LineIcon("home_" + group, w, Closed(7, 3, 17, 3, 17, 21, 7, 21), Poly(7, 9, 17, 9), Poly(9.5f, 5, 9.5f, 7), Poly(9.5f, 11, 9.5f, 14));
+                case "stove": return LineIcon("home_" + group, w, Closed(4, 8, 20, 8, 20, 20, 4, 20), Circle(9, 14, 2.5f, 16), Circle(15, 14, 2.5f, 16), Poly(6, 5, 18, 5));
+                case "bowl": return LineIcon("home_" + group, w, Poly(4, 12, 20, 12), Poly(5, 12, 8, 18, 16, 18, 19, 12), Circle(9, 9, 2.4f, 16), Circle(14.5f, 8.5f, 2.4f, 16));
+                case "bed": return LineIcon("home_" + group, w, Poly(3, 19, 3, 7), Poly(3, 14, 21, 14, 21, 19), Closed(5, 10, 10, 10, 10, 14, 5, 14), Poly(10, 11, 21, 11, 21, 14));
+                case "nightstand": return LineIcon("home_" + group, w, Closed(6, 8, 18, 8, 18, 19, 6, 19), Poly(6, 13.5f, 18, 13.5f), Poly(11, 10.5f, 13, 10.5f), Poly(11, 16, 13, 16));
+                case "tub": return LineIcon("home_" + group, w, Poly(3, 11, 21, 11), Poly(4, 11, 5, 17, 19, 17, 20, 11), Poly(6, 17, 6, 20), Poly(18, 17, 18, 20), Poly(6, 11, 6, 5, 9, 5));
+                case "mirror": return LineIcon("home_" + group, w, RoundRect(7, 3, 10, 18, 4), Poly(10, 9, 13, 6), Poly(10, 12, 15, 7));
+                case "towel": return LineIcon("home_" + group, w, Poly(4, 5, 20, 5), Closed(7, 5, 17, 5, 17, 19, 7, 19), Poly(7, 15, 17, 15));
+                case "pergola": return LineIcon("home_" + group, w, Poly(5, 21, 5, 7), Poly(19, 21, 19, 7), Poly(3, 7, 21, 7), Poly(4, 10, 20, 10), Circle(10.5f, 13.5f, 1.5f, 12), Circle(13.5f, 13.5f, 1.5f, 12), Circle(12, 16, 1.5f, 12));
+                case "tree": return LineIcon("home_" + group, w, Circle(12, 9, 6, 32), Poly(12, 15, 12, 21), Circle(10, 8, 1.2f, 10), Circle(14.5f, 10, 1.2f, 10));
+                case "flowers": return LineIcon("home_" + group, w, Poly(4, 19, 20, 19), Poly(8, 19, 8, 12), Poly(12, 19, 12, 10), Poly(16, 19, 16, 12), Circle(8, 10, 2, 12), Circle(12, 8, 2, 12), Circle(16, 10, 2, 12));
+                case "bench": return LineIcon("home_" + group, w, Poly(4, 7, 20, 7), Poly(4, 10, 20, 10), Poly(3, 13, 21, 13), Poly(5, 7, 5, 19), Poly(19, 7, 19, 19));
+                case "fountain": return LineIcon("home_" + group, w, Poly(4, 14, 6, 19, 18, 19, 20, 14, 4, 14), Poly(12, 14, 12, 8), Poly(8, 8, 16, 8), Poly(9, 4, 9, 6), Poly(15, 4, 15, 6), Poly(12, 2.5f, 12, 4.5f));
+                case "pool": return LineIcon("home_" + group, w, RoundRect(3, 8, 18, 12, 2), Poly(6, 14, 8, 13, 10, 14, 12, 13, 14, 14, 16, 13, 18, 14), Poly(16, 4, 16, 10), Poly(19, 4, 19, 10), Poly(16, 6, 19, 6));
+                case "lampposts": return LineIcon("home_" + group, w, Poly(8, 21, 8, 7), Poly(16, 21, 16, 7), Closed(6, 3, 10, 3, 10, 7, 6, 7), Closed(14, 3, 18, 3, 18, 7, 14, 7));
+                default:
+                    Debug.LogWarning($"[FF] No home icon for group '{group}'.");
+                    return null;
+            }
+        }
+
         // ---------- assets ----------
 
         delegate Color Pixel(int x, int y, int size);

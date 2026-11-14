@@ -16,6 +16,17 @@ namespace FF.Tests
         [TearDown]
         public void TearDown() => Object.DestroyImmediate(_e);
 
+        [Test]
+        public void SalePrice_WithHomeMultiplier()
+        {
+            // round(500·0.85·1.2/10)·10 = round(51)·10
+            Assert.AreEqual(510, _e.SalePrice(500, 0, 1.2));
+            Assert.AreEqual(430, _e.SalePrice(500, 0, 1.0));
+            Assert.AreEqual(_e.SalePrice(500, 0), _e.SalePrice(500, 0, 1.0));
+            // quality 1 and the full +20 %: round(500·0.85·1.25·1.2/10)·10 = round(63.75)·10
+            Assert.AreEqual(640, _e.SalePrice(500, 1, 1.2));
+        }
+
         [TestCase(1, 13)] // round(12.5) = 13 in JS (C# would give 12)
         [TestCase(2, 17)]
         [TestCase(3, 22)] // round(21.5)
