@@ -1,0 +1,569 @@
+{
+  "_note": "Dream House (M10). Positions are prototype coordinates (x east, z south). Catalog prices are final dollars (no ECON). Stages are pads house_found..house_windows in pads.json. comfortBonusPerPoint · best comfort (200) = +20% sale prices.",
+  "comfortBonusPerPoint": 0.001,
+  "areas": [
+    {
+      "id": "living",
+      "requiresStage": 2,
+      "gift": 5000
+    },
+    {
+      "id": "kitchen",
+      "requiresStage": 2,
+      "gift": 15000
+    },
+    {
+      "id": "bedroom",
+      "requiresStage": 2,
+      "gift": 40000
+    },
+    {
+      "id": "bathroom",
+      "requiresStage": 2,
+      "gift": 500000
+    },
+    {
+      "id": "yard",
+      "requiresStage": 1,
+      "gift": 100000
+    }
+  ],
+  "slots": [
+    {
+      "id": "living_sofa",
+      "area": "living",
+      "product": "Sofa",
+      "group": "",
+      "comfort": 10,
+      "pos": [
+        77.3,
+        -16.3
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "living_table",
+      "area": "living",
+      "product": "Table",
+      "group": "",
+      "comfort": 8,
+      "pos": [
+        78.6,
+        -14.6
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "living_chair1",
+      "area": "living",
+      "product": "Chair",
+      "group": "",
+      "comfort": 4,
+      "pos": [
+        77.6,
+        -14.6
+      ],
+      "yaw": 90
+    },
+    {
+      "id": "living_chair2",
+      "area": "living",
+      "product": "Chair",
+      "group": "",
+      "comfort": 4,
+      "pos": [
+        79.6,
+        -14.6
+      ],
+      "yaw": -90
+    },
+    {
+      "id": "living_carpet",
+      "area": "living",
+      "product": "None",
+      "group": "carpet",
+      "comfort": 0,
+      "pos": [
+        78.4,
+        -15.3
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "living_lamp",
+      "area": "living",
+      "product": "None",
+      "group": "lamp",
+      "comfort": 0,
+      "pos": [
+        76.1,
+        -13.7
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "living_tv",
+      "area": "living",
+      "product": "None",
+      "group": "tv",
+      "comfort": 0,
+      "pos": [
+        80.3,
+        -16.4
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "living_painting",
+      "area": "living",
+      "product": "None",
+      "group": "painting",
+      "comfort": 0,
+      "pos": [
+        75.8,
+        -15.4
+      ],
+      "yaw": 90
+    },
+    {
+      "id": "living_plant",
+      "area": "living",
+      "product": "None",
+      "group": "plant",
+      "comfort": 0,
+      "pos": [
+        80.4,
+        -13.7
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "kitchen_kitchen",
+      "area": "kitchen",
+      "product": "Kitchen",
+      "group": "",
+      "comfort": 12,
+      "pos": [
+        84.0,
+        -16.4
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "kitchen_chair1",
+      "area": "kitchen",
+      "product": "Chair",
+      "group": "",
+      "comfort": 4,
+      "pos": [
+        83.0,
+        -14.3
+      ],
+      "yaw": 180
+    },
+    {
+      "id": "kitchen_chair2",
+      "area": "kitchen",
+      "product": "Chair",
+      "group": "",
+      "comfort": 4,
+      "pos": [
+        84.6,
+        -14.3
+      ],
+      "yaw": 180
+    },
+    {
+      "id": "kitchen_fridge",
+      "area": "kitchen",
+      "product": "None",
+      "group": "fridge",
+      "comfort": 0,
+      "pos": [
+        85.9,
+        -16.4
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "kitchen_stove",
+      "area": "kitchen",
+      "product": "None",
+      "group": "stove",
+      "comfort": 0,
+      "pos": [
+        82.1,
+        -16.4
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "kitchen_bowl",
+      "area": "kitchen",
+      "product": "None",
+      "group": "bowl",
+      "comfort": 0,
+      "pos": [
+        86.0,
+        -13.8
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "bedroom_wardrobe",
+      "area": "bedroom",
+      "product": "Wardrobe",
+      "group": "",
+      "comfort": 10,
+      "pos": [
+        76.3,
+        -20.4
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "bedroom_bed",
+      "area": "bedroom",
+      "product": "None",
+      "group": "bed",
+      "comfort": 0,
+      "pos": [
+        78.6,
+        -19.8
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "bedroom_nightstand",
+      "area": "bedroom",
+      "product": "None",
+      "group": "nightstand",
+      "comfort": 0,
+      "pos": [
+        80.3,
+        -20.4
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "bedroom_carpet",
+      "area": "bedroom",
+      "product": "None",
+      "group": "carpet",
+      "comfort": 0,
+      "pos": [
+        78.6,
+        -18.2
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "bedroom_lamp",
+      "area": "bedroom",
+      "product": "None",
+      "group": "lamp",
+      "comfort": 0,
+      "pos": [
+        80.4,
+        -17.7
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "bathroom_sink",
+      "area": "bathroom",
+      "product": "Sink",
+      "group": "",
+      "comfort": 12,
+      "pos": [
+        85.9,
+        -18.4
+      ],
+      "yaw": -90
+    },
+    {
+      "id": "bathroom_tub",
+      "area": "bathroom",
+      "product": "None",
+      "group": "tub",
+      "comfort": 0,
+      "pos": [
+        83.0,
+        -20.2
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "bathroom_mirror",
+      "area": "bathroom",
+      "product": "None",
+      "group": "mirror",
+      "comfort": 0,
+      "pos": [
+        86.2,
+        -19.6
+      ],
+      "yaw": -90
+    },
+    {
+      "id": "bathroom_towel",
+      "area": "bathroom",
+      "product": "None",
+      "group": "towel",
+      "comfort": 0,
+      "pos": [
+        81.6,
+        -20.5
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "yard_pergola",
+      "area": "yard",
+      "product": "None",
+      "group": "pergola",
+      "comfort": 0,
+      "pos": [
+        89.0,
+        -20.5
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "yard_tree",
+      "area": "yard",
+      "product": "None",
+      "group": "tree",
+      "comfort": 0,
+      "pos": [
+        73.6,
+        -18.5
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "yard_flowers1",
+      "area": "yard",
+      "product": "None",
+      "group": "flowers",
+      "comfort": 0,
+      "pos": [
+        76.0,
+        -11.6
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "yard_flowers2",
+      "area": "yard",
+      "product": "None",
+      "group": "flowers",
+      "comfort": 0,
+      "pos": [
+        88.0,
+        -11.6
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "yard_bench",
+      "area": "yard",
+      "product": "None",
+      "group": "bench",
+      "comfort": 0,
+      "pos": [
+        88.6,
+        -7.6
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "yard_fountain",
+      "area": "yard",
+      "product": "None",
+      "group": "fountain",
+      "comfort": 0,
+      "pos": [
+        80.0,
+        -8.0
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "yard_pool",
+      "area": "yard",
+      "product": "None",
+      "group": "pool",
+      "comfort": 0,
+      "pos": [
+        75.6,
+        -7.8
+      ],
+      "yaw": 0
+    },
+    {
+      "id": "yard_lamps",
+      "area": "yard",
+      "product": "None",
+      "group": "lampposts",
+      "comfort": 0,
+      "pos": [
+        83.0,
+        -5.2
+      ],
+      "yaw": 0
+    }
+  ],
+  "items": [
+    {
+      "id": "carpet_vishap",
+      "group": "carpet",
+      "price": 600,
+      "comfort": 4
+    },
+    {
+      "id": "carpet_garden",
+      "group": "carpet",
+      "price": 900,
+      "comfort": 5
+    },
+    {
+      "id": "carpet_star",
+      "group": "carpet",
+      "price": 1400,
+      "comfort": 6
+    },
+    {
+      "id": "lamp_clay",
+      "group": "lamp",
+      "price": 300,
+      "comfort": 2
+    },
+    {
+      "id": "lamp_brass",
+      "group": "lamp",
+      "price": 800,
+      "comfort": 3
+    },
+    {
+      "id": "tv",
+      "group": "tv",
+      "price": 4000,
+      "comfort": 6
+    },
+    {
+      "id": "painting_ararat",
+      "group": "painting",
+      "price": 2500,
+      "comfort": 5
+    },
+    {
+      "id": "painting_garni",
+      "group": "painting",
+      "price": 2500,
+      "comfort": 5
+    },
+    {
+      "id": "plant",
+      "group": "plant",
+      "price": 500,
+      "comfort": 2
+    },
+    {
+      "id": "fridge",
+      "group": "fridge",
+      "price": 6000,
+      "comfort": 6
+    },
+    {
+      "id": "stove",
+      "group": "stove",
+      "price": 5000,
+      "comfort": 5
+    },
+    {
+      "id": "bowl",
+      "group": "bowl",
+      "price": 400,
+      "comfort": 2
+    },
+    {
+      "id": "bed",
+      "group": "bed",
+      "price": 12000,
+      "comfort": 10
+    },
+    {
+      "id": "nightstand",
+      "group": "nightstand",
+      "price": 1500,
+      "comfort": 3
+    },
+    {
+      "id": "tub",
+      "group": "tub",
+      "price": 60000,
+      "comfort": 10
+    },
+    {
+      "id": "mirror",
+      "group": "mirror",
+      "price": 8000,
+      "comfort": 4
+    },
+    {
+      "id": "towel",
+      "group": "towel",
+      "price": 3000,
+      "comfort": 2
+    },
+    {
+      "id": "pergola",
+      "group": "pergola",
+      "price": 20000,
+      "comfort": 10
+    },
+    {
+      "id": "tree",
+      "group": "tree",
+      "price": 7000,
+      "comfort": 6
+    },
+    {
+      "id": "flowers_rose",
+      "group": "flowers",
+      "price": 500,
+      "comfort": 3
+    },
+    {
+      "id": "flowers_tulip",
+      "group": "flowers",
+      "price": 400,
+      "comfort": 2
+    },
+    {
+      "id": "bench",
+      "group": "bench",
+      "price": 1200,
+      "comfort": 3
+    },
+    {
+      "id": "fountain",
+      "group": "fountain",
+      "price": 150000,
+      "comfort": 12
+    },
+    {
+      "id": "pool",
+      "group": "pool",
+      "price": 1200000,
+      "comfort": 20
+    },
+    {
+      "id": "lampposts",
+      "group": "lampposts",
+      "price": 5000,
+      "comfort": 2
+    }
+  ]
+}

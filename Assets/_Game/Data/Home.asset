@@ -1,0 +1,387 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 207b990326e794324b6c0a22ec0334a4, type: 3}
+  m_Name: Home
+  m_EditorClassIdentifier: FF.Data::FF.Data.HomeDef
+  comfortBonusPerPoint: 0.001
+  areas:
+  - id: living
+    nameKey: home.area.living
+    requiresStage: 2
+    gift: 5000
+  - id: kitchen
+    nameKey: home.area.kitchen
+    requiresStage: 2
+    gift: 15000
+  - id: bedroom
+    nameKey: home.area.bedroom
+    requiresStage: 2
+    gift: 40000
+  - id: bathroom
+    nameKey: home.area.bathroom
+    requiresStage: 2
+    gift: 500000
+  - id: yard
+    nameKey: home.area.yard
+    requiresStage: 1
+    gift: 100000
+  slots:
+  - id: living_sofa
+    area: living
+    product: 7
+    group: 
+    comfort: 10
+    protoPos: {x: 77.3, y: -16.3}
+    yaw: 0
+  - id: living_table
+    area: living
+    product: 9
+    group: 
+    comfort: 8
+    protoPos: {x: 78.6, y: -14.6}
+    yaw: 0
+  - id: living_chair1
+    area: living
+    product: 6
+    group: 
+    comfort: 4
+    protoPos: {x: 77.6, y: -14.6}
+    yaw: 90
+  - id: living_chair2
+    area: living
+    product: 6
+    group: 
+    comfort: 4
+    protoPos: {x: 79.6, y: -14.6}
+    yaw: -90
+  - id: living_carpet
+    area: living
+    product: 0
+    group: carpet
+    comfort: 0
+    protoPos: {x: 78.4, y: -15.3}
+    yaw: 0
+  - id: living_lamp
+    area: living
+    product: 0
+    group: lamp
+    comfort: 0
+    protoPos: {x: 76.1, y: -13.7}
+    yaw: 0
+  - id: living_tv
+    area: living
+    product: 0
+    group: tv
+    comfort: 0
+    protoPos: {x: 80.3, y: -16.4}
+    yaw: 0
+  - id: living_painting
+    area: living
+    product: 0
+    group: painting
+    comfort: 0
+    protoPos: {x: 75.8, y: -15.4}
+    yaw: 90
+  - id: living_plant
+    area: living
+    product: 0
+    group: plant
+    comfort: 0
+    protoPos: {x: 80.4, y: -13.7}
+    yaw: 0
+  - id: kitchen_kitchen
+    area: kitchen
+    product: 10
+    group: 
+    comfort: 12
+    protoPos: {x: 84, y: -16.4}
+    yaw: 0
+  - id: kitchen_chair1
+    area: kitchen
+    product: 6
+    group: 
+    comfort: 4
+    protoPos: {x: 83, y: -14.3}
+    yaw: 180
+  - id: kitchen_chair2
+    area: kitchen
+    product: 6
+    group: 
+    comfort: 4
+    protoPos: {x: 84.6, y: -14.3}
+    yaw: 180
+  - id: kitchen_fridge
+    area: kitchen
+    product: 0
+    group: fridge
+    comfort: 0
+    protoPos: {x: 85.9, y: -16.4}
+    yaw: 0
+  - id: kitchen_stove
+    area: kitchen
+    product: 0
+    group: stove
+    comfort: 0
+    protoPos: {x: 82.1, y: -16.4}
+    yaw: 0
+  - id: kitchen_bowl
+    area: kitchen
+    product: 0
+    group: bowl
+    comfort: 0
+    protoPos: {x: 86, y: -13.8}
+    yaw: 0
+  - id: bedroom_wardrobe
+    area: bedroom
+    product: 8
+    group: 
+    comfort: 10
+    protoPos: {x: 76.3, y: -20.4}
+    yaw: 0
+  - id: bedroom_bed
+    area: bedroom
+    product: 0
+    group: bed
+    comfort: 0
+    protoPos: {x: 78.6, y: -19.8}
+    yaw: 0
+  - id: bedroom_nightstand
+    area: bedroom
+    product: 0
+    group: nightstand
+    comfort: 0
+    protoPos: {x: 80.3, y: -20.4}
+    yaw: 0
+  - id: bedroom_carpet
+    area: bedroom
+    product: 0
+    group: carpet
+    comfort: 0
+    protoPos: {x: 78.6, y: -18.2}
+    yaw: 0
+  - id: bedroom_lamp
+    area: bedroom
+    product: 0
+    group: lamp
+    comfort: 0
+    protoPos: {x: 80.4, y: -17.7}
+    yaw: 0
+  - id: bathroom_sink
+    area: bathroom
+    product: 11
+    group: 
+    comfort: 12
+    protoPos: {x: 85.9, y: -18.4}
+    yaw: -90
+  - id: bathroom_tub
+    area: bathroom
+    product: 0
+    group: tub
+    comfort: 0
+    protoPos: {x: 83, y: -20.2}
+    yaw: 0
+  - id: bathroom_mirror
+    area: bathroom
+    product: 0
+    group: mirror
+    comfort: 0
+    protoPos: {x: 86.2, y: -19.6}
+    yaw: -90
+  - id: bathroom_towel
+    area: bathroom
+    product: 0
+    group: towel
+    comfort: 0
+    protoPos: {x: 81.6, y: -20.5}
+    yaw: 0
+  - id: yard_pergola
+    area: yard
+    product: 0
+    group: pergola
+    comfort: 0
+    protoPos: {x: 89, y: -20.5}
+    yaw: 0
+  - id: yard_tree
+    area: yard
+    product: 0
+    group: tree
+    comfort: 0
+    protoPos: {x: 73.6, y: -18.5}
+    yaw: 0
+  - id: yard_flowers1
+    area: yard
+    product: 0
+    group: flowers
+    comfort: 0
+    protoPos: {x: 76, y: -11.6}
+    yaw: 0
+  - id: yard_flowers2
+    area: yard
+    product: 0
+    group: flowers
+    comfort: 0
+    protoPos: {x: 88, y: -11.6}
+    yaw: 0
+  - id: yard_bench
+    area: yard
+    product: 0
+    group: bench
+    comfort: 0
+    protoPos: {x: 88.6, y: -7.6}
+    yaw: 0
+  - id: yard_fountain
+    area: yard
+    product: 0
+    group: fountain
+    comfort: 0
+    protoPos: {x: 80, y: -8}
+    yaw: 0
+  - id: yard_pool
+    area: yard
+    product: 0
+    group: pool
+    comfort: 0
+    protoPos: {x: 75.6, y: -7.8}
+    yaw: 0
+  - id: yard_lamps
+    area: yard
+    product: 0
+    group: lampposts
+    comfort: 0
+    protoPos: {x: 83, y: -5.2}
+    yaw: 0
+  items:
+  - id: carpet_vishap
+    group: carpet
+    nameKey: home.item.carpet_vishap
+    price: 600
+    comfort: 4
+  - id: carpet_garden
+    group: carpet
+    nameKey: home.item.carpet_garden
+    price: 900
+    comfort: 5
+  - id: carpet_star
+    group: carpet
+    nameKey: home.item.carpet_star
+    price: 1400
+    comfort: 6
+  - id: lamp_clay
+    group: lamp
+    nameKey: home.item.lamp_clay
+    price: 300
+    comfort: 2
+  - id: lamp_brass
+    group: lamp
+    nameKey: home.item.lamp_brass
+    price: 800
+    comfort: 3
+  - id: tv
+    group: tv
+    nameKey: home.item.tv
+    price: 4000
+    comfort: 6
+  - id: painting_ararat
+    group: painting
+    nameKey: home.item.painting_ararat
+    price: 2500
+    comfort: 5
+  - id: painting_garni
+    group: painting
+    nameKey: home.item.painting_garni
+    price: 2500
+    comfort: 5
+  - id: plant
+    group: plant
+    nameKey: home.item.plant
+    price: 500
+    comfort: 2
+  - id: fridge
+    group: fridge
+    nameKey: home.item.fridge
+    price: 6000
+    comfort: 6
+  - id: stove
+    group: stove
+    nameKey: home.item.stove
+    price: 5000
+    comfort: 5
+  - id: bowl
+    group: bowl
+    nameKey: home.item.bowl
+    price: 400
+    comfort: 2
+  - id: bed
+    group: bed
+    nameKey: home.item.bed
+    price: 12000
+    comfort: 10
+  - id: nightstand
+    group: nightstand
+    nameKey: home.item.nightstand
+    price: 1500
+    comfort: 3
+  - id: tub
+    group: tub
+    nameKey: home.item.tub
+    price: 60000
+    comfort: 10
+  - id: mirror
+    group: mirror
+    nameKey: home.item.mirror
+    price: 8000
+    comfort: 4
+  - id: towel
+    group: towel
+    nameKey: home.item.towel
+    price: 3000
+    comfort: 2
+  - id: pergola
+    group: pergola
+    nameKey: home.item.pergola
+    price: 20000
+    comfort: 10
+  - id: tree
+    group: tree
+    nameKey: home.item.tree
+    price: 7000
+    comfort: 6
+  - id: flowers_rose
+    group: flowers
+    nameKey: home.item.flowers_rose
+    price: 500
+    comfort: 3
+  - id: flowers_tulip
+    group: flowers
+    nameKey: home.item.flowers_tulip
+    price: 400
+    comfort: 2
+  - id: bench
+    group: bench
+    nameKey: home.item.bench
+    price: 1200
+    comfort: 3
+  - id: fountain
+    group: fountain
+    nameKey: home.item.fountain
+    price: 150000
+    comfort: 12
+  - id: pool
+    group: pool
+    nameKey: home.item.pool
+    price: 1200000
+    comfort: 20
+  - id: lampposts
+    group: lampposts
+    nameKey: home.item.lampposts
+    price: 5000
+    comfort: 2

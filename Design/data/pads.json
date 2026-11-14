@@ -554,6 +554,70 @@
         12000,
         30000
       ]
+    },
+    {
+      "id": "house_found",
+      "pos": [
+        83.6,
+        -11.4
+      ],
+      "glyph": "⌂",
+      "baseCost": 1600,
+      "costMultiplier": 1,
+      "maxLevel": 1,
+      "effect": "Dream house foundation: tuff slab, opens the yard slots and the Home Store",
+      "visibleWhen": "tutorial done",
+      "costPerLevel_beforeECON": [
+        1600
+      ]
+    },
+    {
+      "id": "house_walls",
+      "pos": [
+        83.6,
+        -11.4
+      ],
+      "glyph": "⌂",
+      "baseCost": 8000,
+      "costMultiplier": 1,
+      "maxLevel": 1,
+      "effect": "Tuff walls with arches; opens the room slots; walls block",
+      "visibleWhen": "previous house stage",
+      "costPerLevel_beforeECON": [
+        8000
+      ]
+    },
+    {
+      "id": "house_roof",
+      "pos": [
+        83.6,
+        -11.4
+      ],
+      "glyph": "⌂",
+      "baseCost": 24000,
+      "costMultiplier": 1,
+      "maxLevel": 1,
+      "effect": "Terracotta roof; the roof hides when the player is inside",
+      "visibleWhen": "previous house stage",
+      "costPerLevel_beforeECON": [
+        24000
+      ]
+    },
+    {
+      "id": "house_windows",
+      "pos": [
+        83.6,
+        -11.4
+      ],
+      "glyph": "⌂",
+      "baseCost": 60000,
+      "costMultiplier": 1,
+      "maxLevel": 1,
+      "effect": "Door, window frames, balcony",
+      "visibleWhen": "previous house stage",
+      "costPerLevel_beforeECON": [
+        60000
+      ]
     }
   ]
 }
