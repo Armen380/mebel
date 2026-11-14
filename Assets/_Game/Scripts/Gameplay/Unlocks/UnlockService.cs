@@ -84,6 +84,19 @@ namespace FF.Gameplay.Unlocks
         void OnPadCompleted(string padId, int level)
         {
             if (padId == WorldStateSync.ShopPadId || padId.EndsWith(BuySuffix)) Check(false);
+            // Dream House (M10): after the foundation, arrows lead to the Home Store counter once
+            if (padId == WorldStateSnapshot.HouseStagePads[0] && _progress.MarkSeen(HomeStoreGuideId))
+                GuideTo(ProtoCoords.ToUnity(_db.world.dreamHouse.homeStoreCounter));
+        }
+
+        const string HomeStoreGuideId = "home_store";
+
+        void GuideTo(Vector3 target)
+        {
+            _guide = target;
+            _guide.y = GuideHeight;
+            _guideUntil = Time.time + GuideSeconds;
+            _hasGuide = true;
         }
 
         void OnQuestChanged(int step)

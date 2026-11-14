@@ -249,5 +249,39 @@ namespace FF.Editor
             script.Setup(iconImage, name, line, button, buyBg, price, lip);
             return script;
         }
+        /// <summary>Comfort chip under the level pill (TopLeft column): house icon, "Comfort N", "+x% income", storage box.</summary>
+        public static void BuildComfortChip(Transform safe)
+        {
+            Transform column = safe.Find("TopLeft");
+            if (column == null)
+            {
+                Debug.LogWarning("[FF] TopLeft HUD column missing; build it before the comfort chip.");
+                return;
+            }
+            RectTransform chip = Pill("Comfort", column, UiPalette.Walnut, new RectOffset(8, 12, 4, 4), 6);
+            RectTransform icon = Rect("Icon", chip);
+            Image iconImage = icon.gameObject.AddComponent<Image>();
+            iconImage.sprite = TextureFactory.LineIcon("un_house", 2f,
+                TextureFactory.Closed(3, 11, 12, 4, 21, 11, 21, 20, 3, 20), TextureFactory.Poly(9, 20, 9, 14, 15, 14, 15, 20));
+            iconImage.color = UiPalette.Honey;
+            iconImage.raycastTarget = false;
+            Size(icon.gameObject, 18, 18);
+            TMP_Text comfort = Text("Comfort", chip, "Comfort 0", 12, UiPalette.Cream, "ExtraBold");
+            TMP_Text bonus = Text("Bonus", chip, "+0%", 12, UiPalette.Leaf, "Black");
+
+            RectTransform box = Pill("Box", chip, UiPalette.Honey, new RectOffset(6, 7, 1, 1), 3, false);
+            RectTransform boxIcon = Rect("Icon", box);
+            Image boxImage = boxIcon.gameObject.AddComponent<Image>();
+            boxImage.sprite = TextureFactory.LineIcon("box", 2.2f, TextureFactory.Closed(4, 8, 20, 8, 20, 20, 4, 20),
+                TextureFactory.Closed(3, 4, 21, 4, 21, 8, 3, 8), TextureFactory.Poly(10, 12, 14, 12));
+            boxImage.color = UiPalette.Walnut;
+            boxImage.raycastTarget = false;
+            Size(boxIcon.gameObject, 14, 14);
+            TMP_Text count = Text("Count", box, "0", 12, UiPalette.Walnut, "Black");
+
+            chip.gameObject.SetActive(false);
+            var script = column.gameObject.AddComponent<ComfortChip>();
+            script.Setup(chip.gameObject, comfort, bonus, box.gameObject, count);
+        }
     }
 }

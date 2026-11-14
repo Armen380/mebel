@@ -127,6 +127,8 @@ namespace FF.Editor
         static void SetupHome(HomeSlotBuilder.Result slots, HouseBuilder.Result house, Transform player)
         {
             house.Counter.gameObject.AddComponent<FF.Gameplay.Home.HomeStoreCounter>().Setup(player.GetComponent<PlayerMover>());
+            house.Root.gameObject.AddComponent<FF.Gameplay.Home.HouseCutaway>().Setup(house.Hide.ToArray(), house.Sink.ToArray(),
+                player.GetComponent<PlayerMover>());
             Transform systems = Root("Systems");
             Transform old = systems.Find("Home");
             if (old != null) Object.DestroyImmediate(old.gameObject);
@@ -305,6 +307,7 @@ namespace FF.Editor
             Wire(joystick, "knob", knob);
 
             HudBuilder.BuildTopLeft(safe);
+            HomeHudBuilder.BuildComfortChip(safe);
             HudBuilder.BuildQuestBar(safe);
             HudBuilder.BuildToast(safe);
             HomeHudBuilder.BuildVariantPicker(safe, db);
