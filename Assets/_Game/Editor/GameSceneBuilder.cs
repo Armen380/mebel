@@ -73,7 +73,7 @@ namespace FF.Editor
             Transform player = SpawnPlayer(db.world);
             foreach (BuildingFader fader in Root("World").GetComponentsInChildren<BuildingFader>(true)) fader.Setup(player);
             SetupSystems(zones, shop, player, kit);
-            SetupHome(homeSlots, player);
+            SetupHome(homeSlots, house, player);
             MoveInputAggregator input = SetupInput();
             VirtualJoystick joystick = SetupHud(db);
             Wire(input, "joystickSource", joystick);
@@ -124,8 +124,9 @@ namespace FF.Editor
         // ---------- systems ----------
 
         /// <summary>Dream House runtime (M10): the slot loop (placement, variant picker, room-complete feedback).</summary>
-        static void SetupHome(HomeSlotBuilder.Result slots, Transform player)
+        static void SetupHome(HomeSlotBuilder.Result slots, HouseBuilder.Result house, Transform player)
         {
+            house.Counter.gameObject.AddComponent<FF.Gameplay.Home.HomeStoreCounter>().Setup(player.GetComponent<PlayerMover>());
             Transform systems = Root("Systems");
             Transform old = systems.Find("Home");
             if (old != null) Object.DestroyImmediate(old.gameObject);
@@ -312,6 +313,8 @@ namespace FF.Editor
             HudBuilder.BuildUnlockCard(safe);
             HudBuilder.BuildAdOfferPopup(safe, AdsSetup.Config());
             HudBuilder.BuildUpgradesPanel(hud, db, upgradesButton.GetComponent<Button>(), badge, joystick);
+            foreach (FF.UI.Home.HomeStorePanel old in hud.GetComponents<FF.UI.Home.HomeStorePanel>()) Object.DestroyImmediate(old);
+            HomeHudBuilder.BuildHomeStorePanel(hud, db, joystick);
             MenuBuilder.Build(ui, hud, safe);
             return joystick;
         }

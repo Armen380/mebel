@@ -3,6 +3,8 @@ using FF.Data;
 using FF.Editor.Art;
 using FF.UI.Home;
 using FF.UI.HUD;
+using FF.UI.Input;
+using FF.UI.Localization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -74,6 +76,178 @@ namespace FF.Editor
             }
             GroupIcons(db.home, out string[] groups, out Sprite[] sprites);
             root.gameObject.AddComponent<VariantPicker>().Setup(panel.gameObject, buttons, icons, labels, groups, sprites);
+        }
+        static readonly Color Walnut2 = new Color32(0x3a, 0x28, 0x1b, 0xff);
+        static readonly Color Muted = new Color32(0xcb, 0xb6, 0x97, 0xff);
+
+        /// <summary>Home Store catalog sheet (Upgrades-panel style) with House / Yard tabs.</summary>
+        public static void BuildHomeStorePanel(Transform hud, GameDatabase db, VirtualJoystick joystick)
+        {
+            RectTransform sheet = Rect("HomeStoreSheet", hud);
+            Stretch(sheet);
+            RectTransform dimRect = Rect("Backdrop", sheet);
+            Stretch(dimRect);
+            Image dim = dimRect.gameObject.AddComponent<Image>();
+            dim.color = new Color(20 / 255f, 12 / 255f, 8 / 255f, 0.5f);
+            var backdrop = dimRect.gameObject.AddComponent<Button>();
+            backdrop.transition = Selectable.Transition.None;
+
+            const float corner = 26;
+            RectTransform panel = Rect("Panel", sheet);
+            panel.anchorMin = new Vector2(0.5f, 0);
+            panel.anchorMax = new Vector2(0.5f, 0.78f);
+            panel.pivot = new Vector2(0.5f, 0);
+            panel.sizeDelta = new Vector2(360 * Px, corner * Px);
+            panel.anchoredPosition = new Vector2(0, -corner * Px);
+            Image panelBg = panel.gameObject.AddComponent<Image>();
+            panelBg.sprite = TextureFactory.Rounded();
+            panelBg.type = Image.Type.Sliced;
+            panelBg.pixelsPerUnitMultiplier = 16f / (corner * Px);
+            panelBg.color = UiPalette.Walnut;
+            var column = panel.gameObject.AddComponent<VerticalLayoutGroup>();
+            column.childControlWidth = column.childControlHeight = true;
+            column.childForceExpandWidth = true;
+            column.childForceExpandHeight = false;
+
+            RectTransform head = Rect("Head", panel);
+            Row(head.gameObject, new RectOffset(20, 16, 18, 8), 12);
+            RectTransform titles = Rect("Titles", head);
+            var titleColumn = titles.gameObject.AddComponent<VerticalLayoutGroup>();
+            titleColumn.childControlWidth = titleColumn.childControlHeight = true;
+            titleColumn.childForceExpandWidth = titleColumn.childForceExpandHeight = false;
+            titles.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
+            TMP_Text title = Text("Title", titles, "Տան խանութ", 22, UiPalette.Cream, "Black");
+            title.alignment = TextAlignmentOptions.Left;
+            title.gameObject.AddComponent<LocalizedTmpText>().SetKey("home.store.title");
+            TMP_Text balance = Text("Balance", titles, "", 14, UiPalette.Honey, "ExtraBold");
+            balance.alignment = TextAlignmentOptions.Left;
+
+            RectTransform close = Rect("Close", head);
+            Image closeBg = close.gameObject.AddComponent<Image>();
+            closeBg.sprite = TextureFactory.Rounded();
+            closeBg.type = Image.Type.Sliced;
+            closeBg.pixelsPerUnitMultiplier = 16f / (14 * Px);
+            closeBg.color = Walnut2;
+            var closeButton = close.gameObject.AddComponent<Button>();
+            closeButton.targetGraphic = closeBg;
+            Size(close.gameObject, 44, 44);
+            RectTransform x = Rect("Icon", close);
+            x.anchorMin = x.anchorMax = new Vector2(0.5f, 0.5f);
+            x.sizeDelta = new Vector2(22 * Px, 22 * Px);
+            Image xImage = x.gameObject.AddComponent<Image>();
+            xImage.sprite = TextureFactory.LineIcon("close", 2.6f, TextureFactory.Poly(6, 6, 18, 18), TextureFactory.Poly(18, 6, 6, 18));
+            xImage.color = UiPalette.Cream;
+            xImage.raycastTarget = false;
+
+            // tabs
+            RectTransform tabs = Rect("Tabs", panel);
+            Row(tabs.gameObject, new RectOffset(20, 20, 4, 10), 8);
+            Button houseTab = Tab(tabs, "home.tab.house", "Տուն", out Image houseBg);
+            Button yardTab = Tab(tabs, "home.tab.yard", "Բակ", out Image yardBg);
+
+            RectTransform body = Rect("Body", panel);
+            body.gameObject.AddComponent<LayoutElement>().flexibleHeight = 1;
+            body.gameObject.AddComponent<RectMask2D>();
+            Image hit = body.gameObject.AddComponent<Image>();
+            hit.color = Color.clear;
+            var scroll = body.gameObject.AddComponent<ScrollRect>();
+            scroll.horizontal = false;
+            scroll.movementType = ScrollRect.MovementType.Elastic;
+            scroll.elasticity = 0.1f;
+            scroll.inertia = true;
+            scroll.decelerationRate = 0.135f;
+            scroll.scrollSensitivity = 60;
+            RectTransform content = Rect("Content", body);
+            content.anchorMin = new Vector2(0, 1);
+            content.anchorMax = new Vector2(1, 1);
+            content.pivot = new Vector2(0.5f, 1);
+            content.offsetMin = content.offsetMax = Vector2.zero;
+            var list = content.gameObject.AddComponent<VerticalLayoutGroup>();
+            list.padding = Scaled(new RectOffset(16, 16, 0, 20 + (int)corner));
+            list.spacing = 6 * Px;
+            list.childControlWidth = list.childControlHeight = true;
+            list.childForceExpandWidth = true;
+            list.childForceExpandHeight = false;
+            content.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            scroll.content = content;
+            scroll.viewport = body;
+
+            HomeStoreRow row = StoreRow(content);
+
+            GroupIcons(db.home, out string[] groups, out Sprite[] sprites);
+            sheet.gameObject.SetActive(true);
+            var script = hud.gameObject.AddComponent<HomeStorePanel>();
+            script.Setup(sheet.gameObject, closeButton, backdrop, balance, houseTab, yardTab, houseBg, yardBg, content, row, joystick, groups, sprites);
+        }
+
+        static Button Tab(Transform parent, string key, string preview, out Image bg)
+        {
+            RectTransform tab = Card("Tab_" + key, parent, Walnut2, 12);
+            bg = tab.GetComponent<Image>();
+            bg.raycastTarget = true;
+            Row(tab.gameObject, new RectOffset(16, 16, 8, 8), 0);
+            tab.GetComponent<HorizontalLayoutGroup>().childAlignment = TextAnchor.MiddleCenter;
+            tab.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
+            TMP_Text label = Text("Label", tab, preview, 15, UiPalette.Cream, "Black");
+            label.gameObject.AddComponent<LocalizedTmpText>().SetKey(key);
+            var button = tab.gameObject.AddComponent<Button>();
+            button.targetGraphic = bg;
+            button.transition = Selectable.Transition.None;
+            return button;
+        }
+
+        static HomeStoreRow StoreRow(Transform parent)
+        {
+            RectTransform row = Card("RowTemplate", parent, Walnut2, 16);
+            row.gameObject.AddComponent<CanvasGroup>();
+            var h = row.gameObject.AddComponent<HorizontalLayoutGroup>();
+            h.padding = Scaled(new RectOffset(12, 12, 10, 10));
+            h.spacing = 12 * Px;
+            h.childAlignment = TextAnchor.MiddleLeft;
+            h.childControlWidth = h.childControlHeight = true;
+            h.childForceExpandWidth = h.childForceExpandHeight = false;
+
+            RectTransform icon = Rect("Icon", row);
+            Image iconImage = icon.gameObject.AddComponent<Image>();
+            iconImage.color = UiPalette.Honey;
+            iconImage.raycastTarget = false;
+            Size(icon.gameObject, 40, 40);
+
+            RectTransform info = Rect("Info", row);
+            var v = info.gameObject.AddComponent<VerticalLayoutGroup>();
+            v.spacing = 2 * Px;
+            v.childControlWidth = v.childControlHeight = true;
+            v.childForceExpandWidth = true;
+            v.childForceExpandHeight = false;
+            info.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
+            TMP_Text name = Text("Name", info, "", 15, UiPalette.Cream, "ExtraBold");
+            name.alignment = TextAlignmentOptions.Left;
+            name.textWrappingMode = TextWrappingModes.Normal;
+            TMP_Text line = Text("Line", info, "", 12, Muted, "Bold");
+            line.alignment = TextAlignmentOptions.Left;
+
+            RectTransform buy = Rect("Buy", row);
+            Image buyBg = buy.gameObject.AddComponent<Image>();
+            buyBg.sprite = TextureFactory.Rounded();
+            buyBg.type = Image.Type.Sliced;
+            buyBg.pixelsPerUnitMultiplier = 16f / (12 * Px);
+            buyBg.color = UiPalette.Leaf;
+            var lip = buy.gameObject.AddComponent<UnityEngine.UI.Shadow>();
+            lip.effectColor = UiPalette.LeafDark;
+            lip.effectDistance = new Vector2(0, -4 * Px);
+            var button = buy.gameObject.AddComponent<Button>();
+            button.targetGraphic = buyBg;
+            button.transition = Selectable.Transition.None;
+            Row(buy.gameObject, new RectOffset(10, 10, 0, 0), 0);
+            buy.GetComponent<HorizontalLayoutGroup>().childAlignment = TextAnchor.MiddleCenter;
+            var buySize = buy.gameObject.AddComponent<LayoutElement>();
+            buySize.minWidth = 88 * Px;
+            buySize.minHeight = buySize.preferredHeight = 42 * Px;
+            TMP_Text price = Text("Price", buy, "$0", 15, Color.white, "Black");
+
+            var script = row.gameObject.AddComponent<HomeStoreRow>();
+            script.Setup(iconImage, name, line, button, buyBg, price, lip);
+            return script;
         }
     }
 }

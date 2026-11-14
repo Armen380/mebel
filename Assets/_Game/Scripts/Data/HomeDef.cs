@@ -11,6 +11,40 @@ namespace FF.Data
     [CreateAssetMenu(menuName = "FF/Home", fileName = "Home")]
     public sealed class HomeDef : ScriptableObject
     {
+        /// <summary>Construction stage pads in build order (pads.json); stage n is built when the first n have level ≥ 1.</summary>
+        public static readonly string[] StagePads = { "house_found", "house_walls", "house_roof", "house_windows" };
+
+        /// <summary>Localization key of a stage's name (stage 1 … 4).</summary>
+        public static string StageNameKey(int stage) => "home.stage." + StagePads[Mathf.Clamp(stage, 1, StagePads.Length) - 1];
+
+        /// <summary>Lowest house stage that opens a slot of the group (int.MaxValue if none).</summary>
+        public int RequiredStage(string group)
+        {
+            int best = int.MaxValue;
+            foreach (SlotDef s in slots)
+            {
+                if (s.IsFactory || s.group != group) continue;
+                AreaDef a = Area(s.area);
+                if (a != null && a.requiresStage < best) best = a.requiresStage;
+            }
+            return best;
+        }
+
+        /// <summary>Every slot of the group is in the yard (catalog tab).</summary>
+        public bool IsYardGroup(string group)
+        {
+            bool any = false;
+            foreach (SlotDef s in slots)
+            {
+                if (s.IsFactory || s.group != group) continue;
+                if (s.area != YardArea) return false;
+                any = true;
+            }
+            return any;
+        }
+
+        public const string YardArea = "yard";
+
         [Tooltip("Sale price bonus per comfort point (0.001 · 200 = +20 % for the best house).")]
         public double comfortBonusPerPoint = 0.001;
         public List<AreaDef> areas = new List<AreaDef>();
