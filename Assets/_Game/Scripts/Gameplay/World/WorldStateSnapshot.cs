@@ -36,6 +36,8 @@ namespace FF.Gameplay.World
         public const string Sawmill2Id = "saw2";
         /// <summary>Product id of the Plumbing factory (prototype <c>S.owned.sink</c>).</summary>
         public const string PlumbingId = "sink";
+        /// <summary>Dream House stage pads in build order (M10).</summary>
+        public static readonly string[] HouseStagePads = { "house_found", "house_walls", "house_roof", "house_windows" };
 
         /// <summary>Is a machine (sawmill id or product id) owned and working?</summary>
         public bool Owns(string machineId) =>

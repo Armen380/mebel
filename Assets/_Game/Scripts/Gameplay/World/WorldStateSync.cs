@@ -16,11 +16,21 @@ namespace FF.Gameplay.World
         public static int MainRegisters(int registerLevel, int shopLevel) =>
             Mathf.Min(MainRegisterSlots, 1 + Mathf.Min(registerLevel, shopLevel));
 
+        /// <summary>Dream House stages built: leading house_* pads with level ≥ 1.</summary>
+        public static int HouseStage(IUpgradeLevels levels)
+        {
+            string[] pads = WorldStateSnapshot.HouseStagePads;
+            int n = 0;
+            while (n < pads.Length && levels.GetLevel(pads[n]) >= 1) n++;
+            return n;
+        }
+
         public static void Apply(WorldStateSnapshot state, IUpgradeLevels levels)
         {
             state.ShopLevel = levels.GetLevel(ShopPadId);
             state.MainRegisters = MainRegisters(levels.GetLevel(RegisterPadId), state.ShopLevel);
             state.AnnexSecondRegister = levels.GetLevel(AnnexRegisterPadId) > 0;
+            state.HouseStage = HouseStage(levels);
         }
     }
 }

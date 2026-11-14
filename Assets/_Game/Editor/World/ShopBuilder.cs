@@ -92,6 +92,13 @@ namespace FF.Editor.World
             AddPad(result, ctx, padsRoot, db.Pad(WorldStateSync.AnnexRegisterPadId), PadRule.OwnerOwned, WorldStateSnapshot.PlumbingId);
             AddPad(result, ctx, padsRoot, db.Pad(DeliveryDirector.TruckPadId), PadRule.Always, null);
             AddPad(result, ctx, padsRoot, db.Pad(TruckBay.ParkingPadId), PadRule.Always, null);
+            // Dream House stages (M10): one at a time, each after the previous one; the first after the tutorial
+            string previous = null;
+            foreach (string stage in WorldStateSnapshot.HouseStagePads)
+            {
+                AddPad(result, ctx, padsRoot, db.Pad(stage), PadRule.AfterPad, previous);
+                previous = stage;
+            }
 
             BuildLockedLabels(world, db);
 

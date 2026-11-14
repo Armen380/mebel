@@ -179,7 +179,8 @@ namespace FF.Gameplay.Unlocks
                     icon = "house";
                     title = Text("un.dream.t");
                     subtitle = Text("un.dream.s");
-                    target = ProtoCoords.ToUnity(_db.world.dreamHouse.cardTarget);
+                    UpgradePad foundation = _pads.Find(WorldStateSnapshot.HouseStagePads[0]);
+                    target = foundation != null ? foundation.Position : ProtoCoords.ToUnity(_db.world.dreamHouse.cardTarget);
                     break;
             }
             GameEvents.RaiseUnlockCardShown(icon, title, subtitle);
