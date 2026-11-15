@@ -61,7 +61,17 @@ Status: **In progress** — merged into main (PR #27, user OK 2026-11-15); next:
   hand-edited home ids; variant buttons share the group icon.
 - Play Mode automation: back up ~/Library/Application Support/Armen380/Furniture Factory/save.json first (autosave writes
   the test stages into it); a full Game scene rebuild (FF/Build Game Scene) is needed after builder changes.
-- [ ] T12 Release 1.0.2 (1.0.1 is not released separately; ASC version 1.0 renamed to 1.0.2; Google Play after 1.0 is live)
+- [ ] T12 Release 1.0.2 (1.0.1 is not released separately; ASC version 1.0 renamed to 1.0.2; Google Play after 1.0 is live) (branch `release-1.0.2`)
+  - [x] AppIdentity 1.0.2, Android code 4, iOS build 4 (note: PlayerSettings must be saved to disk — after a Play Mode stop
+    Unity reloaded ProjectSettings and the first AAB came out as 1.0.1-3; it was deleted and rebuilt)
+  - [x] AAB Builds/Android/FurnitureFactory-1.0.2-4.aab (jar verified, CN=Armen380 E0:E6:…:48:FC, com.incode.furniturefactory, 1.0.2)
+  - [x] IPA Builds/iOS-Archive/FurnitureFactory-1.0.2-4.ipa (com.incode.furniturefactory 1.0.2 (4), iPhone + iPad, App Store signing)
+  - [x] Screenshots 0a-dream-house, 0b-inside, 0c-home-store (English, furnished house) in Builds/Screenshots/{iPhone 1320×2868,
+    iPad 2064×2752, iPhone-1206x2622, Device-2007x2853}; they sort before the old 1–5
+  - [x] Store texts en/ru + App Review notes: Builds/StoreTexts-1.0.2.md
+  - [ ] User: App Store Connect — rename version 1.0 → 1.0.2, upload IPA build 4 (Claude can upload on the user's yes), new
+    screenshots first, texts, review notes, submit
+  - [ ] Google Play: AAB code 4 after 1.0 is published (user decision)
 
 ### Release prep (user request 2026-11-06: "do the LevelPlay app, keystore, IPA and Profiler yourself; tell me what you cannot") (branch `release-prep`)
 Status: **In progress**
