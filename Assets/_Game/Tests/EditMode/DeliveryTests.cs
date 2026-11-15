@@ -199,6 +199,16 @@ namespace FF.Tests
             Assert.AreEqual(8 * 742, DeliveryRules.Payout(cargo, _db.economy, 1));
         }
 
+        [Test]
+        public void TruckPayout_UsesHomeMultiplier()
+        {
+            ProductDef chair = _db.Product("chair");
+            var cargo = new List<ProductDef> { chair, chair };
+            // +20 % comfort: round(500·0.85·1.2/10)·10 = 510 → round(510·1.4) = 714 per item
+            Assert.AreEqual(2 * 714, DeliveryRules.Payout(cargo, _db.economy, 0, 1.2));
+            Assert.AreEqual(2 * 602, DeliveryRules.Payout(cargo, _db.economy, 0, 1.0));
+        }
+
         // ---------- docks ----------
 
         [Test]
@@ -261,7 +271,7 @@ namespace FF.Tests
             cargo.Of(2).Add(ItemType.Table);
 
             SaveData data = SaveSerializer.FromJson(SaveSerializer.ToJson(SaveMapper.Capture(progress, state, cargo, "en")));
-            Assert.AreEqual(4, data.version);
+            Assert.AreEqual(SaveData.CurrentVersion, data.version);
 
             var loaded = new DeliveryCargo();
             SaveMapper.Apply(data, new GameProgress(_db.economy), WorldStateSnapshot.NewGame(_db.products), loaded);

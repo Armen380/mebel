@@ -26,6 +26,8 @@ namespace FF.Gameplay.World
         public int MainRegisters = 1;
         /// <summary>Second materials-shop register bought (pad reg_annex).</summary>
         public bool AnnexSecondRegister;
+        /// <summary>Dream House stages built, 0 … 4 (leading house_* pads with level ≥ 1, see WorldStateSync).</summary>
+        public int HouseStage;
         public readonly HashSet<string> OwnedProducts = new HashSet<string>();
 
         public bool MinesOpen => OwnsPlumbing;
@@ -34,6 +36,8 @@ namespace FF.Gameplay.World
         public const string Sawmill2Id = "saw2";
         /// <summary>Product id of the Plumbing factory (prototype <c>S.owned.sink</c>).</summary>
         public const string PlumbingId = "sink";
+        /// <summary>Dream House stage pads in build order (M10).</summary>
+        public static readonly string[] HouseStagePads = HomeDef.StagePads;
 
         /// <summary>Is a machine (sawmill id or product id) owned and working?</summary>
         public bool Owns(string machineId) =>

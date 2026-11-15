@@ -118,7 +118,7 @@ namespace FF.Gameplay.Player
                     _flights.FlyToStack(hands.Pop(), z.Stack, _economy.transferFlightSeconds, _economy.flightArc);
                     GameEvents.RaiseZoneDropped(z.Id);
                 }
-                else if (z.Kind == ZoneKind.Pickup && ZoneTransferRules.CanPickup(z.Stack, hands))
+                else if (z.Kind == ZoneKind.Pickup && ZoneTransferRules.CanPickup(z.Stack, hands, z.CarryLimit))
                 {
                     _flights.FlyToStack(z.Stack.Pop(), hands, _economy.transferFlightSeconds, _economy.flightArc);
                     GameEvents.RaiseZonePicked(z.Id);

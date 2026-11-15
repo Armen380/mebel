@@ -21,6 +21,8 @@ namespace FF.Gameplay.Zones
         [SerializeField] Transform pileAnchor;
         [SerializeField] GameObject marker;
         [SerializeField] bool showCounter = true;
+        [Tooltip("Pickup zones: the hands may hold at most this many items taken here (0 = carry capacity). Home Store boxes: 1.")]
+        [SerializeField] int carryLimit;
         [Tooltip("Counter = n/cap over the pile; Cash = sum of the bills on it.")]
         [SerializeField] WorldTagStyle tagStyle = WorldTagStyle.Counter;
 
@@ -36,6 +38,7 @@ namespace FF.Gameplay.Zones
         public ZoneKind Kind => kind;
         public ItemType ItemType => itemType;
         public ItemStack Stack { get; private set; }
+        public int CarryLimit => carryLimit;
         public float Radius { get; private set; } = 1.3f;
         public bool IsActive => Stack != null && (_active == null || _active());
         public Vector3 Position => transform.position;
@@ -54,6 +57,12 @@ namespace FF.Gameplay.Zones
             marker = markerObject;
             tagStyle = zoneKind == ZoneKind.Cash ? WorldTagStyle.Cash : WorldTagStyle.Counter;
         }
+
+        /// <summary>Editor tools only: no n/cap counter over the pile (Dream House slots show a ghost instead).</summary>
+        public void HideCounter() => showCounter = false;
+
+        /// <summary>Editor tools only: see <see cref="CarryLimit"/>.</summary>
+        public void SetCarryLimit(int limit) => carryLimit = limit;
 
         /// <summary>Editor tools only: a drop zone for any product whose pile is lent by its owner (no own counter).</summary>
         public void SetupAnyProduct()

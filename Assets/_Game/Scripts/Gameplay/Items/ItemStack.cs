@@ -82,6 +82,18 @@ namespace FF.Gameplay.Items
             return item;
         }
 
+        /// <summary>Removes a settled item from anywhere in the stack; the ones above it move down a slot.</summary>
+        public Item RemoveAt(int index)
+        {
+            if (index < 0 || index >= _items.Count) return null;
+            Item item = _items[index];
+            _items.RemoveAt(index);
+            for (int i = index; i < _items.Count; i++)
+                _items[i].transform.localPosition = Layout.SlotPosition(i, _catalog.Height(_items[i].Type));
+            if (!_fixedType && Count == 0) Type = ItemType.None;
+            return item;
+        }
+
         /// <summary>Moves every settled item into <paramref name="into"/> (prototype <c>throwAll</c> splice).</summary>
         public void TakeAll(List<Item> into)
         {

@@ -747,6 +747,190 @@ MonoBehaviour:
     m_Key: ui.privacy_policy
     m_Metadata:
       m_Items: []
+  - m_Id: 5318706467954688
+    m_Key: home.stage.house_found
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472148992
+    m_Key: home.stage.house_walls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472148993
+    m_Key: home.stage.house_roof
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472148994
+    m_Key: home.stage.house_windows
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472148995
+    m_Key: home.area.living
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472148996
+    m_Key: home.area.kitchen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472148997
+    m_Key: home.area.bedroom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472148998
+    m_Key: home.area.bathroom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472148999
+    m_Key: home.area.yard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149000
+    m_Key: home.item.carpet_vishap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149001
+    m_Key: home.item.carpet_garden
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149002
+    m_Key: home.item.carpet_star
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149003
+    m_Key: home.item.lamp_clay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149004
+    m_Key: home.item.lamp_brass
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149005
+    m_Key: home.item.tv
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149006
+    m_Key: home.item.painting_ararat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149007
+    m_Key: home.item.painting_garni
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149008
+    m_Key: home.item.plant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149009
+    m_Key: home.item.fridge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149010
+    m_Key: home.item.stove
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149011
+    m_Key: home.item.bowl
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149012
+    m_Key: home.item.bed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149013
+    m_Key: home.item.nightstand
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149014
+    m_Key: home.item.tub
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149015
+    m_Key: home.item.mirror
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149016
+    m_Key: home.item.towel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149017
+    m_Key: home.item.pergola
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149018
+    m_Key: home.item.tree
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149019
+    m_Key: home.item.flowers_rose
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149020
+    m_Key: home.item.flowers_tulip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149021
+    m_Key: home.item.bench
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149022
+    m_Key: home.item.fountain
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149023
+    m_Key: home.item.pool
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149024
+    m_Key: home.item.lampposts
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149025
+    m_Key: home.store.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149026
+    m_Key: home.tab.house
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149027
+    m_Key: home.tab.yard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149028
+    m_Key: home.buy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149029
+    m_Key: home.owned
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149030
+    m_Key: home.placed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149031
+    m_Key: home.needs
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149032
+    m_Key: home.comfort
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149033
+    m_Key: home.bonus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149034
+    m_Key: t.roomDone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149035
+    m_Key: sign.homeStore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5318706472149036
+    m_Key: done.house
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

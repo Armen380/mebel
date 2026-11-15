@@ -48,6 +48,10 @@ namespace FF.Gameplay.Delivery
             bays = bayList;
         }
 
+        IHomeBonus _home;
+
+        double HomeMultiplier => _home != null ? _home.SaleMultiplier : 1.0;
+
         void Awake()
         {
             foreach (TruckBay b in bays)
@@ -63,6 +67,7 @@ namespace FF.Gameplay.Delivery
             _economy = _db.economy;
             _settings = _db.world.delivery;
             _levels = Services.Get<IUpgradeLevels>();
+            Services.TryGet(out _home);
             _progress = Services.Get<GameProgress>();
             _items = Services.Get<ItemPool>();
             _cargo = Services.Get<DeliveryCargo>();
@@ -149,7 +154,7 @@ namespace FF.Gameplay.Delivery
                 {
                     case TruckEvent.Full:
                         CargoProducts(t);
-                        t.PendingPay = DeliveryRules.Payout(_scratch, _economy, _levels.GetLevel(QualityId));
+                        t.PendingPay = DeliveryRules.Payout(_scratch, _economy, _levels.GetLevel(QualityId), HomeMultiplier);
                         t.PendingXp = DeliveryRules.PayoutXp(_scratch);
                         break;
                     case TruckEvent.LeftBay:

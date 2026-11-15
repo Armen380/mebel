@@ -23,6 +23,10 @@ namespace FF.Gameplay.CameraRig
         WorldLayout.CameraSettings _settings;
         Vector3 _baseOffset;
         int _width, _height;
+        float _aspect = 1f, _zoom = 1f, _zoomTarget = 1f;
+
+        /// <summary>Scales the follow offset (Dream House inside view: 0.75); eases at the camera's position rate.</summary>
+        public void SetZoom(float scale) => _zoomTarget = scale;
 
         void Start()
         {
@@ -48,6 +52,10 @@ namespace FF.Gameplay.CameraRig
         void LateUpdate()
         {
             if (Screen.width != _width || Screen.height != _height) ApplyAspect();
+            if (Mathf.Approximately(_zoom, _zoomTarget)) return;
+            float k = 1f - Mathf.Exp(-_settings.positionLerpRate * Mathf.Min(Time.deltaTime, 0.05f));
+            _zoom = Mathf.Abs(_zoomTarget - _zoom) < 0.002f ? _zoomTarget : Mathf.Lerp(_zoom, _zoomTarget, k);
+            follow.FollowOffset = _baseOffset * (_aspect * _zoom);
         }
 
         void ApplyAspect()
@@ -55,7 +63,8 @@ namespace FF.Gameplay.CameraRig
             _width = Screen.width;
             _height = Screen.height;
             bool portrait = _height > _width * _settings.portraitAspect;
-            follow.FollowOffset = _baseOffset * (portrait ? _settings.portraitMultiplier : 1f);
+            _aspect = portrait ? _settings.portraitMultiplier : 1f;
+            follow.FollowOffset = _baseOffset * (_aspect * _zoom);
         }
     }
 }

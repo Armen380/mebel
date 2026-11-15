@@ -22,6 +22,9 @@ namespace FF.Gameplay.World
             Add(result, b.shopFrontLeftWall);
             Add(result, new ProtoRect(b.shopFrontRightMinX, wallX + t, b.shopFrontWallZ.min, b.shopFrontWallZ.max));
             foreach (ProtoRect r in b.dreamPlotFence) Add(result, r);
+            if (state.HouseStage >= 1) Add(result, layout.dreamHouse.homeStore);
+            if (state.HouseStage >= 2)
+                foreach (ProtoRect r in b.houseWalls) Add(result, r);
             if (state.OwnsPlumbing)
                 foreach (ProtoRect r in b.materialsShopWalls) Add(result, r);
 

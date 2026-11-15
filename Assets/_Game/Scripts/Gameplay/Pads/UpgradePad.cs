@@ -29,6 +29,7 @@ namespace FF.Gameplay.Pads
         WorldStateSnapshot _state;
         GameProgress _progress;
         int _ownerUnlockLevel;
+        int _tutorialSteps;
         GameProgress.PadState _pad;
         MaterialPropertyBlock _block;
         Renderer _fillRenderer;
@@ -40,9 +41,16 @@ namespace FF.Gameplay.Pads
         public GameProgress.PadState State => _pad;
         public Vector3 Position => transform.position;
         public long Price => _economy.PadPrice(def, _pad.Level);
-        public bool IsVisible => PadRules.IsVisible(rule, _pad.Level, def.maxLevel,
-            !string.IsNullOrEmpty(owner) && _state.Owns(owner), _progress.Level, _ownerUnlockLevel,
+        public bool IsVisible => PadRules.IsVisible(rule, _pad.Level, def.maxLevel, OwnerDone, _progress.Level, _ownerUnlockLevel,
             _progress.GetLevel(RegisterPadId), _progress.GetLevel(ShopPadId));
+
+        /// <summary>
+        /// The owner condition: a building is owned, or for <see cref="PadRule.AfterPad"/> the previous pad (owner) is
+        /// bought — with no owner, the tutorial is done.
+        /// </summary>
+        bool OwnerDone => rule == PadRule.AfterPad
+            ? (string.IsNullOrEmpty(owner) ? _progress.QuestStep >= _tutorialSteps : _progress.GetLevel(owner) >= 1)
+            : !string.IsNullOrEmpty(owner) && _state.Owns(owner);
 
         /// <summary>Editor tools only.</summary>
         public void Setup(PadDef padDef, PadRule padRule, string ownerId, GameObject visualRoot, Transform fillQuad, TMP_Text price)
@@ -64,6 +72,7 @@ namespace FF.Gameplay.Pads
             _pad = _progress.Pad(def.id);
             ProductDef product = string.IsNullOrEmpty(owner) ? null : db.Product(owner);
             _ownerUnlockLevel = rule == PadRule.BuyOwner && product != null ? product.unlockLevel : 0;
+            _tutorialSteps = db.tutorial != null ? db.tutorial.steps.Count : 0;
             _block = new MaterialPropertyBlock();
             _fillRenderer = fill.GetComponent<Renderer>();
             _size = Services.Get<GameDatabase>().world.production.padSize;

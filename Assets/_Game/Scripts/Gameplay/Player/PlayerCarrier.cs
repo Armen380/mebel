@@ -50,6 +50,8 @@ namespace FF.Gameplay.Player
         public int CarriedCount => Stack.Count;
         public int CarryCapacity => Stack.Capacity;
 
+        FF.Gameplay.Home.HomeBoxes _homeBoxes;
+
         public void ThrowAll()
         {
             if (Stack.Settled == 0) return;
@@ -57,8 +59,14 @@ namespace FF.Gameplay.Player
             Stack.TakeAll(_throwBuffer);
             Vector3 p = transform.position, forward = transform.forward;
             float spread = _economy.throwSpread;
+            if (_homeBoxes == null) Services.TryGet(out _homeBoxes);
             for (int i = 0; i < _throwBuffer.Count; i++)
             {
+                if (_throwBuffer[i].Type == ItemType.HomeBox && _homeBoxes != null)
+                {
+                    _homeBoxes.Return(_throwBuffer[i]); // M10: bought items are never lost
+                    continue;
+                }
                 Vector3 target = p + forward * _economy.throwDistance;
                 target.x += (Random.value - 0.5f) * spread;
                 target.z += (Random.value - 0.5f) * spread;

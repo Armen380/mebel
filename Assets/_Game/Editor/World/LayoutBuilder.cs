@@ -241,53 +241,21 @@ namespace FF.Editor.World
             b.Box(g, 10.6f, 0.1f, 0.08f, Fence, 77.3f, 0.75f, d.plotZ.max, "Rail");
             b.Box(g, 10.6f, 0.1f, 0.08f, Fence, 92.7f, 0.75f, d.plotZ.max, "Rail");
 
-            // paths, foundation with stakes and strings
+            // paths and the foundation outline; stakes, strings, billboard and the house itself are HouseBuilder's (M10)
             b.Flat(g, 3, 6, Paving, cx, -7, 0.012f, "Path");
             b.Flat(g, 9, 3, Paving, 81.5f, -11.5f, 0.012f, "Path");
             Vector2 fc = d.foundationCenter, fs = d.foundationSize;
             b.Flat(g, fs.x, fs.y, 0xcfc6b8, fc.x, fc.y, 0.016f, "Foundation");
             b.Flat(g, fs.x - 0.6f, fs.y - 0.6f, 0xb9b0a1, fc.x, fc.y, 0.017f, "FoundationInner");
-            float sx = fs.x / 2 - 0.1f, sz = fs.y / 2 - 0.1f;
-            foreach ((float x, float z) in new[] { (fc.x - sx, fc.y + sz), (fc.x + sx, fc.y + sz), (fc.x - sx, fc.y - sz), (fc.x + sx, fc.y - sz) })
-                b.Box(g, 0.12f, 0.9f, 0.12f, 0xd9a066, x, 0.45f, z, "Stake");
-            b.Box(g, fs.x - 0.2f, 0.03f, 0.03f, Danger, fc.x, 0.75f, fc.y + sz, "String");
-            b.Box(g, fs.x - 0.2f, 0.03f, 0.03f, Danger, fc.x, 0.75f, fc.y - sz, "String");
-            b.Box(g, 0.03f, 0.03f, fs.y - 0.2f, Danger, fc.x - sx, 0.75f, fc.y, "String");
-            b.Box(g, 0.03f, 0.03f, fs.y - 0.2f, Danger, fc.x + sx, 0.75f, fc.y, "String");
 
-            BuildBillboard(b, g, d.billboard);
-
-            // owner's work area (empty for now)
+            // owner's work area: the Home Store stands here (M10)
             b.Flat(g, 7, 9, Paving, d.workArea.x, d.workArea.y, 0.016f, "WorkArea");
-            b.Sign(g, "sign.sales", 2.6f, Walnut, Honey, d.workArea.x, 1.7f, -10.2f);
-            b.Box(g, 0.12f, 1.6f, 0.12f, Wood, d.workArea.x, 0.8f, -10.3f, "SignPost");
 
             foreach ((float x, float z) in new[] { (70f, -8f), (70f, -20f), (100f, -10f), (100f, -22f), (76f, -28f), (92f, -28f) })
             {
                 b.Cyl(g, 0.18f, 0.24f, 1.4f, Trunk, 7, x, 0.7f, z, "Trunk");
                 b.Ico(g, 0.95f, Leaf, x, 1.9f, z, "Crown");
             }
-        }
-
-        /// <summary>Blockout of the prototype's painted billboard: sky panel, simple house, title and "Coming soon" ribbon.</summary>
-        static void BuildBillboard(Blockout b, Transform p, Vector2 at)
-        {
-            Transform g = b.Group("Billboard", p);
-            b.Box(g, 0.22f, 3.6f, 0.22f, Wood, at.x - 3.4f, 1.8f, at.y, "Post");
-            b.Box(g, 0.22f, 3.6f, 0.22f, Wood, at.x + 3.4f, 1.8f, at.y, "Post");
-            b.Box(g, 7.2f, 4.4f, 0.16f, Walnut, at.x, 3.4f, at.y - 0.12f, "Frame");
-            float fz = at.y + 0.02f; // panel face, toward the camera
-            b.Box(g, 6.9f, 4.3f, 0.02f, 0xcfe9f4, at.x, 3.4f, fz, "Sky");
-            b.Box(g, 6.9f, 1.0f, 0.03f, 0x8cc65a, at.x, 1.75f, fz + 0.01f, "Hill");
-            b.Box(g, 2.7f, 1.6f, 0.04f, Cream, at.x - 0.2f, 2.6f, fz + 0.02f, "House");
-            GameObject roof = b.Box(g, 2.2f, 0.3f, 0.05f, Danger, at.x - 0.9f, 3.65f, fz + 0.03f, "RoofL");
-            roof.transform.localRotation = Quaternion.Euler(0, 0, 33);
-            roof = b.Box(g, 2.2f, 0.3f, 0.05f, Danger, at.x + 0.5f, 3.65f, fz + 0.03f, "RoofR");
-            roof.transform.localRotation = Quaternion.Euler(0, 0, -33);
-            b.Box(g, 0.5f, 0.8f, 0.05f, Wood, at.x - 0.2f, 2.2f, fz + 0.03f, "Door");
-            b.Sign(g, "dream.title", 4.2f, Walnut, Honey, at.x - 1.2f, 5.0f, fz + 0.05f);
-            Transform ribbon = b.Sign(g, "dream.soon", 2.2f, Danger, 0xffffff, at.x + 2.2f, 2.0f, fz + 0.05f);
-            ribbon.localRotation = Quaternion.Euler(0, 0, 10);
         }
 
         // ---------- delivery yard ----------

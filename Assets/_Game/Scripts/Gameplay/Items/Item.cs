@@ -11,6 +11,8 @@ namespace FF.Gameplay.Items
         public ItemType Type => type;
         /// <summary>Money value of a bill (M3); 0 for goods.</summary>
         public long Value { get; set; }
+        /// <summary>Home Store item id of a <see cref="ItemType.HomeBox"/> (M10); null otherwise.</summary>
+        public string HomeItemId { get; set; }
 
         /// <summary>Editor tools only (prefab building).</summary>
         public void SetType(ItemType itemType) => type = itemType;

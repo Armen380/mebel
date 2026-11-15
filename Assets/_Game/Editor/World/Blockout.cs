@@ -50,6 +50,10 @@ namespace FF.Editor.World
         public GameObject Hemisphere(Transform parent, float radius, int color, float x, float y, float z, string name = "Hemisphere") =>
             Make(name, parent, LowPolyMeshFactory.Hemisphere(), MaterialPaletteEditor.Get(Hex(color)), Pos(x, y, z), Vector3.one * radius, true);
 
+        /// <summary>Any mesh with a palette colour (arches, roofs).</summary>
+        public GameObject Mesh(Transform parent, Mesh mesh, int color, float x, float y, float z, Vector3 scale, string name = "Mesh") =>
+            Make(name, parent, mesh, MaterialPaletteEditor.Get(Hex(color)), Pos(x, y, z), scale, true);
+
         /// <summary>Horizontal ground decal (prototype <c>flat()</c>): receives shadows, casts none.</summary>
         public GameObject Flat(Transform parent, float w, float d, int color, float x, float z, float y = 0.01f, string name = "Flat") =>
             Make(name, parent, LowPolyMeshFactory.Plane(), MaterialPaletteEditor.Get(Hex(color)), Pos(x, y, z), new Vector3(w, 1, d), false);

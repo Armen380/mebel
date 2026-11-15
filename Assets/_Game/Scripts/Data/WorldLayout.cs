@@ -373,6 +373,17 @@ namespace FF.Data
             public Vector2 cardTarget = new Vector2(85f, -6f);
             [Tooltip("\"Dream house / Soon\" chip, proto (x, y, z) (prototype V3(81, 1.4, -17)).")]
             public Vector3 soonChip = new Vector3(81f, 1.4f, -17f);
+
+            [Header("Dream House (M10)")]
+            [Tooltip("Front door, then the inner doorways (living↔kitchen, living↔bedroom, kitchen↔bathroom), proto (x, z). Gaps in blockers.houseWalls.")]
+            public Vector2[] houseDoorways = { new Vector2(78f, -13f), new Vector2(81f, -15f), new Vector2(78f, -17f), new Vector2(84f, -17f) };
+            [Tooltip("Front wall (toward the road / camera) z; it and the roof hide while the player is inside.")]
+            public float houseFrontZ = -13f;
+            public float houseWallHeight = 3f;
+            [Tooltip("Home Store building on the owner's work area, proto rect.")]
+            public ProtoRect homeStore = new ProtoRect(91.5f, 95.5f, -17.5f, -13.5f);
+            [Tooltip("Where the player stands to open the Home Store catalog, proto (x, z).")]
+            public Vector2 homeStoreCounter = new Vector2(93.5f, -12.6f);
         }
 
         /// <summary>Player region rules of the prototype <c>collide()</c>.</summary>
@@ -425,6 +436,21 @@ namespace FF.Data
                 new ProtoRect(60.45f, 60.75f, 0.4f, 9.85f),
                 new ProtoRect(46.25f, 50f, 9.55f, 9.85f),
                 new ProtoRect(53f, 60.75f, 9.55f, 9.85f),
+            };
+            [Tooltip("Dream House walls (house stage ≥ 2): outer walls with the front door gap, inner walls with three doorways (0.25 m thick).")]
+            public ProtoRect[] houseWalls =
+            {
+                new ProtoRect(75.5f, 77.2f, -13.125f, -12.875f),
+                new ProtoRect(78.8f, 86.5f, -13.125f, -12.875f),
+                new ProtoRect(75.5f, 86.5f, -21.125f, -20.875f),
+                new ProtoRect(75.375f, 75.625f, -21f, -13f),
+                new ProtoRect(86.375f, 86.625f, -21f, -13f),
+                new ProtoRect(75.625f, 77.3f, -17.125f, -16.875f),
+                new ProtoRect(78.7f, 83.3f, -17.125f, -16.875f),
+                new ProtoRect(84.7f, 86.375f, -17.125f, -16.875f),
+                new ProtoRect(80.875f, 81.125f, -16.875f, -15.7f),
+                new ProtoRect(80.875f, 81.125f, -14.3f, -13.125f),
+                new ProtoRect(80.875f, 81.125f, -20.875f, -17.125f),
             };
             [Tooltip("Owned factory = (x ± factoryHalfX) × factoryZ.")]
             public float factoryHalfX = 2.7f;

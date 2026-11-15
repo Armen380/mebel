@@ -5,6 +5,64 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
+### M10 Dream House (user request 2026-11-14, after Apple's 4.3(a) rejection of 1.0) (branch `m10-dream-house`)
+Status: **In progress** — merged into main (PR #27, user OK 2026-11-15); next: T12 release 1.0.2.
+- Design: docs/superpowers/specs/2026-11-14-dream-house-design.md (user decisions: build by hand like the game, Home Store
+  next to the house, walk inside, fixed slots, Armenian style, same scene + catalog panel; 1б no house tutorial, 2а
+  furnishing only, no upkeep).
+- Plan (12 tasks, detailed steps): docs/superpowers/plans/2026-11-14-dream-house.md
+- [x] Design agreed and approved
+- [x] Implementation plan written and approved
+- [x] T1 Data, import, strings (Design/data/dream_house.json, 4 house_* pads, en/ru/hy; Armenian texts drafted by Claude — user to check)
+- [x] T2 Pure home logic (HomeRules / HomeState)
+- [x] T3 Save v5 (home: slots, storage, rooms; v4 saves load with an empty home)
+- [x] T4 HomeService, comfort sale bonus (customers + trucks, +20 % max), room gifts
+- [x] T5 Stage pads (one at a time, first after the tutorial), house walls with door gaps, Home Store blocker
+- [x] T6 Armenian tuff house (4 stages pop in), yard, Home Store building (HouseBuilder, non-static World/DreamHouse)
+- [x] T7 32 slots with ghosts/models, factory drop zones, carpets/paintings textures, variant picker
+- [x] T8 Home Store catalog (House / Yard tabs) at the counter
+- [x] T9 Cut-away inside the house (front wall sinks, roof hides) + camera zoom ×0.75
+- [x] T10 Comfort chip (HUD, from the foundation) and a one-time guide to the Home Store
+- [x] T11 Tests 660/660, Play Mode checks, whole-branch review (2 Important fixed: per-item buy cap, cut-away from the walls stage)
+- [x] User play-test 2026-11-15: "все отлично"
+- [x] **Play-test change (user 2026-11-15): bought items are carried in boxes.** User decision: boxes with the item's icon
+  (not mini models). Design (approved): a bought item appears as a box on a pickup pile at the Home Store counter and
+  flies into the hands (waits there while the hands hold something else); carrying a box to the ghost of its group
+  unpacks it on the slot; a box of another variant brought to a placed slot swaps it (the old item comes back as a box
+  into the hands) — the variant picker is removed; thrown boxes (Q) fly back to the pile; save keeps boxes as storage
+  (they reappear on the pile).
+  - [x] ItemType.HomeBox (not a product: no shelves / trucks), Item.HomeItemId, box prefab with an icon label
+  - [x] ItemStack.RemoveAt (take a matching box from the middle of the stack)
+  - [x] HomeRules.TryPlaceItem (a specific item), HomeService.TryPlaceItem; drop the "place from storage by standing" path
+  - [x] HomeBoxes (pickup pile at the counter, boxes ↔ storage reconcile, throw returns), HomeSlotSystem carries boxes
+  - [x] Remove the variant picker (UI, event, IHomeStore.Variants)
+  - [x] Tests 663/663; Play Mode: 2 carpets bought at the counter → boxes into the hands → star unpacked on the living carpet slot → vishap box swapped in (star back in the hands) → thrown boxes back on the pile; pushed to PR #27
+- [x] **Play-test change 2 (user 2026-11-15): "пусть коробки возьмёт по штуке и в доме на полу будет место, куда именно
+  вставить эту коробку".** One box at a time from the pile (the hands take a box only when empty); every Home Store slot
+  gets a floor marker (drop-zone style) with its group's icon, shown with the ghost while the slot is open and empty.
+  - [x] Zone carry limit (pile: 1) in the pickup rule, test
+  - [x] Floor markers with icons for store slots
+  - [x] Rebuild, Play Mode check (1 box in the hands, 4 left on the pile; markers with icons on free slots), commit, push to PR #27
+  - [x] Fix found on the way: room slots now stand on the 0.3 m foundation slab (they were at ground level: markers under the floor, furniture sunk)
+- [x] **Play-test fix 3 (user 2026-11-15): "я взял коробку, но нигде не могу вставить".** The user's top box was a flower
+  bed while both beds were already filled (rose + tulip), so it could only swap (rose ↔ tulip), which looked like nothing
+  happened; the TV and garden-lamp boxes (free slots) were lower in the pile. Fix: the pile keeps boxes with a free slot
+  on top (HomeRules.HasFreeSlot + HomeBoxes.SortPile on every pile change). Checked on the user's save: first box =
+  garden lamps → placed. Tests 665/665.
+- [x] **Play-test change 4 (user 2026-11-15): "когда выбираю коробку, пусть мне укажет, где её вставить".** While a Home
+  Store box is in the hands, the floor arrows (GuideTrail) lead to the nearest free open slot of its group (else the
+  nearest slot it can swap with). Tutorial arrows keep priority, the box comes before unlock-card guides.
+  - [x] HomeRules.TargetSlot (nearest free, else swap), test
+  - [x] HomeBoxes.TryGetGuide + GuideTrail source; Play Mode check on the user's save (rose box → arrows to the tulip bed); tests 666/666; pushed to PR #27
+- [x] Merge into main after the user's OK (user 2026-11-15: "Всё ок, сливай"; PR #27)
+- Deferred review minors (not blocking): a few slots reachable through a wall (wardrobe, kitchen, bowl, towel — move
+  0.2–0.4 m in); a swap doesn't autosave until the next money change; standing on the stage pad pays all four stages in a
+  row; some home tunables are MonoBehaviour constants; HomeStoreRow caches no CanvasGroup; loading doesn't validate
+  hand-edited home ids; variant buttons share the group icon.
+- Play Mode automation: back up ~/Library/Application Support/Armen380/Furniture Factory/save.json first (autosave writes
+  the test stages into it); a full Game scene rebuild (FF/Build Game Scene) is needed after builder changes.
+- [ ] T12 Release 1.0.2 (1.0.1 is not released separately; ASC version 1.0 renamed to 1.0.2; Google Play after 1.0 is live)
+
 ### Release prep (user request 2026-11-06: "do the LevelPlay app, keystore, IPA and Profiler yourself; tell me what you cannot") (branch `release-prep`)
 Status: **In progress**
 - [x] iOS: Apple team F83UUGVD8Y (already signed in to Xcode) set in Unity (automatic signing); fresh Xcode export; xcodebuild archive + export with `-allowProvisioningUpdates` → Builds/iOS-Archive/ipa/FurnitureFactory.ipa (134 MB, App Store Connect signing). Fix: Xcode 27 needs iOS ≥ 15 for every pod (IronSource / Unity Ads declare 12–13) → `IosPostBuild` adds a Podfile post_install block (order 45, between Podfile generation and pod install).
@@ -58,7 +116,7 @@ Notes (done 2026-11-07):
 ## Done
 
 ### Update 1.0.1: floor arrows, worker roles, softer colours (user request 2026-11-10) (branch `update-1.0.1`)
-Result: 1.0.1 merged (PR #25) and built — Builds/Android/FurnitureFactory-1.0.1-3.aab (52.3 MB, jar verified, CN=Armen380 E0:E6:…:48:FC, com.incode.furniturefactory, versionCode 3 / 1.0.1) and Builds/iOS-Archive/FurnitureFactory-1.0.1-3.ipa (129 MB, com.incode.furniturefactory 1.0.1 (3), iPhone + iPad, distribution signing). Not uploaded: Google Play when the user wants, App Store after 1.0 is approved (then create version 1.0.1 in App Store Connect).
+Result: 1.0.1 merged (PR #25) and built — Builds/Android/FurnitureFactory-1.0.1-3.aab (52.3 MB, jar verified, CN=Armen380 E0:E6:…:48:FC, com.incode.furniturefactory, versionCode 3 / 1.0.1) and Builds/iOS-Archive/FurnitureFactory-1.0.1-3.ipa (129 MB, com.incode.furniturefactory 1.0.1 (3), iPhone + iPad, distribution signing). Not uploaded. User decision 2026-11-10: hold 1.0.1 on BOTH stores until 1.0 passes review and is published on Google Play and the App Store; then upload AAB code 3 (new Play release) and IPA build 3 (new App Store version 1.0.1).
 Status: **Done**
 Progress: parts 1–2 done and checked (the Editor had been closed at 10:59, reopened). Tests 630/630 after the localization re-import (only the 4 string tables changed). Game.unity patched in place (fresh open): GuideTrail after TutorialArrow, 24 arrows — `git diff --patience` shows insertions only. Play Mode on the user's save (backed up and restored, same SHA): tutorial step forced to 4/8 → orange chevrons from the player to the target; first try (0.55 m, every 1.1 m) was too small → 1 m every 1.5 m. Worker sampling: carriers held only planks, robots only sofas / sinks, lumberjacks logs.
 Decisions (user answers 2026-11-10): arrows for the tutorial **and** new-unlock guides; robots carry only finished goods; carriers only planks (lumberjacks keep the logs); colours by a palette pass (no post-processing), before / after screenshots first.

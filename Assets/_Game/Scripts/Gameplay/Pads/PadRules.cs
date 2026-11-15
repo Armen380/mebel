@@ -11,6 +11,8 @@ namespace FF.Gameplay.Pads
         BuyOwner,
         /// <summary>New register: fewer registers bought than the shop level.</summary>
         Register,
+        /// <summary>Dream House stage: the previous stage is built (the first stage: the tutorial is done).</summary>
+        AfterPad,
     }
 
     public static class PadRules
@@ -25,6 +27,7 @@ namespace FF.Gameplay.Pads
                 case PadRule.OwnerOwned: return ownerOwned;
                 case PadRule.BuyOwner: return !ownerOwned && playerLevel >= ownerUnlockLevel;
                 case PadRule.Register: return registerLevel < shopLevel;
+                case PadRule.AfterPad: return ownerOwned;
                 default: return true;
             }
         }

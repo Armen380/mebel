@@ -1,0 +1,199 @@
+using System.Collections.Generic;
+using FF.Data;
+using FF.Gameplay.Home;
+using NUnit.Framework;
+using UnityEngine;
+
+namespace FF.Tests
+{
+    /// <summary>Dream House rules (M10): slots, storage, buying caps, comfort, room gifts.</summary>
+    public sealed class HomeRulesTests
+    {
+        HomeDef _def;
+        HomeState _state;
+
+        [SetUp]
+        public void Build()
+        {
+            _def = ScriptableObject.CreateInstance<HomeDef>();
+            _def.comfortBonusPerPoint = 0.001;
+            _def.areas.Add(new HomeDef.AreaDef { id = "living", requiresStage = 2, gift = 5000 });
+            _def.areas.Add(new HomeDef.AreaDef { id = "yard", requiresStage = 1, gift = 100 });
+            _def.slots.Add(new HomeDef.SlotDef { id = "living_sofa", area = "living", product = ItemType.Sofa, comfort = 10 });
+            _def.slots.Add(new HomeDef.SlotDef { id = "living_chair1", area = "living", product = ItemType.Chair, comfort = 4 });
+            _def.slots.Add(new HomeDef.SlotDef { id = "living_carpet", area = "living", group = "carpet" });
+            _def.slots.Add(new HomeDef.SlotDef { id = "yard_carpet", area = "yard", group = "carpet" });
+            _def.slots.Add(new HomeDef.SlotDef { id = "yard_bed", area = "yard", group = "bench" });
+            _def.items.Add(new HomeDef.HomeItemDef { id = "carpet_a", group = "carpet", price = 600, comfort = 4 });
+            _def.items.Add(new HomeDef.HomeItemDef { id = "carpet_b", group = "carpet", price = 900, comfort = 6 });
+            _def.items.Add(new HomeDef.HomeItemDef { id = "bench", group = "bench", price = 1200, comfort = 3 });
+            _def.items.Add(new HomeDef.HomeItemDef { id = "bed", group = "bed", price = 12000, comfort = 10 });
+            _state = new HomeState();
+        }
+
+        [TearDown]
+        public void Destroy() => Object.DestroyImmediate(_def);
+
+        HomeDef.SlotDef Slot(string id) => _def.Slot(id);
+        HomeDef.HomeItemDef Item(string id) => _def.Item(id);
+
+        [Test]
+        public void FactorySlot_AcceptsOnlyItsProduct_OnePerSlot()
+        {
+            Assert.IsFalse(HomeRules.CanPlaceFactory(_def, _state, Slot("living_sofa"), 2, ItemType.Chair));
+            Assert.IsTrue(HomeRules.CanPlaceFactory(_def, _state, Slot("living_sofa"), 2, ItemType.Sofa));
+            HomeRules.PlaceFactory(_state, Slot("living_sofa"));
+            Assert.AreEqual("sofa", _state.Placed["living_sofa"]);
+            Assert.IsFalse(HomeRules.CanPlaceFactory(_def, _state, Slot("living_sofa"), 2, ItemType.Sofa));
+            Assert.IsFalse(HomeRules.CanPlaceFactory(_def, _state, Slot("living_carpet"), 2, ItemType.Sofa), "store slot");
+        }
+
+        [Test]
+        public void Slots_ClosedUntilAreaStage()
+        {
+            Assert.IsFalse(HomeRules.CanPlaceFactory(_def, _state, Slot("living_sofa"), 1, ItemType.Sofa));
+            Assert.IsTrue(HomeRules.CanPlaceFactory(_def, _state, Slot("living_sofa"), 2, ItemType.Sofa));
+            Assert.IsFalse(HomeRules.IsAreaOpen(_def, "yard", 0));
+            Assert.IsTrue(HomeRules.IsAreaOpen(_def, "yard", 1));
+            Assert.IsFalse(HomeRules.IsAreaOpen(_def, "nowhere", 4));
+        }
+
+        [Test]
+        public void Buy_CappedPerItemBySlotCount()
+        {
+            // each variant can be owned as many times as its group has slots, so every slot can hold the best variant
+            Assert.IsTrue(HomeRules.CanBuy(_def, _state, Item("carpet_a"), 2, 10000));
+            HomeRules.Buy(_state, Item("carpet_a"));
+            HomeRules.Buy(_state, Item("carpet_a"));
+            Assert.AreEqual(2, HomeRules.OwnedItem(_def, _state, "carpet_a"));
+            Assert.IsFalse(HomeRules.CanBuy(_def, _state, Item("carpet_a"), 2, 10000), "two carpet slots, two of this carpet owned");
+            Assert.IsTrue(HomeRules.CanBuy(_def, _state, Item("carpet_b"), 2, 10000), "another variant is still buyable");
+            HomeRules.TryPlaceItem(_def, _state, Slot("living_carpet"), 2, "carpet_a");
+            Assert.AreEqual(2, HomeRules.OwnedItem(_def, _state, "carpet_a"), "placed ones count too");
+            Assert.IsFalse(HomeRules.CanBuy(_def, _state, Item("carpet_a"), 2, 10000));
+        }
+
+        [Test]
+        public void Buy_NeedsMoney()
+        {
+            Assert.IsFalse(HomeRules.CanBuy(_def, _state, Item("carpet_b"), 2, 899));
+            Assert.IsTrue(HomeRules.CanBuy(_def, _state, Item("carpet_b"), 2, 900));
+        }
+
+        [Test]
+        public void Buy_RefusedWhenAreaClosed()
+        {
+            Assert.IsFalse(HomeRules.IsItemAvailable(_def, Item("bed"), 4), "no slot for the group at all");
+            Assert.IsFalse(HomeRules.IsItemAvailable(_def, Item("bench"), 0));
+            Assert.IsTrue(HomeRules.IsItemAvailable(_def, Item("bench"), 1));
+            Assert.IsFalse(HomeRules.CanBuy(_def, _state, Item("bench"), 0, 100000));
+        }
+
+        [Test]
+        public void CarriedItem_PlacedThenSwapped_ComfortFollowsPlacedItem()
+        {
+            HomeRules.Buy(_state, Item("carpet_a"));
+            HomeRules.Buy(_state, Item("carpet_b"));
+            Assert.IsFalse(HomeRules.TryPlaceItem(_def, _state, Slot("living_carpet"), 1, "carpet_b"), "living closed at stage 1");
+            Assert.IsTrue(HomeRules.TryPlaceItem(_def, _state, Slot("living_carpet"), 2, "carpet_b"));
+            Assert.AreEqual("carpet_b", _state.Placed["living_carpet"], "the carried variant, not catalog order");
+            Assert.IsFalse(_state.Storage.ContainsKey("carpet_b"));
+            Assert.AreEqual(6, HomeRules.Comfort(_def, _state));
+
+            Assert.IsTrue(HomeRules.Swap(_state, Slot("living_carpet"), "carpet_a"));
+            Assert.AreEqual("carpet_a", _state.Placed["living_carpet"]);
+            Assert.AreEqual(1, _state.Storage["carpet_b"]);
+            Assert.AreEqual(4, HomeRules.Comfort(_def, _state));
+            Assert.IsFalse(HomeRules.Swap(_state, Slot("living_carpet"), "bench"), "not in storage");
+        }
+
+        [Test]
+        public void TryPlaceItem_RefusesWrongGroupFilledSlotOrNotOwned()
+        {
+            Assert.IsFalse(HomeRules.TryPlaceItem(_def, _state, Slot("yard_carpet"), 2, "carpet_a"), "not bought");
+            HomeRules.Buy(_state, Item("bench"));
+            Assert.IsFalse(HomeRules.TryPlaceItem(_def, _state, Slot("yard_carpet"), 2, "bench"), "wrong group");
+            HomeRules.Buy(_state, Item("carpet_a"));
+            HomeRules.Buy(_state, Item("carpet_b"));
+            Assert.IsTrue(HomeRules.TryPlaceItem(_def, _state, Slot("yard_carpet"), 2, "carpet_a"));
+            Assert.IsFalse(HomeRules.TryPlaceItem(_def, _state, Slot("yard_carpet"), 2, "carpet_b"), "slot filled: that is a swap");
+            Assert.IsFalse(HomeRules.TryPlaceItem(_def, _state, Slot("living_sofa"), 2, "carpet_b"), "factory slot");
+        }
+
+        [Test]
+        public void HasFreeSlot_OnlyOpenEmptySlotsOfTheGroup()
+        {
+            Assert.IsTrue(HomeRules.HasFreeSlot(_def, _state, "carpet", 1), "yard carpet slot is open at stage 1");
+            HomeRules.Buy(_state, Item("carpet_a"));
+            HomeRules.TryPlaceItem(_def, _state, Slot("yard_carpet"), 1, "carpet_a");
+            Assert.IsFalse(HomeRules.HasFreeSlot(_def, _state, "carpet", 1), "the living one is closed until the walls");
+            Assert.IsTrue(HomeRules.HasFreeSlot(_def, _state, "carpet", 2));
+            Assert.IsFalse(HomeRules.HasFreeSlot(_def, _state, "bed", 4), "no slot at all");
+        }
+
+        [Test]
+        public void TargetSlot_NearestFreeElseSwap()
+        {
+            Slot("living_carpet").protoPos = new Vector2(10, 0);
+            Slot("yard_carpet").protoPos = new Vector2(2, 0);
+            HomeRules.Buy(_state, Item("carpet_a"));
+            HomeRules.Buy(_state, Item("carpet_b"));
+            Assert.AreEqual("yard_carpet", HomeRules.TargetSlot(_def, _state, "carpet_a", 2, new Vector2(0, 0)).id, "nearest free");
+            Assert.AreEqual("living_carpet", HomeRules.TargetSlot(_def, _state, "carpet_a", 2, new Vector2(12, 0)).id);
+            Assert.AreEqual("yard_carpet", HomeRules.TargetSlot(_def, _state, "carpet_a", 1, new Vector2(12, 0)).id, "living closed at stage 1");
+            HomeRules.TryPlaceItem(_def, _state, Slot("yard_carpet"), 2, "carpet_a");
+            Assert.AreEqual("living_carpet", HomeRules.TargetSlot(_def, _state, "carpet_b", 2, new Vector2(0, 0)).id, "free beats a nearer swap");
+            HomeRules.TryPlaceItem(_def, _state, Slot("living_carpet"), 2, "carpet_b");
+            HomeRules.Buy(_state, Item("carpet_a"));
+            Assert.AreEqual("living_carpet", HomeRules.TargetSlot(_def, _state, "carpet_a", 2, new Vector2(0, 0)).id,
+                "no free slot: the slot with another variant (the yard one already has carpet_a)");
+            Assert.IsNull(HomeRules.TargetSlot(_def, _state, "bed", 4, Vector2.zero), "no slot for the group");
+        }
+
+        [Test]
+        public void BoxDiff_SpawnsMissingAndDropsExtra()
+        {
+            // storage: 2 carpet_a, 1 bench; boxes in the world: carpet_a, lamp (stale), carpet_a, carpet_a
+            _state.Storage["carpet_a"] = 2;
+            _state.Storage["bench"] = 1;
+            var live = new List<string> { "carpet_a", "lamp", "carpet_a", "carpet_a" };
+            var spawn = new List<string>();
+            var extra = new List<int>();
+            HomeRules.BoxDiff(_state.Storage, live, spawn, extra);
+            CollectionAssert.AreEqual(new[] { "bench" }, spawn);
+            CollectionAssert.AreEquivalent(new[] { 1, 3 }, extra, "the stale lamp and the third carpet_a");
+        }
+
+        [Test]
+        public void Comfort_CountsFactorySlots()
+        {
+            HomeRules.PlaceFactory(_state, Slot("living_sofa"));
+            HomeRules.PlaceFactory(_state, Slot("living_chair1"));
+            Assert.AreEqual(14, HomeRules.Comfort(_def, _state));
+        }
+
+        [Test]
+        public void RoomGift_PaidOnce_EvenAfterSwap()
+        {
+            HomeRules.Buy(_state, Item("carpet_a"));
+            HomeRules.Buy(_state, Item("carpet_b"));
+            HomeRules.PlaceFactory(_state, Slot("living_sofa"));
+            Assert.IsFalse(HomeRules.TryClaimGift(_def, _state, "living", out _), "not complete");
+            HomeRules.PlaceFactory(_state, Slot("living_chair1"));
+            HomeRules.TryPlaceItem(_def, _state, Slot("living_carpet"), 2, "carpet_a");
+            Assert.IsTrue(HomeRules.IsAreaComplete(_def, _state, "living"));
+            Assert.IsTrue(HomeRules.TryClaimGift(_def, _state, "living", out long gift));
+            Assert.AreEqual(5000, gift);
+            HomeRules.Swap(_state, Slot("living_carpet"), "carpet_b");
+            Assert.IsFalse(HomeRules.TryClaimGift(_def, _state, "living", out _));
+            Assert.IsTrue(_state.RewardedAreas.Contains("living"));
+        }
+
+        [Test]
+        public void SaleMultiplier_200Comfort_Is1_2()
+        {
+            Assert.AreEqual(1.2, HomeRules.SaleMultiplier(_def, 200), 1e-9);
+            Assert.AreEqual(1.0, HomeRules.SaleMultiplier(_def, 0), 1e-9);
+        }
+    }
+}

@@ -52,6 +52,33 @@ namespace FF.Tests
         }
 
         [Test]
+        public void RemoveAt_TakesAMiddleItem_AndCloseTheGap()
+        {
+            ItemStack s = Stack(5);
+            Land(s, ItemType.Log);
+            Land(s, ItemType.Log);
+            Land(s, ItemType.Log);
+            Item b = s[1], c = s[2];
+            Assert.AreSame(b, s.RemoveAt(1));
+            Assert.AreEqual(2, s.Settled);
+            Assert.AreSame(c, s[1]);
+            Assert.AreEqual(0.3f, c.transform.localPosition.y, 1e-5f, "c moved down into b's slot");
+            Assert.AreEqual(ItemType.Log, s.Type);
+            s.RemoveAt(0);
+            s.RemoveAt(0);
+            Assert.AreEqual(ItemType.None, s.Type, "empty non-fixed stack is untyped again");
+            Assert.IsNull(s.RemoveAt(0));
+        }
+
+        [Test]
+        public void HomeBox_IsNotAProduct()
+        {
+            Assert.IsFalse(ItemTypes.IsProduct(ItemType.HomeBox), "boxes must not go on shelves or trucks");
+            Assert.IsTrue(ItemTypes.IsProduct(ItemType.Material));
+            Assert.IsTrue(ItemTypes.IsProduct(ItemType.Chair));
+        }
+
+        [Test]
         public void NonFixedStack_TakesTypeOfFirstIncomingItem()
         {
             ItemStack s = Stack(5);
@@ -219,6 +246,18 @@ namespace FF.Tests
             hands.Pop();
             Land(hands, ItemType.Plank);
             Assert.IsFalse(ZoneTransferRules.CanPickup(zone, hands), "hands full");
+        }
+
+        [Test]
+        public void CanPickup_CarryLimit_OneBoxAtATime()
+        {
+            ItemStack pile = Stack(30, ItemType.Log), hands = Stack(5);
+            Land(pile, ItemType.Log);
+            Land(pile, ItemType.Log);
+            Assert.IsTrue(ZoneTransferRules.CanPickup(pile, hands, 1));
+            Land(hands, ItemType.Log);
+            Assert.IsFalse(ZoneTransferRules.CanPickup(pile, hands, 1), "the hands may hold one from this pile");
+            Assert.IsTrue(ZoneTransferRules.CanPickup(pile, hands, 0), "0 = no limit");
         }
     }
 }
