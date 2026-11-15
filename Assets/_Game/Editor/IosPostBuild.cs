@@ -12,6 +12,7 @@ namespace FF.Editor
     public static class IosPostBuild
     {
         const string Key = "NSUserTrackingUsageDescription";
+        const string EncryptionKey = "ITSAppUsesNonExemptEncryption";
         const string TrackingDescription =
             "Your choice lets us show ads that fit you better. The game shows ads between levels and short videos you choose to watch for a reward.";
 
@@ -45,6 +46,11 @@ end
             Debug.Log($"[FF] iOS: pods raised to iOS {MinimumIos} in the Podfile.");
         }
 
+        /// <summary>
+        /// Writes the App Tracking Transparency description and the export-compliance answer into Info.plist. The game
+        /// only uses HTTPS through iOS (exempt encryption), so <c>ITSAppUsesNonExemptEncryption = false</c> lets App Store
+        /// Connect skip the encryption question for every build.
+        /// </summary>
         [PostProcessBuild(999)]
         public static void OnPostProcessBuild(BuildTarget target, string buildPath)
         {
@@ -52,12 +58,20 @@ end
             string plistPath = Path.Combine(buildPath, "Info.plist");
             if (!File.Exists(plistPath)) return;
             string plist = File.ReadAllText(plistPath);
-            if (plist.Contains($"<key>{Key}</key>")) return;
+            string updated = WithKey(plist, Key, $"<string>{TrackingDescription}</string>");
+            updated = WithKey(updated, EncryptionKey, "<false/>");
+            if (updated == plist) return;
+            File.WriteAllText(plistPath, updated);
+            Debug.Log("[FF] iOS: NSUserTrackingUsageDescription and ITSAppUsesNonExemptEncryption written to Info.plist.");
+        }
+
+        /// <summary>Adds <paramref name="key"/> with <paramref name="valueXml"/> to the root dict; unchanged if the key exists.</summary>
+        public static string WithKey(string plist, string key, string valueXml)
+        {
+            if (plist.Contains($"<key>{key}</key>")) return plist;
             int end = plist.LastIndexOf("</dict>", System.StringComparison.Ordinal);
-            if (end < 0) return;
-            plist = plist.Insert(end, $"  <key>{Key}</key>\n    <string>{TrackingDescription}</string>\n  ");
-            File.WriteAllText(plistPath, plist);
-            Debug.Log("[FF] iOS: NSUserTrackingUsageDescription written to Info.plist.");
+            if (end < 0) return plist;
+            return plist.Insert(end, $"  <key>{key}</key>\n    {valueXml}\n  ");
         }
     }
 }

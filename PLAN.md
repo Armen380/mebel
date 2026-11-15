@@ -5,6 +5,15 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
+### iOS export compliance key (user request 2026-11-16: "Да, добавь") (branch `ios-export-compliance`)
+Status: **In progress**. App Store Connect asks about encryption for every build because Info.plist has no
+`ITSAppUsesNonExemptEncryption`. The game only uses HTTPS through iOS → exempt → the key is `false`.
+Build 4 (already uploaded) still needs the manual answer "None of the algorithms mentioned above".
+- [x] `IosPostBuild` writes `ITSAppUsesNonExemptEncryption = false` into Info.plist (pure helper `WithKey` + IosPostBuildTests)
+- [x] Hook run on a copy of Builds/iOS/Info.plist: plutil OK, key = false, ATT text kept, second run changes nothing
+- [ ] Full EditMode suite (blocked 2026-11-16: the Editor was in the user's Play Mode, test runs timed out)
+- [ ] PR, merge after the user's OK; the key reaches the store with the next build
+
 ### M10 Dream House (user request 2026-11-14, after Apple's 4.3(a) rejection of 1.0) (branch `m10-dream-house`)
 Status: **In progress** — merged into main (PR #27, user OK 2026-11-15); next: T12 release 1.0.2.
 - Design: docs/superpowers/specs/2026-11-14-dream-house-design.md (user decisions: build by hand like the game, Home Store
