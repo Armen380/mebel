@@ -6,7 +6,7 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 ## In progress
 
 ### M10 Dream House (user request 2026-11-14, after Apple's 4.3(a) rejection of 1.0) (branch `m10-dream-house`)
-Status: **In progress** — implemented and reviewed; waiting for the user's play-test, then merge and T12.
+Status: **In progress** — merged into main (PR #27, user OK 2026-11-15); next: T12 release 1.0.2.
 - Design: docs/superpowers/specs/2026-11-14-dream-house-design.md (user decisions: build by hand like the game, Home Store
   next to the house, walk inside, fixed slots, Armenian style, same scene + catalog panel; 1б no house tutorial, 2а
   furnishing only, no upkeep).
@@ -54,7 +54,7 @@ Status: **In progress** — implemented and reviewed; waiting for the user's pla
   nearest slot it can swap with). Tutorial arrows keep priority, the box comes before unlock-card guides.
   - [x] HomeRules.TargetSlot (nearest free, else swap), test
   - [x] HomeBoxes.TryGetGuide + GuideTrail source; Play Mode check on the user's save (rose box → arrows to the tulip bed); tests 666/666; pushed to PR #27
-- [ ] Merge into main after the user's OK
+- [x] Merge into main after the user's OK (user 2026-11-15: "Всё ок, сливай"; PR #27)
 - Deferred review minors (not blocking): a few slots reachable through a wall (wardrobe, kitchen, bowl, towel — move
   0.2–0.4 m in); a swap doesn't autosave until the next money change; standing on the stage pad pays all four stages in a
   row; some home tunables are MonoBehaviour constants; HomeStoreRow caches no CanvasGroup; loading doesn't validate
