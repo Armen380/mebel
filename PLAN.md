@@ -69,8 +69,9 @@ Status: **In progress** — merged into main (PR #27, user OK 2026-11-15); next:
   - [x] Screenshots 0a-dream-house, 0b-inside, 0c-home-store (English, furnished house) in Builds/Screenshots/{iPhone 1320×2868,
     iPad 2064×2752, iPhone-1206x2622, Device-2007x2853}; they sort before the old 1–5
   - [x] Store texts en/ru + App Review notes: Builds/StoreTexts-1.0.2.md
-  - [ ] User: App Store Connect — rename version 1.0 → 1.0.2, upload IPA build 4 (Claude can upload on the user's yes), new
-    screenshots first, texts, review notes, submit
+  - [x] IPA 1.0.2 (4) uploaded to App Store Connect 2026-11-15 (user: "Да, загружай"; xcodebuild export destination=upload, Upload succeeded)
+  - [ ] User: App Store Connect — rename version 1.0 → 1.0.2, pick build 4, new screenshots first, texts and review notes
+    from Builds/StoreTexts-1.0.2.md, submit
   - [ ] Google Play: AAB code 4 after 1.0 is published (user decision)
 
 ### Release prep (user request 2026-11-06: "do the LevelPlay app, keystore, IPA and Profiler yourself; tell me what you cannot") (branch `release-prep`)
