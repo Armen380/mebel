@@ -40,12 +40,22 @@ namespace FF.Gameplay.Tutorial
             for (int i = 0; i < marks.Length; i++) marks[i].gameObject.SetActive(false);
         }
 
+        FF.Gameplay.Home.HomeBoxes _homeBoxes;
+        bool _homeBoxesLooked;
+
         void LateUpdate()
         {
             _mode ??= Services.Get<GameMode>();
+            if (_homeBoxes == null && !_homeBoxesLooked)
+            {
+                _homeBoxesLooked = true;
+                Services.TryGet(out _homeBoxes);
+            }
             int n = 0;
             float yaw = 0f;
-            if (!_mode.InMenu && (tutorial.TryGetTarget(out Vector3 target) || unlocks.TryGetGuide(out target)))
+            // tutorial first, then the slot of a carried Dream House box (M10 play-test), then unlock-card guides
+            if (!_mode.InMenu && (tutorial.TryGetTarget(out Vector3 target) ||
+                                  (_homeBoxes != null && _homeBoxes.TryGetGuide(out target)) || unlocks.TryGetGuide(out target)))
             {
                 _phase = (_phase + Time.deltaTime * config.speed) % config.spacing;
                 Vector3 p = player.position;

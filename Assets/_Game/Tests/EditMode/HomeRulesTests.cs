@@ -132,6 +132,25 @@ namespace FF.Tests
         }
 
         [Test]
+        public void TargetSlot_NearestFreeElseSwap()
+        {
+            Slot("living_carpet").protoPos = new Vector2(10, 0);
+            Slot("yard_carpet").protoPos = new Vector2(2, 0);
+            HomeRules.Buy(_state, Item("carpet_a"));
+            HomeRules.Buy(_state, Item("carpet_b"));
+            Assert.AreEqual("yard_carpet", HomeRules.TargetSlot(_def, _state, "carpet_a", 2, new Vector2(0, 0)).id, "nearest free");
+            Assert.AreEqual("living_carpet", HomeRules.TargetSlot(_def, _state, "carpet_a", 2, new Vector2(12, 0)).id);
+            Assert.AreEqual("yard_carpet", HomeRules.TargetSlot(_def, _state, "carpet_a", 1, new Vector2(12, 0)).id, "living closed at stage 1");
+            HomeRules.TryPlaceItem(_def, _state, Slot("yard_carpet"), 2, "carpet_a");
+            Assert.AreEqual("living_carpet", HomeRules.TargetSlot(_def, _state, "carpet_b", 2, new Vector2(0, 0)).id, "free beats a nearer swap");
+            HomeRules.TryPlaceItem(_def, _state, Slot("living_carpet"), 2, "carpet_b");
+            HomeRules.Buy(_state, Item("carpet_a"));
+            Assert.AreEqual("living_carpet", HomeRules.TargetSlot(_def, _state, "carpet_a", 2, new Vector2(0, 0)).id,
+                "no free slot: the slot with another variant (the yard one already has carpet_a)");
+            Assert.IsNull(HomeRules.TargetSlot(_def, _state, "bed", 4, Vector2.zero), "no slot for the group");
+        }
+
+        [Test]
         public void BoxDiff_SpawnsMissingAndDropsExtra()
         {
             // storage: 2 carpet_a, 1 bench; boxes in the world: carpet_a, lamp (stale), carpet_a, carpet_a

@@ -80,6 +80,29 @@ namespace FF.Gameplay.Home
             return false;
         }
 
+        /// <summary>
+        /// Where a carried box should go (floor arrows): the nearest empty open slot of its group, else the nearest open
+        /// slot holding another variant (a swap); null when neither exists. <paramref name="fromProto"/> is in prototype x, z.
+        /// </summary>
+        public static HomeDef.SlotDef TargetSlot(HomeDef d, HomeState s, string itemId, int stage, UnityEngine.Vector2 fromProto)
+        {
+            HomeDef.HomeItemDef item = d.Item(itemId);
+            if (item == null) return null;
+            HomeDef.SlotDef free = null, swap = null;
+            float freeD = float.MaxValue, swapD = float.MaxValue;
+            foreach (HomeDef.SlotDef slot in d.slots)
+            {
+                if (slot.IsFactory || slot.group != item.group || !IsSlotOpen(d, slot, stage)) continue;
+                float dist = (slot.protoPos - fromProto).sqrMagnitude;
+                if (!s.Placed.TryGetValue(slot.id, out string placed))
+                {
+                    if (dist < freeD) { freeD = dist; free = slot; }
+                }
+                else if (placed != itemId && dist < swapD) { swapD = dist; swap = slot; }
+            }
+            return free ?? swap;
+        }
+
         /// <summary>Items of a group in storage plus placed.</summary>
         public static int Owned(HomeDef d, HomeState s, string group)
         {

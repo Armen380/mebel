@@ -49,6 +49,11 @@ Status: **In progress** — implemented and reviewed; waiting for the user's pla
   happened; the TV and garden-lamp boxes (free slots) were lower in the pile. Fix: the pile keeps boxes with a free slot
   on top (HomeRules.HasFreeSlot + HomeBoxes.SortPile on every pile change). Checked on the user's save: first box =
   garden lamps → placed. Tests 665/665.
+- [x] **Play-test change 4 (user 2026-11-15): "когда выбираю коробку, пусть мне укажет, где её вставить".** While a Home
+  Store box is in the hands, the floor arrows (GuideTrail) lead to the nearest free open slot of its group (else the
+  nearest slot it can swap with). Tutorial arrows keep priority, the box comes before unlock-card guides.
+  - [x] HomeRules.TargetSlot (nearest free, else swap), test
+  - [x] HomeBoxes.TryGetGuide + GuideTrail source; Play Mode check on the user's save (rose box → arrows to the tulip bed); tests 666/666; pushed to PR #27
 - [ ] Merge into main after the user's OK
 - Deferred review minors (not blocking): a few slots reachable through a wall (wardrobe, kitchen, bowl, towel — move
   0.2–0.4 m in); a swap doesn't autosave until the next money change; standing on the stage pad pays all four stages in a

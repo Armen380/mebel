@@ -145,6 +145,20 @@ namespace FF.Gameplay.Home
             return box;
         }
 
+        /// <summary>Floor-arrow target while a box is in the hands: its slot (nearest free, else a swap).</summary>
+        public bool TryGetGuide(out Vector3 target)
+        {
+            target = default;
+            ItemStack hands = carrier.Stack;
+            if (!_started || hands.Type != ItemType.HomeBox || hands.Settled == 0) return false;
+            Vector3 p = carrier.transform.position;
+            HomeDef.SlotDef slot = HomeRules.TargetSlot(_def, _home.State, hands[hands.Settled - 1].HomeItemId, _home.Stage,
+                new Vector2(p.x, -p.z)); // Unity → prototype (z mirrored)
+            if (slot == null) return false;
+            target = ProtoCoords.ToUnity(slot.protoPos.x, slot.protoPos.y);
+            return true;
+        }
+
         /// <summary>The top-most carried box of a group (optionally not of one item); -1 if none.</summary>
         public int FindCarried(string group, string notItem)
         {
