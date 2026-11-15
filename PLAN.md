@@ -11,7 +11,8 @@ Status: **In progress**. App Store Connect asks about encryption for every build
 Build 4 (already uploaded) still needs the manual answer "None of the algorithms mentioned above".
 - [x] `IosPostBuild` writes `ITSAppUsesNonExemptEncryption = false` into Info.plist (pure helper `WithKey` + IosPostBuildTests)
 - [x] Hook run on a copy of Builds/iOS/Info.plist: plutil OK, key = false, ATT text kept, second run changes nothing
-- [ ] Full EditMode suite (blocked 2026-11-16: the Editor was in the user's Play Mode, test runs timed out)
+- [x] Full EditMode suite 668/668 (headless `unity test --mode EditMode`; the Editor was closed). Note: tests in a
+  running Editor time out while it is in Play Mode — stop Play Mode first (ask the user)
 - [ ] PR, merge after the user's OK; the key reaches the store with the next build
 
 ### M10 Dream House (user request 2026-11-14, after Apple's 4.3(a) rejection of 1.0) (branch `m10-dream-house`)
