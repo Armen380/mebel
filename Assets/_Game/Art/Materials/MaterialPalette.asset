@@ -1087,3 +1087,9 @@ MonoBehaviour:
     unlit: 0
     material: {fileID: 2100000, guid: 74756fffcdee5416d9ffdea1c73e5b71, type: 2}
     ghost: {fileID: 2100000, guid: 1c1c8cc072ff149bb869f17139915f6e, type: 2}
+  - color:
+      serializedVersion: 2
+      rgba: 4284454856
+    unlit: 0
+    material: {fileID: 2100000, guid: 281ce385dfd244215bcb2d628d60f05b, type: 2}
+    ghost: {fileID: 2100000, guid: 8427c9e24dbd647f8a7222bf4da1da6a, type: 2}

@@ -12,6 +12,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 207b990326e794324b6c0a22ec0334a4, type: 3}
   m_Name: Home
   m_EditorClassIdentifier: FF.Data::FF.Data.HomeDef
+  iconGroups:
+  - carpet
+  - lamp
+  - tv
+  - painting
+  - plant
+  - fridge
+  - stove
+  - bowl
+  - bed
+  - nightstand
+  - tub
+  - mirror
+  - towel
+  - pergola
+  - tree
+  - flowers
+  - bench
+  - fountain
+  - pool
+  - lampposts
+  iconSprites:
+  - {fileID: 21300000, guid: db761acf80a724537bc296a97dcb6c07, type: 3}
+  - {fileID: 21300000, guid: dacfefa91213c421684c74af6f88622e, type: 3}
+  - {fileID: 21300000, guid: d3aa4c3f68d614fa9a2149333dc26ac1, type: 3}
+  - {fileID: 21300000, guid: dd17caa7f4c5d4895a7080e9a93663fa, type: 3}
+  - {fileID: 21300000, guid: 071e67eaf65614a9dabe645c0d06162a, type: 3}
+  - {fileID: 21300000, guid: 216741a37bb1149f2b05f1841c2de266, type: 3}
+  - {fileID: 21300000, guid: 6bf452e0adf4a4dfa8bbc4a5b4c9e3d2, type: 3}
+  - {fileID: 21300000, guid: 961137cd375a74f2081ddd34089b7d7c, type: 3}
+  - {fileID: 21300000, guid: 50979a079b4a34a7f9358e6c35f3af7b, type: 3}
+  - {fileID: 21300000, guid: 7f091099ed96c491f9f74a853080c96f, type: 3}
+  - {fileID: 21300000, guid: 048df678310534166afda6efe06dd1ff, type: 3}
+  - {fileID: 21300000, guid: c161ad4d504694cc7a868879cba64f9c, type: 3}
+  - {fileID: 21300000, guid: 98e574187f94844d0964f17de84cf53a, type: 3}
+  - {fileID: 21300000, guid: 81a5702ee09864e6fb5b05f619982aff, type: 3}
+  - {fileID: 21300000, guid: e269fdf89784e4f82b6a903384fa36c6, type: 3}
+  - {fileID: 21300000, guid: 82587f79ae94b4203aa8b305e338f807, type: 3}
+  - {fileID: 21300000, guid: 5f395ea0937ee4af5bfa73bd17604208, type: 3}
+  - {fileID: 21300000, guid: 8253b944887e04817ab13c24e11816f8, type: 3}
+  - {fileID: 21300000, guid: 7ee98062985914316b236a65a2718e4b, type: 3}
+  - {fileID: 21300000, guid: 2e1cf71670abf452b9c40fb429741024, type: 3}
   comfortBonusPerPoint: 0.001
   areas:
   - id: living

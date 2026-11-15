@@ -23,11 +23,14 @@ namespace FF.Editor.World
         const int Vine = HouseBuilder.Vine, Honey = HouseBuilder.Honey, Cream = 0xf6ecd9, White = 0xf2f2f0, Steel = 0x9aa3ad;
         const int Water = 0x4fb3d9, Leaf = 0x3f8f3a, Terracotta = 0xc4643f, Brass = 0xd2a64a, Ink = 0x2b2d33;
         static readonly Color DropTint = new Color(43 / 255f, 29 / 255f, 20 / 255f, 0.30f);
+        static readonly Color PickupTint = new Color(61 / 255f, 138 / 255f, 49 / 255f, 0.42f);
 
         public sealed class Result
         {
             public readonly List<HomeSlot> Slots = new List<HomeSlot>();
             public readonly List<Zone> Zones = new List<Zone>();
+            /// <summary>Pickup pile of Home Store boxes at the counter.</summary>
+            public Zone Pile;
         }
 
         /// <summary>Furniture size of the carried product models (item prefabs are hand-size).</summary>
@@ -52,6 +55,13 @@ namespace FF.Editor.World
             var zones = new ZoneFactory(db);
             Material drop = ZoneFactory.TransparentMaterial("ZoneMarker_Drop", TextureFactory.ZoneMarker("Drop", DropTint, -1), 10);
             var b = new Blockout(mirrorZ: true);
+
+            // bought items wait here in boxes and fly into the hands (play-test change 2026-11-15)
+            Material pickup = ZoneFactory.TransparentMaterial("ZoneMarker_Pickup", TextureFactory.ZoneMarker("Pickup", PickupTint, 1), 10);
+            Vector2 counter = db.world.dreamHouse.homeStoreCounter;
+            result.Pile = zones.Zone("home_boxes", slotsRoot, ZoneKind.Pickup, ItemType.HomeBox, counter + new Vector2(1.0f, 0.1f),
+                new Vector3(0f, 0f, -0.6f), "sign.homeStore", null, pickup);
+            result.Zones.Add(result.Pile);
 
             foreach (HomeDef.SlotDef s in home.slots)
             {

@@ -67,14 +67,6 @@ namespace FF.Gameplay.Home
             return true;
         }
 
-        public int Variants(string slotId, System.Collections.Generic.List<string> into)
-        {
-            HomeDef.SlotDef slot = _def.Slot(slotId);
-            if (slot != null) return HomeRules.OtherVariants(_def, State, slot, into);
-            into.Clear();
-            return 0;
-        }
-
         public bool Swap(string slotId, string itemId)
         {
             HomeDef.SlotDef slot = _def.Slot(slotId);
@@ -98,10 +90,11 @@ namespace FF.Gameplay.Home
             return true;
         }
 
-        public bool TryPlaceFromStorage(string slotId)
+        /// <summary>Unpacks a carried Home Store item on an empty open slot of its group.</summary>
+        public bool TryPlaceItem(string slotId, string itemId)
         {
             HomeDef.SlotDef slot = _def.Slot(slotId);
-            if (slot == null || !HomeRules.TryPlaceFromStorage(_def, State, slot, Stage, out _)) return false;
+            if (slot == null || !HomeRules.TryPlaceItem(_def, State, slot, Stage, itemId)) return false;
             Placed(slot);
             return true;
         }

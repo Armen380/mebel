@@ -61,3 +61,7 @@ MonoBehaviour:
     stackHeight: 0.56
     prefab: {fileID: 4824063836534617295, guid: 7236483a029254be2b7eff3161289a89, type: 3}
     prewarm: 30
+  - type: 13
+    stackHeight: 0.42
+    prefab: {fileID: 6849305570308079252, guid: 1484d0c2f6be64cb3b0dce5978ec32ba, type: 3}
+    prewarm: 12

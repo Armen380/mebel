@@ -134,6 +134,7 @@ namespace FF.Editor
             if (old != null) Object.DestroyImmediate(old.gameObject);
             var go = new GameObject("Home");
             go.transform.SetParent(systems, false);
+            go.AddComponent<FF.Gameplay.Home.HomeBoxes>().Setup(slots.Pile, player.GetComponent<PlayerCarrier>());
             go.AddComponent<FF.Gameplay.Home.HomeSlotSystem>().Setup(slots.Slots, player.GetComponent<PlayerMover>());
         }
 
@@ -310,7 +311,6 @@ namespace FF.Editor
             HomeHudBuilder.BuildComfortChip(safe);
             HudBuilder.BuildQuestBar(safe);
             HudBuilder.BuildToast(safe);
-            HomeHudBuilder.BuildVariantPicker(safe, db);
             BuildThrowButton(safe);
             RectTransform upgradesButton = HudBuilder.BuildUpgradesButton(safe, out GameObject badge);
             HudBuilder.BuildUnlockCard(safe);

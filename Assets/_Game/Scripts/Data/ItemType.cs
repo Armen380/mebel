@@ -15,12 +15,14 @@ namespace FF.Data
         Kitchen,
         Sink,
         Material,
+        /// <summary>Dream House: a Home Store item packed in a box (M10); its item id is on the Item. Not a product.</summary>
+        HomeBox,
     }
 
     public static class ItemTypes
     {
         /// <summary>Furniture and building materials (prototype <c>isProduct</c>): everything a truck takes.</summary>
-        public static bool IsProduct(ItemType type) => type >= ItemType.Chair;
+        public static bool IsProduct(ItemType type) => type >= ItemType.Chair && type <= ItemType.Material;
     }
 
     public enum ShopKind

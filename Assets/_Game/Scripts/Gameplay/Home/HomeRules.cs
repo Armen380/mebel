@@ -26,31 +26,39 @@ namespace FF.Gameplay.Home
         /// <summary>Product id of a factory item type ("sofa" for Sofa), as ProductDef ids are.</summary>
         public static string ProductId(ItemType type) => type.ToString().ToLowerInvariant();
 
-        /// <summary>Places the first item of the slot's group (catalog order) that is in storage.</summary>
-        public static bool TryPlaceFromStorage(HomeDef d, HomeState s, HomeDef.SlotDef slot, int stage, out string itemId)
+        /// <summary>Places a carried item (from storage) on an empty open slot of its group.</summary>
+        public static bool TryPlaceItem(HomeDef d, HomeState s, HomeDef.SlotDef slot, int stage, string itemId)
         {
-            itemId = null;
-            if (slot.IsFactory || s.Placed.ContainsKey(slot.id) || !IsSlotOpen(d, slot, stage)) return false;
-            foreach (HomeDef.HomeItemDef item in d.items)
-            {
-                if (item.group != slot.group || Count(s, item.id) <= 0) continue;
-                Take(s, item.id);
-                s.Placed[slot.id] = item.id;
-                itemId = item.id;
-                return true;
-            }
-            return false;
+            HomeDef.HomeItemDef item = d.Item(itemId);
+            if (item == null || slot.IsFactory || item.group != slot.group || s.Placed.ContainsKey(slot.id) ||
+                Count(s, itemId) <= 0 || !IsSlotOpen(d, slot, stage)) return false;
+            Take(s, itemId);
+            s.Placed[slot.id] = itemId;
+            return true;
         }
 
-        /// <summary>Storage items of the slot's group other than the placed one; returns how many were added.</summary>
-        public static int OtherVariants(HomeDef d, HomeState s, HomeDef.SlotDef slot, List<string> into)
+        /// <summary>
+        /// Boxes in the world vs storage: item ids to spawn as boxes, and indices of <paramref name="liveBoxes"/> that no
+        /// longer have a storage item behind them.
+        /// </summary>
+        public static void BoxDiff(IReadOnlyDictionary<string, int> storage, IReadOnlyList<string> liveBoxes, List<string> spawn, List<int> extra)
         {
-            into.Clear();
-            if (slot.IsFactory) return 0;
-            s.Placed.TryGetValue(slot.id, out string placed);
-            foreach (HomeDef.HomeItemDef item in d.items)
-                if (item.group == slot.group && item.id != placed && Count(s, item.id) > 0) into.Add(item.id);
-            return into.Count;
+            spawn.Clear();
+            extra.Clear();
+            var seen = new Dictionary<string, int>();
+            for (int i = 0; i < liveBoxes.Count; i++)
+            {
+                string id = liveBoxes[i];
+                seen.TryGetValue(id ?? "", out int n);
+                storage.TryGetValue(id ?? "", out int want);
+                if (n >= want) extra.Add(i);
+                else seen[id] = n + 1;
+            }
+            foreach (KeyValuePair<string, int> kv in storage)
+            {
+                seen.TryGetValue(kv.Key, out int have);
+                for (int k = have; k < kv.Value; k++) spawn.Add(kv.Key);
+            }
         }
 
         /// <summary>Puts the placed item back into storage and places <paramref name="itemId"/> from storage instead.</summary>

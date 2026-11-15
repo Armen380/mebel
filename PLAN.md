@@ -24,7 +24,20 @@ Status: **In progress** — implemented and reviewed; waiting for the user's pla
 - [x] T9 Cut-away inside the house (front wall sinks, roof hides) + camera zoom ×0.75
 - [x] T10 Comfort chip (HUD, from the foundation) and a one-time guide to the Home Store
 - [x] T11 Tests 660/660, Play Mode checks, whole-branch review (2 Important fixed: per-item buy cap, cut-away from the walls stage)
-- [ ] User play-test, merge into main
+- [x] User play-test 2026-11-15: "все отлично"
+- [x] **Play-test change (user 2026-11-15): bought items are carried in boxes.** User decision: boxes with the item's icon
+  (not mini models). Design (approved): a bought item appears as a box on a pickup pile at the Home Store counter and
+  flies into the hands (waits there while the hands hold something else); carrying a box to the ghost of its group
+  unpacks it on the slot; a box of another variant brought to a placed slot swaps it (the old item comes back as a box
+  into the hands) — the variant picker is removed; thrown boxes (Q) fly back to the pile; save keeps boxes as storage
+  (they reappear on the pile).
+  - [x] ItemType.HomeBox (not a product: no shelves / trucks), Item.HomeItemId, box prefab with an icon label
+  - [x] ItemStack.RemoveAt (take a matching box from the middle of the stack)
+  - [x] HomeRules.TryPlaceItem (a specific item), HomeService.TryPlaceItem; drop the "place from storage by standing" path
+  - [x] HomeBoxes (pickup pile at the counter, boxes ↔ storage reconcile, throw returns), HomeSlotSystem carries boxes
+  - [x] Remove the variant picker (UI, event, IHomeStore.Variants)
+  - [x] Tests 663/663; Play Mode: 2 carpets bought at the counter → boxes into the hands → star unpacked on the living carpet slot → vishap box swapped in (star back in the hands) → thrown boxes back on the pile; pushed to PR #27
+- [ ] Merge into main after the user's OK
 - Deferred review minors (not blocking): a few slots reachable through a wall (wardrobe, kitchen, bowl, towel — move
   0.2–0.4 m in); a swap doesn't autosave until the next money change; standing on the stage pad pays all four stages in a
   row; some home tunables are MonoBehaviour constants; HomeStoreRow caches no CanvasGroup; loading doesn't validate

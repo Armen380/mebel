@@ -68,7 +68,7 @@ namespace FF.Tests
             Assert.AreEqual(2, HomeRules.OwnedItem(_def, _state, "carpet_a"));
             Assert.IsFalse(HomeRules.CanBuy(_def, _state, Item("carpet_a"), 2, 10000), "two carpet slots, two of this carpet owned");
             Assert.IsTrue(HomeRules.CanBuy(_def, _state, Item("carpet_b"), 2, 10000), "another variant is still buyable");
-            HomeRules.TryPlaceFromStorage(_def, _state, Slot("living_carpet"), 2, out _);
+            HomeRules.TryPlaceItem(_def, _state, Slot("living_carpet"), 2, "carpet_a");
             Assert.AreEqual(2, HomeRules.OwnedItem(_def, _state, "carpet_a"), "placed ones count too");
             Assert.IsFalse(HomeRules.CanBuy(_def, _state, Item("carpet_a"), 2, 10000));
         }
@@ -90,33 +90,48 @@ namespace FF.Tests
         }
 
         [Test]
-        public void StorageItem_PlacedThenSwapped_ComfortFollowsPlacedItem()
+        public void CarriedItem_PlacedThenSwapped_ComfortFollowsPlacedItem()
         {
             HomeRules.Buy(_state, Item("carpet_a"));
             HomeRules.Buy(_state, Item("carpet_b"));
-            Assert.IsFalse(HomeRules.TryPlaceFromStorage(_def, _state, Slot("living_carpet"), 1, out _), "living closed at stage 1");
-            Assert.IsTrue(HomeRules.TryPlaceFromStorage(_def, _state, Slot("living_carpet"), 2, out string placed));
-            Assert.AreEqual("carpet_a", placed, "catalog order");
-            Assert.AreEqual(0, _state.Storage.TryGetValue("carpet_a", out int a) ? a : 0);
-            Assert.AreEqual(4, HomeRules.Comfort(_def, _state));
-
-            var others = new List<string>();
-            Assert.AreEqual(1, HomeRules.OtherVariants(_def, _state, Slot("living_carpet"), others));
-            Assert.AreEqual("carpet_b", others[0]);
-
-            Assert.IsTrue(HomeRules.Swap(_state, Slot("living_carpet"), "carpet_b"));
-            Assert.AreEqual("carpet_b", _state.Placed["living_carpet"]);
-            Assert.AreEqual(1, _state.Storage["carpet_a"]);
+            Assert.IsFalse(HomeRules.TryPlaceItem(_def, _state, Slot("living_carpet"), 1, "carpet_b"), "living closed at stage 1");
+            Assert.IsTrue(HomeRules.TryPlaceItem(_def, _state, Slot("living_carpet"), 2, "carpet_b"));
+            Assert.AreEqual("carpet_b", _state.Placed["living_carpet"], "the carried variant, not catalog order");
+            Assert.IsFalse(_state.Storage.ContainsKey("carpet_b"));
             Assert.AreEqual(6, HomeRules.Comfort(_def, _state));
+
+            Assert.IsTrue(HomeRules.Swap(_state, Slot("living_carpet"), "carpet_a"));
+            Assert.AreEqual("carpet_a", _state.Placed["living_carpet"]);
+            Assert.AreEqual(1, _state.Storage["carpet_b"]);
+            Assert.AreEqual(4, HomeRules.Comfort(_def, _state));
             Assert.IsFalse(HomeRules.Swap(_state, Slot("living_carpet"), "bench"), "not in storage");
         }
 
         [Test]
-        public void EmptySlot_NothingInStorage_NotPlaced()
+        public void TryPlaceItem_RefusesWrongGroupFilledSlotOrNotOwned()
         {
-            Assert.IsFalse(HomeRules.TryPlaceFromStorage(_def, _state, Slot("yard_carpet"), 2, out _));
+            Assert.IsFalse(HomeRules.TryPlaceItem(_def, _state, Slot("yard_carpet"), 2, "carpet_a"), "not bought");
             HomeRules.Buy(_state, Item("bench"));
-            Assert.IsFalse(HomeRules.TryPlaceFromStorage(_def, _state, Slot("yard_carpet"), 2, out _), "wrong group");
+            Assert.IsFalse(HomeRules.TryPlaceItem(_def, _state, Slot("yard_carpet"), 2, "bench"), "wrong group");
+            HomeRules.Buy(_state, Item("carpet_a"));
+            HomeRules.Buy(_state, Item("carpet_b"));
+            Assert.IsTrue(HomeRules.TryPlaceItem(_def, _state, Slot("yard_carpet"), 2, "carpet_a"));
+            Assert.IsFalse(HomeRules.TryPlaceItem(_def, _state, Slot("yard_carpet"), 2, "carpet_b"), "slot filled: that is a swap");
+            Assert.IsFalse(HomeRules.TryPlaceItem(_def, _state, Slot("living_sofa"), 2, "carpet_b"), "factory slot");
+        }
+
+        [Test]
+        public void BoxDiff_SpawnsMissingAndDropsExtra()
+        {
+            // storage: 2 carpet_a, 1 bench; boxes in the world: carpet_a, lamp (stale), carpet_a, carpet_a
+            _state.Storage["carpet_a"] = 2;
+            _state.Storage["bench"] = 1;
+            var live = new List<string> { "carpet_a", "lamp", "carpet_a", "carpet_a" };
+            var spawn = new List<string>();
+            var extra = new List<int>();
+            HomeRules.BoxDiff(_state.Storage, live, spawn, extra);
+            CollectionAssert.AreEqual(new[] { "bench" }, spawn);
+            CollectionAssert.AreEquivalent(new[] { 1, 3 }, extra, "the stale lamp and the third carpet_a");
         }
 
         [Test]
@@ -135,7 +150,7 @@ namespace FF.Tests
             HomeRules.PlaceFactory(_state, Slot("living_sofa"));
             Assert.IsFalse(HomeRules.TryClaimGift(_def, _state, "living", out _), "not complete");
             HomeRules.PlaceFactory(_state, Slot("living_chair1"));
-            HomeRules.TryPlaceFromStorage(_def, _state, Slot("living_carpet"), 2, out _);
+            HomeRules.TryPlaceItem(_def, _state, Slot("living_carpet"), 2, "carpet_a");
             Assert.IsTrue(HomeRules.IsAreaComplete(_def, _state, "living"));
             Assert.IsTrue(HomeRules.TryClaimGift(_def, _state, "living", out long gift));
             Assert.AreEqual(5000, gift);

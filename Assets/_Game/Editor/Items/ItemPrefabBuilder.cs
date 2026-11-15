@@ -25,6 +25,7 @@ namespace FF.Editor.Items
             (ItemType.Log, 0.3f, 80), (ItemType.Plank, 0.11f, 180), (ItemType.Clay, 0.28f, 32), (ItemType.Iron, 0.24f, 32),
             (ItemType.Material, 0.3f, 30), (ItemType.Bill, 0.055f, 40), (ItemType.Chair, 0.5f, 52), (ItemType.Sofa, 0.44f, 30),
             (ItemType.Wardrobe, 0.84f, 30), (ItemType.Table, 0.5f, 30), (ItemType.Kitchen, 0.58f, 30), (ItemType.Sink, 0.56f, 30),
+            (ItemType.HomeBox, 0.42f, 12), // M10: Home Store item boxes
         };
 
         [MenuItem("FF/Build Item Prefabs", priority = 22)]
@@ -47,6 +48,7 @@ namespace FF.Editor.Items
                     var root = new GameObject(type.ToString());
                     root.AddComponent<Item>().SetType(type);
                     BuildShape(b, root.transform, type);
+                    if (type == ItemType.HomeBox) BuildBoxLabels(root);
                     prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
                     Object.DestroyImmediate(root);
                 }
@@ -68,6 +70,30 @@ namespace FF.Editor.Items
             AssetDatabase.SaveAssets();
             Debug.Log($"[FF] Item catalog ready ({entries.Count} types{(rebuild ? ", prefabs rebuilt" : "")}).");
             return catalog;
+        }
+
+        /// <summary>Icon labels on the top and the front of a Home Store box; the icon is set per box at runtime.</summary>
+        static void BuildBoxLabels(GameObject root)
+        {
+            Texture2D icon = FF.Editor.Art.TextureFactory.HomeIcon("carpet").texture;
+            Material m = ZoneFactory.TransparentMaterial("HomeBoxLabel", icon, 0);
+            m.SetColor("_BaseColor", new Color32(0x5a, 0x3a, 0x22, 0xff));
+            EditorUtility.SetDirty(m);
+            var renderers = new List<Renderer>();
+            foreach ((Vector3 pos, Vector3 euler) in new[] { (new Vector3(0, 0.403f, 0), Vector3.zero), (new Vector3(0, 0.2f, -0.252f), new Vector3(-90, 0, 0)) })
+            {
+                var go = new GameObject("Label");
+                go.transform.SetParent(root.transform, false);
+                go.transform.localPosition = pos;
+                go.transform.localRotation = Quaternion.Euler(euler);
+                go.transform.localScale = new Vector3(0.3f, 1f, 0.3f);
+                go.AddComponent<MeshFilter>().sharedMesh = FF.Editor.Art.LowPolyMeshFactory.TexturedQuad();
+                var r = go.AddComponent<MeshRenderer>();
+                r.sharedMaterial = m;
+                r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                renderers.Add(r);
+            }
+            root.AddComponent<FF.Gameplay.Home.HomeBoxLabel>().Setup(renderers.ToArray());
         }
 
         static void BuildShape(Blockout b, Transform g, ItemType type)
@@ -138,6 +164,12 @@ namespace FF.Editor.Items
                     b.Box(g, 0.4f, 0.22f, 0.32f, 0x5b6470, 0, 0.11f, 0);
                     b.Box(g, 0.18f, 0.1f, 0.14f, 0xb5653d, 0.08f, 0.24f, 0.04f);
                     b.Box(g, 0.12f, 0.08f, 0.1f, 0x8a949c, -0.1f, 0.23f, -0.06f);
+                    break;
+                case ItemType.HomeBox:
+                    b.Box(g, 0.5f, 0.4f, 0.5f, 0xc8975f, 0, 0.2f, 0);
+                    b.Box(g, 0.1f, 0.012f, 0.52f, 0xe8d29f, 0, 0.402f, 0);
+                    b.Box(g, 0.36f, 0.006f, 0.36f, 0xf6ecd9, 0, 0.4f, 0);
+                    b.Box(g, 0.34f, 0.32f, 0.006f, 0xf6ecd9, 0, 0.2f, 0.25f);
                     break;
                 case ItemType.Material:
                     for (int k = 0; k < 3; k++)

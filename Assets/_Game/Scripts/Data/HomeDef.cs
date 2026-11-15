@@ -45,6 +45,17 @@ namespace FF.Data
 
         public const string YardArea = "yard";
 
+        [Tooltip("Catalog / box label icon per item group (parallel lists, filled by the scene builder).")]
+        public List<string> iconGroups = new List<string>();
+        public List<Sprite> iconSprites = new List<Sprite>();
+
+        public Sprite Icon(string group)
+        {
+            for (int i = 0; i < iconGroups.Count && i < iconSprites.Count; i++)
+                if (iconGroups[i] == group) return iconSprites[i];
+            return null;
+        }
+
         [Tooltip("Sale price bonus per comfort point (0.001 · 200 = +20 % for the best house).")]
         public double comfortBonusPerPoint = 0.001;
         public List<AreaDef> areas = new List<AreaDef>();
