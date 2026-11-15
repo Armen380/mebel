@@ -5,16 +5,6 @@ Full approved plan for M0+M1 (with details per step): see the sections below.
 
 ## In progress
 
-### iOS export compliance key (user request 2026-11-16: "Да, добавь") (branch `ios-export-compliance`)
-Status: **In progress**. App Store Connect asks about encryption for every build because Info.plist has no
-`ITSAppUsesNonExemptEncryption`. The game only uses HTTPS through iOS → exempt → the key is `false`.
-Build 4 (already uploaded) still needs the manual answer "None of the algorithms mentioned above".
-- [x] `IosPostBuild` writes `ITSAppUsesNonExemptEncryption = false` into Info.plist (pure helper `WithKey` + IosPostBuildTests)
-- [x] Hook run on a copy of Builds/iOS/Info.plist: plutil OK, key = false, ATT text kept, second run changes nothing
-- [x] Full EditMode suite 668/668 (headless `unity test --mode EditMode`; the Editor was closed). Note: tests in a
-  running Editor time out while it is in Play Mode — stop Play Mode first (ask the user)
-- [ ] PR, merge after the user's OK; the key reaches the store with the next build
-
 ### M10 Dream House (user request 2026-11-14, after Apple's 4.3(a) rejection of 1.0) (branch `m10-dream-house`)
 Status: **In progress** — merged into main (PR #27, user OK 2026-11-15); next: T12 release 1.0.2.
 - Design: docs/superpowers/specs/2026-11-14-dream-house-design.md (user decisions: build by hand like the game, Home Store
@@ -135,6 +125,7 @@ Notes (done 2026-11-07):
 - 6: APK breakdown: libil2cpp.so 78 MB + global-metadata 14.8 MB of 180 MB uncompressed; managed stripping Minimal → Low with `Assets/_Game/link.xml` (FF.*, Newtonsoft, Localization, LevelPlay kept whole); IL2CPP Release for dev builds, Master for the store AAB / iOS export.
 
 ## Done
+- iOS export compliance key (2026-11-16): `IosPostBuild` writes `ITSAppUsesNonExemptEncryption = false` into Info.plist, 668/668, PR #30 merged; applies from the next iOS build (build 4 answered by hand).
 
 ### Update 1.0.1: floor arrows, worker roles, softer colours (user request 2026-11-10) (branch `update-1.0.1`)
 Result: 1.0.1 merged (PR #25) and built — Builds/Android/FurnitureFactory-1.0.1-3.aab (52.3 MB, jar verified, CN=Armen380 E0:E6:…:48:FC, com.incode.furniturefactory, versionCode 3 / 1.0.1) and Builds/iOS-Archive/FurnitureFactory-1.0.1-3.ipa (129 MB, com.incode.furniturefactory 1.0.1 (3), iPhone + iPad, distribution signing). Not uploaded. User decision 2026-11-10: hold 1.0.1 on BOTH stores until 1.0 passes review and is published on Google Play and the App Store; then upload AAB code 3 (new Play release) and IPA build 3 (new App Store version 1.0.1).
