@@ -247,5 +247,17 @@ namespace FF.Tests
             Land(hands, ItemType.Plank);
             Assert.IsFalse(ZoneTransferRules.CanPickup(zone, hands), "hands full");
         }
+
+        [Test]
+        public void CanPickup_CarryLimit_OneBoxAtATime()
+        {
+            ItemStack pile = Stack(30, ItemType.Log), hands = Stack(5);
+            Land(pile, ItemType.Log);
+            Land(pile, ItemType.Log);
+            Assert.IsTrue(ZoneTransferRules.CanPickup(pile, hands, 1));
+            Land(hands, ItemType.Log);
+            Assert.IsFalse(ZoneTransferRules.CanPickup(pile, hands, 1), "the hands may hold one from this pile");
+            Assert.IsTrue(ZoneTransferRules.CanPickup(pile, hands, 0), "0 = no limit");
+        }
     }
 }

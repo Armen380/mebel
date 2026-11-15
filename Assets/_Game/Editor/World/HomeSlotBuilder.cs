@@ -33,6 +33,16 @@ namespace FF.Editor.World
             public Zone Pile;
         }
 
+        const float SlotMarkerSize = 1.15f;
+
+        static Material SlotIconMaterial(string group, Texture2D icon)
+        {
+            Material m = ZoneFactory.TransparentMaterial("HomeSlotIcon_" + group, icon, 9);
+            m.SetColor("_BaseColor", new Color32(0xfb, 0xf1, 0xde, 0xf0));
+            EditorUtility.SetDirty(m);
+            return m;
+        }
+
         /// <summary>Furniture size of the carried product models (item prefabs are hand-size).</summary>
         static float ProductScale(ItemType t)
         {
@@ -61,6 +71,7 @@ namespace FF.Editor.World
             Vector2 counter = db.world.dreamHouse.homeStoreCounter;
             result.Pile = zones.Zone("home_boxes", slotsRoot, ZoneKind.Pickup, ItemType.HomeBox, counter + new Vector2(1.0f, 0.1f),
                 new Vector3(0f, 0f, -0.6f), "sign.homeStore", null, pickup);
+            result.Pile.SetCarryLimit(1); // one box at a time (play-test change 2026-11-15)
             result.Zones.Add(result.Pile);
 
             foreach (HomeDef.SlotDef s in home.slots)
@@ -68,6 +79,8 @@ namespace FF.Editor.World
                 var go = new GameObject("Slot_" + s.id);
                 go.transform.SetParent(slotsRoot, false);
                 go.transform.position = ProtoCoords.ToUnity(s.protoPos.x, s.protoPos.y);
+                // rooms stand on the foundation slab, the yard on the ground
+                if (s.area != HomeDef.YardArea) go.transform.position += Vector3.up * HouseBuilder.SlabTop;
                 Transform turn = new GameObject("Turn").transform;
                 turn.SetParent(go.transform, false);
                 turn.localRotation = Quaternion.Euler(0, s.yaw, 0);
@@ -102,11 +115,20 @@ namespace FF.Editor.World
                         ids.Add(item.id);
                         models.Add(m.gameObject);
                     }
-                    Transform g = b.Group("Ghost", turn);
+                    // ghost = the translucent first variant (turned with the slot) + a floor marker with the group icon
+                    // (play-test change 2026-11-15: "on the floor a place where exactly to put the box")
+                    var ghostRoot = new GameObject("Ghost");
+                    ghostRoot.transform.SetParent(go.transform, false);
+                    Transform g = b.Group("Model", ghostRoot.transform);
+                    g.localRotation = turn.localRotation;
                     if (first != null) ItemModel(b, g, first.id);
-                    ghost = g.gameObject;
+                    MakeGhost(g.gameObject);
+                    ZoneFactory.Quad(ghostRoot.transform, "Marker", drop, 0.03f, SlotMarkerSize);
+                    Sprite icon = TextureFactory.HomeIcon(s.group);
+                    if (icon != null) ZoneFactory.Quad(ghostRoot.transform, "Icon", SlotIconMaterial(s.group, icon.texture), 0.04f, SlotMarkerSize * 0.55f);
+                    ghost = ghostRoot;
                 }
-                MakeGhost(ghost);
+                if (s.IsFactory) MakeGhost(ghost);
                 foreach (GameObject m in models) m.SetActive(false);
 
                 var slot = go.AddComponent<HomeSlot>();

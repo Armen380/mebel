@@ -37,6 +37,13 @@ Status: **In progress** — implemented and reviewed; waiting for the user's pla
   - [x] HomeBoxes (pickup pile at the counter, boxes ↔ storage reconcile, throw returns), HomeSlotSystem carries boxes
   - [x] Remove the variant picker (UI, event, IHomeStore.Variants)
   - [x] Tests 663/663; Play Mode: 2 carpets bought at the counter → boxes into the hands → star unpacked on the living carpet slot → vishap box swapped in (star back in the hands) → thrown boxes back on the pile; pushed to PR #27
+- [x] **Play-test change 2 (user 2026-11-15): "пусть коробки возьмёт по штуке и в доме на полу будет место, куда именно
+  вставить эту коробку".** One box at a time from the pile (the hands take a box only when empty); every Home Store slot
+  gets a floor marker (drop-zone style) with its group's icon, shown with the ghost while the slot is open and empty.
+  - [x] Zone carry limit (pile: 1) in the pickup rule, test
+  - [x] Floor markers with icons for store slots
+  - [x] Rebuild, Play Mode check (1 box in the hands, 4 left on the pile; markers with icons on free slots), commit, push to PR #27
+  - [x] Fix found on the way: room slots now stand on the 0.3 m foundation slab (they were at ground level: markers under the floor, furniture sunk)
 - [ ] Merge into main after the user's OK
 - Deferred review minors (not blocking): a few slots reachable through a wall (wardrobe, kitchen, bowl, towel — move
   0.2–0.4 m in); a swap doesn't autosave until the next money change; standing on the stage pad pays all four stages in a

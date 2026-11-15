@@ -27,5 +27,9 @@ namespace FF.Gameplay.Zones
         /// <summary>Pickup: the zone holds items, the carrier is empty-typed or the same type and has room.</summary>
         public static bool CanPickup(ItemStack zone, ItemStack carrier) =>
             zone.Settled > 0 && (carrier.Type == ItemType.None || carrier.Type == zone.Type) && carrier.HasRoom;
+
+        /// <summary>As above, and the carrier holds fewer than <paramref name="carryLimit"/> items (0 = no limit).</summary>
+        public static bool CanPickup(ItemStack zone, ItemStack carrier, int carryLimit) =>
+            CanPickup(zone, carrier) && (carryLimit <= 0 || carrier.Count < carryLimit);
     }
 }

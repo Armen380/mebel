@@ -34,7 +34,8 @@ namespace FF.Editor.World
             public Transform Slots;
         }
 
-        const float SlabTop = 0.3f, WallH = 3f, InnerWallH = 1.4f;
+        public const float SlabTop = 0.3f;
+        const float WallH = 3f, InnerWallH = 1.4f;
 
         public static Result Build(GameDatabase db, Transform world)
         {
