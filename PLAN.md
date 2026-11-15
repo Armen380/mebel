@@ -44,6 +44,11 @@ Status: **In progress** — implemented and reviewed; waiting for the user's pla
   - [x] Floor markers with icons for store slots
   - [x] Rebuild, Play Mode check (1 box in the hands, 4 left on the pile; markers with icons on free slots), commit, push to PR #27
   - [x] Fix found on the way: room slots now stand on the 0.3 m foundation slab (they were at ground level: markers under the floor, furniture sunk)
+- [x] **Play-test fix 3 (user 2026-11-15): "я взял коробку, но нигде не могу вставить".** The user's top box was a flower
+  bed while both beds were already filled (rose + tulip), so it could only swap (rose ↔ tulip), which looked like nothing
+  happened; the TV and garden-lamp boxes (free slots) were lower in the pile. Fix: the pile keeps boxes with a free slot
+  on top (HomeRules.HasFreeSlot + HomeBoxes.SortPile on every pile change). Checked on the user's save: first box =
+  garden lamps → placed. Tests 665/665.
 - [ ] Merge into main after the user's OK
 - Deferred review minors (not blocking): a few slots reachable through a wall (wardrobe, kitchen, bowl, towel — move
   0.2–0.4 m in); a swap doesn't autosave until the next money change; standing on the stage pad pays all four stages in a

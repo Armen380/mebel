@@ -33,6 +33,7 @@ namespace FF.Gameplay.Home
         EconomyConfig _economy;
         WorldStateSnapshot _state;
         bool _dirty = true, _started;
+        int _sortedCount = -1;
 
         public PlayerCarrier Carrier => carrier;
 
@@ -66,7 +67,10 @@ namespace FF.Gameplay.Home
 
         void Update()
         {
-            if (_started && _dirty) Reconcile();
+            if (!_started) return;
+            if (_dirty) Reconcile();
+            // boxes land on the pile after their flight: sort again whenever the pile changes
+            if (pile.Stack.Settled != _sortedCount) SortPile();
         }
 
         /// <summary>Spawns boxes for storage items that have none and removes boxes whose item is gone.</summary>
@@ -90,6 +94,29 @@ namespace FF.Gameplay.Home
             {
                 Item box = Make(id, at);
                 _flights.FlyToStack(box, pile.Stack, _economy.transferFlightSeconds, _economy.flightArc);
+            }
+            SortPile();
+        }
+
+        /// <summary>
+        /// The hands take the top box, one at a time: boxes that have a free slot go on top, so the player is not handed a
+        /// box that can only be swapped (play-test 2026-11-15: "I took a box but can't place it anywhere").
+        /// </summary>
+        void SortPile()
+        {
+            ItemStack s = pile.Stack;
+            int stage = _home.Stage;
+            int n = s.Settled;
+            _sortedCount = n;
+            for (int i = 0, moved = 0; i < n - moved; )
+            {
+                HomeDef.HomeItemDef item = _def.Item(s[i].HomeItemId);
+                if (item != null && HomeRules.HasFreeSlot(_def, _home.State, item.group, stage))
+                {
+                    s.Place(s.RemoveAt(i));
+                    moved++;
+                }
+                else i++;
             }
         }
 

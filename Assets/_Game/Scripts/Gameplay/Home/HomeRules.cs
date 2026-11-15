@@ -72,6 +72,14 @@ namespace FF.Gameplay.Home
             return true;
         }
 
+        /// <summary>Some open slot of the group is empty (a box of it can be unpacked now).</summary>
+        public static bool HasFreeSlot(HomeDef d, HomeState s, string group, int stage)
+        {
+            foreach (HomeDef.SlotDef slot in d.slots)
+                if (!slot.IsFactory && slot.group == group && !s.Placed.ContainsKey(slot.id) && IsSlotOpen(d, slot, stage)) return true;
+            return false;
+        }
+
         /// <summary>Items of a group in storage plus placed.</summary>
         public static int Owned(HomeDef d, HomeState s, string group)
         {

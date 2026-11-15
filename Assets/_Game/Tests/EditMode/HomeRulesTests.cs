@@ -121,6 +121,17 @@ namespace FF.Tests
         }
 
         [Test]
+        public void HasFreeSlot_OnlyOpenEmptySlotsOfTheGroup()
+        {
+            Assert.IsTrue(HomeRules.HasFreeSlot(_def, _state, "carpet", 1), "yard carpet slot is open at stage 1");
+            HomeRules.Buy(_state, Item("carpet_a"));
+            HomeRules.TryPlaceItem(_def, _state, Slot("yard_carpet"), 1, "carpet_a");
+            Assert.IsFalse(HomeRules.HasFreeSlot(_def, _state, "carpet", 1), "the living one is closed until the walls");
+            Assert.IsTrue(HomeRules.HasFreeSlot(_def, _state, "carpet", 2));
+            Assert.IsFalse(HomeRules.HasFreeSlot(_def, _state, "bed", 4), "no slot at all");
+        }
+
+        [Test]
         public void BoxDiff_SpawnsMissingAndDropsExtra()
         {
             // storage: 2 carpet_a, 1 bench; boxes in the world: carpet_a, lamp (stale), carpet_a, carpet_a
